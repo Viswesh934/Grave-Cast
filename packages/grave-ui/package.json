@@ -1,5 +1,5 @@
 {
-  "name": "@gravecast/groovy",
+  "name": "groove-ui",
   "version": "0.1.0",
   "description": "Horror-themed React component library with folklore-inspired design primitives",
   "type": "module",

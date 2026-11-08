@@ -66,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Package Details
 
-- **Package name**: `@gravecast/groovy`
+- **Package name**: `groove-ui`
 - **Initial version**: 0.1.0
 - **License**: MIT
 - **Peer dependencies**: React >=18.0.0, React DOM >=18.0.0, Tailwind CSS ^4.3.5

@@ -1,8 +1,8 @@
-# 🎃 Groovy
+# 🎃 Groove UI
 
 A horror-themed React component library with folklore-inspired design primitives for building spooky, atmospheric user interfaces.
 
-[![npm version](https://img.shields.io/npm/v/@gravecast/groovy.svg)](https://www.npmjs.com/package/@gravecast/groovy)
+[![npm version](https://img.shields.io/npm/v/groove-ui.svg)](https://www.npmjs.com/package/groove-ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
@@ -18,7 +18,7 @@ A horror-themed React component library with folklore-inspired design primitives
 ## Installation
 
 ```bash
-npm install @gravecast/groovy
+npm install groove-ui
 ```
 
 ### Peer Dependencies
@@ -35,13 +35,13 @@ Add the Groovy plugin to your `tailwind.config.ts`:
 
 ```typescript
 import type { Config } from 'tailwindcss';
-import groovyPlugin from '@gravecast/groovy/tailwind';
+import groovyPlugin from 'groove-ui/tailwind';
 
 export default {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@gravecast/groovy/dist/**/*.js'
+    './node_modules/groove-ui/dist/**/*.js'
   ],
   plugins: [groovyPlugin]
 } satisfies Config;
@@ -50,7 +50,7 @@ export default {
 ### 2. Import Components
 
 ```tsx
-import { Button, Card, TombstoneCard } from '@gravecast/groovy';
+import { Button, Card, TombstoneCard } from 'groove-ui';
 
 function App() {
   return (
@@ -80,7 +80,7 @@ Core building blocks for your interface:
 - **Badge** - Informational badges with folklore styling
 
 ```tsx
-import { Button, Card, Badge } from '@gravecast/groovy';
+import { Button, Card, Badge } from 'groove-ui';
 
 <Button variant="primary" size="lg">Primary Action</Button>
 <Card>
@@ -106,7 +106,7 @@ import {
   ExcavationLoader,
   MausoleumDrawer,
   CoffinAccordion 
-} from '@gravecast/groovy';
+} from 'groove-ui';
 
 // Tombstone Card
 <TombstoneCard
@@ -159,7 +159,7 @@ import {
   useAnimationState,
   useMediaQuery,
   useThemeToken 
-} from '@gravecast/groovy/hooks';
+} from 'groove-ui/hooks';
 
 // Horror hover effects
 const { isHovered, handlers } = useHorrorHover({
@@ -182,7 +182,7 @@ const shadowValue = useThemeToken('shadows', 'crypt');
 Access the complete token system:
 
 ```tsx
-import { colors, shadows, typography, animations, spacing } from '@gravecast/groovy/tokens';
+import { colors, shadows, typography, animations, spacing } from 'groove-ui/tokens';
 
 const customComponent = {
   color: colors.grave.crimson[500],
@@ -206,7 +206,7 @@ const customComponent = {
 Pre-built SVG components with folklore themes:
 
 ```tsx
-import { Skull, Coffin, Cross, Headstone, Bone } from '@gravecast/groovy';
+import { Skull, Coffin, Cross, Headstone, Bone } from 'groove-ui';
 
 <Skull size={48} />
 <Coffin size={64} />
@@ -223,7 +223,7 @@ All SVGs support:
 Create atmospheric soundscapes:
 
 ```tsx
-import { AudioProvider, useAudio } from '@gravecast/groovy';
+import { AudioProvider, useAudio } from 'groove-ui';
 
 function App() {
   return (
@@ -284,7 +284,7 @@ SpectralPortal uses render props for maximum flexibility:
 All components are fully typed. Import types from the main package:
 
 ```tsx
-import type { ButtonProps, CardProps, TombstoneCardProps } from '@gravecast/groovy';
+import type { ButtonProps, CardProps, TombstoneCardProps } from 'groove-ui';
 
 const customButton: ButtonProps = {
   variant: 'secondary',
@@ -312,8 +312,9 @@ MIT © Gravecast Team
 
 - [GitHub Repository](https://github.com/yourusername/grave-cast)
 - [Issue Tracker](https://github.com/yourusername/grave-cast/issues)
-- [npm Package](https://www.npmjs.com/package/@gravecast/groovy)
+- [npm Package](https://www.npmjs.com/package/groove-ui)
 
 ---
 
 Built with 🖤 for the dark side of design
+
