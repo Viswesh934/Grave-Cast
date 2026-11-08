@@ -9,7 +9,7 @@ import type { HTMLAttributes } from 'react';
 /**
  * Badge variant types
  */
-export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info';
+export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'wax-seal' | 'talisman';
 
 /**
  * Badge size options

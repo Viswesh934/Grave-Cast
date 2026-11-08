@@ -50,8 +50,8 @@ export function BloodVialDoc() {
                 <BloodVialProgress3D
                   value={val}
                   max={100}
-                  label="Spectral Vitality"
-                  liquidColor="#10b981"
+                  label="Vampiric Vitality"
+                  liquidColor="#ff1744"
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
@@ -64,7 +64,7 @@ export function BloodVialDoc() {
               <BloodVialProgress
                 value={val}
                 max={100}
-                label="Spectral Vitality"
+                label="Vampiric Vitality"
                 orientation={orientation}
                 showPercentage={true}
               />

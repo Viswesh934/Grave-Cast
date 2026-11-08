@@ -31,7 +31,7 @@ export function ExcavationDoc() {
     <ComponentDocPage
       title="ExcavationLoader"
       category="The Crypt"
-      description="An animated loading component evoking archaeological excavations and graveyard digging with a rotating bone shovel tool, parabolic flying dirt particles, and emerging skeletal fingers."
+      description="An authentic excavation scene featuring an excavated subterranean grave trench, an iron graveyard spade clutched by a skeletal gravedigger, and parabolic flying dirt clods."
       packageName="excavation-loader"
       has3DMode={true}
       is3DMode={is3DMode}
@@ -52,7 +52,7 @@ export function ExcavationDoc() {
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.15} minPolarAngle={0.3} />
               </Canvas>
               <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
-                Watch 3D bone shovel stroke & parabolic flying dirt particles
+                Real excavation trench · Iron spade digging cycle · Parabolic dirt physics
               </div>
             </div>
           ) : (

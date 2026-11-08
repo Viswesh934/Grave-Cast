@@ -39,7 +39,7 @@ export function ButtonDoc() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
-            {(['primary', 'secondary', 'ghost', 'danger'] as ButtonVariant[]).map((v) => (
+            {(['primary', 'secondary', 'stone', 'gothic', 'danger', 'ghost'] as ButtonVariant[]).map((v) => (
               <button
                 key={v}
                 type="button"

@@ -27,7 +27,7 @@ export function BloodVialProgress3D({
   value,
   max = 100,
   label = 'Vitality',
-  liquidColor = '#e11d48',
+  liquidColor = '#ff1744',
   height = 4.2,
 }: BloodVialProgress3DProps) {
   const groupRef = useRef<Group>(null);
@@ -39,7 +39,7 @@ export function BloodVialProgress3D({
   const liquidY = -height * 0.38 + liquidHeight / 2;
 
   const bloodBaseColor = useMemo(() => new Color(liquidColor), [liquidColor]);
-  const bloodEmissive = useMemo(() => new Color(liquidColor).multiplyScalar(0.4), [liquidColor]);
+  const bloodEmissive = useMemo(() => new Color(liquidColor).multiplyScalar(0.75), [liquidColor]);
 
   // Subtle fluid sloshing & bubble animation
   useFrame((state) => {
@@ -65,10 +65,10 @@ export function BloodVialProgress3D({
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
       {/* Lighting for glass & liquid */}
-      <ambientLight intensity={0.5} color="#2b2038" />
+      <ambientLight intensity={0.5} color="#182c20" />
       <pointLight position={[2, 3, 3]} intensity={1.2} color="#ffffff" />
       <pointLight position={[-2, -1, -2]} intensity={0.6} color="#fda4af" />
-      <pointLight position={[0, liquidY, 0.8]} intensity={0.8} color={liquidColor} distance={2} />
+      <pointLight position={[0, liquidY, 0.8]} intensity={1.8} color="#ff1744" distance={3.0} />
 
       <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.15}>
         {/* Brass Ornate Cap */}

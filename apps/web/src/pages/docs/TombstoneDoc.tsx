@@ -112,7 +112,7 @@ export function TombstoneDoc() {
                         relief === r
                           ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
                           : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white hover:border-emerald-700/60'
-                      }`}
+                        }`}
                     >
                       {r}
                     </button>
@@ -134,7 +134,7 @@ export function TombstoneDoc() {
                       weathering === w
                         ? 'bg-teal-950/80 text-teal-200 border border-teal-600/80 font-bold shadow-md shadow-teal-950/40'
                         : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white hover:border-teal-700/60'
-                    }`}
+                      }`}
                   >
                     {w}
                   </button>
@@ -156,7 +156,7 @@ export function TombstoneDoc() {
                         intensity === i
                           ? 'bg-emerald-900/70 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
                           : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white hover:border-emerald-700/60'
-                      }`}
+                        }`}
                     >
                       {i}
                     </button>

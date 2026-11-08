@@ -9,7 +9,7 @@ import type { ButtonHTMLAttributes } from 'react';
 /**
  * Button variant types
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'stone' | 'gothic';
 
 /**
  * Button size options

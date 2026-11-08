@@ -4,7 +4,7 @@ import { CauldronBrew, CauldronBrew3D, Canvas, OrbitControls, type BrewColor } f
 
 export function CauldronDoc() {
   const [is3DMode, setIs3DMode] = useState(true);
-  const [brewColor, setBrewColor] = useState<BrewColor>('witchfire');
+  const [brewColor, setBrewColor] = useState<BrewColor>('emerald');
   const [boiling, setBoiling] = useState(true);
 
   const codeSnippet2D = `<CauldronBrew

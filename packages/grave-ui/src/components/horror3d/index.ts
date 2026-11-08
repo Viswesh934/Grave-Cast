@@ -12,8 +12,10 @@ export * from './RunicButton3D';
 export * from './BoneOssuaryDivider3D';
 export * from './LunarPhaseSelector3D';
 export * from './ExcavationLoader3D';
+export * from './MausoleumVault3D';
 export * from './CoffinAccordion3D';
 export * from './CobwebCorner3D';
+export * from './WitchOnBroom3D';
 export * from './ChickenLegStepper3D';
 export * from './horror3d.config';
 

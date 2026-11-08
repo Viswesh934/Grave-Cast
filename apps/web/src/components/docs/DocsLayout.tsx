@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { PumpkinIcon, SearchIcon, VolumeIcon, GitHubIcon } from './DocsIcons';
+import { CoffinBloodLogo, SearchIcon, VolumeIcon, GitHubIcon } from './DocsIcons';
 import { CommandPalette } from './CommandPalette';
 import { playSound } from 'groove-ui';
 
@@ -57,9 +57,9 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: 'THE SLAVIC',
+    title: 'THE FOLKLORE & COVEN',
     items: [
-      { title: 'ChickenLegStepper', path: '/docs/components/chicken-legs', badge: '3D' },
+      { title: 'WitchOnBroom', path: '/docs/components/chicken-legs', badge: '3D' },
     ],
   },
   {
@@ -91,10 +91,10 @@ export function DocsLayout() {
       {/* Top Header (Sticky frosted glass navbar) */}
       <header className="sticky top-0 z-40 w-full border-b border-[#162a1f] bg-[#091510]/85 backdrop-blur-md">
         <div className="max-w-[1600px] mx-auto flex h-14 items-center justify-between px-6 sm:px-8">
-          {/* Brand Logo (extra text v.001 removed) */}
+          {/* Brand Logo - Gothic Coffin with Glowing Arterial Blood */}
           <div className="flex items-center gap-6">
             <NavLink to="/docs/introduction" className="flex items-center gap-2.5 group">
-              <PumpkinIcon size={26} className="filter drop-shadow-[0_0_10px_rgba(16,185,129,0.5)] group-hover:scale-110 transition-transform" />
+              <CoffinBloodLogo size={28} className="filter drop-shadow-[0_0_12px_rgba(255,23,68,0.7)] group-hover:scale-110 transition-transform" />
               <span className="font-serif font-bold text-lg tracking-tight text-white group-hover:text-emerald-400 transition-colors">
                 Grave UI
               </span>

@@ -38,7 +38,7 @@ export function BadgeDoc() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
-            {(['success', 'info', 'warning', 'danger', 'default'] as BadgeVariant[]).map((v) => (
+            {(['wax-seal', 'talisman', 'danger', 'success', 'warning', 'info', 'default'] as BadgeVariant[]).map((v) => (
               <button
                 key={v}
                 type="button"

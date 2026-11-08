@@ -30,7 +30,7 @@ export function BoneOssuaryDoc() {
     <ComponentDocPage
       title="BoneOssuaryDivider"
       category="The Crypt"
-      description="A decorative section divider inspired by the Paris Catacombs and Sedlec Ossuary, arranging skeletal femur bones and weathered skulls with glowing spectral eye sockets."
+      description="A decorative section divider inspired by the Paris Catacombs and Sedlec Ossuary, arranging skeletal femur bones and an anatomically sculpted skull engulfed in procedural flame ribbons and firelight."
       packageName="bone-ossuary-divider"
       has3DMode={true}
       is3DMode={is3DMode}
@@ -51,7 +51,7 @@ export function BoneOssuaryDoc() {
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
               <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
-                Drag to inspect sculpted skulls · Watch flickering soul flames in eye sockets
+                Drag to inspect sculpted skull · Procedural flame tongues licking from cranium and sockets
               </div>
             </div>
           ) : (

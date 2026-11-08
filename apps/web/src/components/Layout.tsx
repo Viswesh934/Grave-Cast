@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { CoffinBloodLogo } from './docs/DocsIcons';
 
 export function Layout() {
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -13,11 +14,8 @@ export function Layout() {
       <aside className="w-64 bg-[#091510] border-r border-[#162a1f] flex flex-col shrink-0">
         <div className="p-6 border-b border-[#162a1f]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-emerald-950/80 border border-emerald-700/80 flex items-center justify-center text-emerald-400 shadow-inner">
-              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" />
-                <path d="M12 6v12M8 10h8" />
-              </svg>
+            <div className="w-9 h-9 rounded-xl bg-[#0d1e16] border border-red-900/60 flex items-center justify-center shadow-[0_0_15px_rgba(255,23,68,0.25)]">
+              <CoffinBloodLogo size={24} />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white tracking-tight font-serif">

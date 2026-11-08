@@ -4,7 +4,7 @@ import { RunicButton, RunicButton3D, Canvas, OrbitControls, type RuneElement } f
 
 export function RunicButtonDoc() {
   const [is3DMode, setIs3DMode] = useState(true);
-  const [element, setElement] = useState<RuneElement>('blood');
+  const [element, setElement] = useState<RuneElement>('spectral');
 
   const codeSnippet2D = `<RunicButton
   element="${element}"
