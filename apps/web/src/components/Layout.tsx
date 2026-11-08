@@ -1,61 +1,65 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { CoffinBloodLogo } from './docs/DocsIcons';
 
 export function Layout() {
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `block px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-      ? 'bg-grave-crimson-600 text-grave-bone-100 shadow-lg shadow-red-950/60 font-semibold'
-      : 'text-grave-mist-300 hover:bg-grave-dark-800 hover:text-grave-bone-100'
+    `block px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
+      ? 'bg-emerald-950/70 text-emerald-200 border border-emerald-600/60 shadow-lg shadow-emerald-950/60 font-semibold'
+      : 'text-stone-300 hover:bg-[#102219] hover:text-white'
     }`;
 
   return (
-    <div className="min-h-screen bg-grave-dark-900 text-grave-bone-200 flex">
+    <div className="min-h-screen bg-[#08120e] text-[#e2ede6] flex">
       {/* Vertical Sidebar */}
-      <aside className="w-64 bg-grave-dark-950 border-r border-grave-dark-700 flex flex-col shrink-0">
-        <div className="p-6 border-b border-grave-dark-700">
-          <div className="flex items-center gap-2.5">
-            <span className="text-2xl" role="img" aria-label="Grave">⚰️</span>
+      <aside className="w-64 bg-[#091510] border-r border-[#162a1f] flex flex-col shrink-0">
+        <div className="p-6 border-b border-[#162a1f]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#0d1e16] border border-red-900/60 flex items-center justify-center shadow-[0_0_15px_rgba(255,23,68,0.25)]">
+              <CoffinBloodLogo size={24} />
+            </div>
             <div>
-              <h1 className="text-xl font-bold text-grave-bone-100 tracking-tight">
+              <h1 className="text-xl font-bold text-white tracking-tight font-serif">
                 Grave UI
               </h1>
-              <p className="text-xs text-grave-mist-400 mt-0.5 font-mono uppercase tracking-wider">
-                Spooky Design System
+              <p className="text-[10px] text-emerald-400/80 font-mono uppercase tracking-widest">
+                Grave Design System
               </p>
             </div>
           </div>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
-          <div className="text-xs font-semibold text-grave-mist-500 uppercase tracking-wider px-4 py-2">
+          <div className="text-[11px] font-semibold text-emerald-500/70 uppercase tracking-wider px-3 py-2 font-mono">
             Showcase
           </div>
           <NavLink to="/primitives" className={navLinkClass}>
-            🧱 Primitives
+            Primitives
           </NavLink>
           <NavLink to="/crypt" className={navLinkClass}>
-            🪦 Crypt Components
+            Crypt Components
           </NavLink>
           <NavLink to="/tokens" className={navLinkClass}>
-            🎨 Design Tokens
+            Design Tokens
           </NavLink>
           <NavLink to="/hooks" className={navLinkClass}>
-            🪝 Hooks & Audio
+            Hooks & Audio
           </NavLink>
         </nav>
 
-        <div className="p-4 border-t border-grave-dark-700/80 space-y-2">          <a
-          href="https://github.com/yourusername/grave-cast"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-center px-4 py-2 bg-grave-dark-800 hover:bg-grave-dark-700 text-grave-bone-200 rounded-lg transition-colors text-xs font-medium border border-grave-dark-700"
-        >
-          GitHub Repository
-        </a>
+        <div className="p-4 border-t border-[#162a1f] space-y-2">
+          <a
+            href="https://github.com/yourusername/grave-cast"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-center px-4 py-2 bg-[#0c1813] hover:bg-[#12251c] text-stone-300 hover:text-emerald-300 rounded-xl transition-colors text-xs font-medium border border-[#183425]"
+          >
+            GitHub Repository
+          </a>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-grave-dark-900 min-h-screen">
+      <main className="flex-1 overflow-auto bg-[#08120e] min-h-screen">
         <Outlet />
       </main>
     </div>

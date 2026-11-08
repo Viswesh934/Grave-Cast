@@ -1,25 +1,106 @@
 import type { SVGProps } from 'react';
 
-export function PumpkinIcon({ size = 24, className = '', ...props }: { size?: number } & SVGProps<SVGSVGElement>) {
+/**
+ * CoffinBloodLogo
+ * Gothic coffin casket silhouette infused with pulsing arterial crimson blood channels and sigil.
+ */
+export function CoffinBloodLogo({ size = 28, className = '', ...props }: { size?: number } & SVGProps<SVGSVGElement>) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={className} {...props}>
-      <path d="M30 5 C30 5, 32 15, 27 18 C33 16, 38 12, 36 5 C33 7, 31 6, 30 5 Z" fill="#33691E" stroke="#1B5E20" strokeWidth="1.5" />
-      <ellipse cx="18" cy="38" rx="14" ry="19" fill="#E65100" />
-      <ellipse cx="46" cy="38" rx="14" ry="19" fill="#E65100" />
-      <ellipse cx="24" cy="38" rx="16" ry="21" fill="#F57C00" />
-      <ellipse cx="40" cy="38" rx="16" ry="21" fill="#F57C00" />
-      <ellipse cx="32" cy="38" rx="14" ry="22" fill="#FB8C00" />
-      <polygon points="21,27 27,33 17,35" fill="#210500" />
-      <polygon points="22,28.5 26,32.5 18.5,34" fill="#FFD54F" />
-      <polygon points="43,27 37,33 47,35" fill="#210500" />
-      <polygon points="42,28.5 38,32.5 45.5,34" fill="#FFD54F" />
-      <polygon points="32,34 28,40 36,40" fill="#210500" />
-      <polygon points="32,35.5 29.5,39.5 34.5,39.5" fill="#FFE082" />
-      <path d="M16 43 Q32 58 48 43 C44 48 42 45 40 47 C38 45 35 49 32 46 C29 49 26 45 24 47 C22 45 20 48 16 43 Z" fill="#210500" />
-      <path d="M17.5 44 Q32 56.5 46.5 44 C43.5 47.5 41.5 45 39.5 46.5 C37.5 44.5 34.5 48 32 45.5 C29.5 48 26.5 44.5 24.5 46.5 C22.5 45 20.5 47.5 17.5 44 Z" fill="#FFCA28" />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill="none"
+      className={`overflow-visible ${className}`}
+      {...props}
+    >
+      <defs>
+        {/* Blood glow filter */}
+        <filter id="bloodGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3.5" result="blur" />
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 0.1 0 0 0  0 0 0.2 0 0  0 0 0 2 0" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        {/* Pulsing blood gradient */}
+        <linearGradient id="bloodPulse" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ff4d6d" />
+          <stop offset="50%" stopColor="#ff1744" />
+          <stop offset="100%" stopColor="#b91c1c" />
+        </linearGradient>
+        {/* Obsidian casket gradient */}
+        <linearGradient id="casketStone" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#283a30" />
+          <stop offset="60%" stopColor="#14221b" />
+          <stop offset="100%" stopColor="#0c1712" />
+        </linearGradient>
+      </defs>
+
+      {/* Intense Ambient Red Glow halo */}
+      <polygon
+        points="32,2 51,17 45,60 19,60 13,17"
+        fill="#ff1744"
+        opacity="0.65"
+        filter="url(#bloodGlow)"
+      />
+
+      {/* Outer Coffin Heavy Rim */}
+      <polygon
+        points="32,4 49,18 43,58 21,58 15,18"
+        fill="url(#casketStone)"
+        stroke="#ff1744"
+        strokeWidth="1.8"
+        strokeOpacity="0.8"
+      />
+
+      {/* Inner Inset Facet */}
+      <polygon
+        points="32,8 45,20 40,54 24,54 19,20"
+        fill="#08120e"
+        stroke="#1a3528"
+        strokeWidth="1.2"
+      />
+
+      {/* Corner Iron Studs */}
+      <circle cx="32" cy="7" r="1.5" fill="#3a5a48" />
+      <circle cx="46" cy="19" r="1.5" fill="#3a5a48" />
+      <circle cx="18" cy="19" r="1.5" fill="#3a5a48" />
+      <circle cx="41" cy="55" r="1.5" fill="#3a5a48" />
+      <circle cx="23" cy="55" r="1.5" fill="#3a5a48" />
+
+      {/* Pulsing Arterial Blood Veins */}
+      <path
+        d="M32 16 Q36 22 41 24 M32 30 Q26 28 22 25 M32 38 Q38 42 39 48 M32 44 Q25 46 25 50"
+        stroke="#ff1744"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        opacity="0.75"
+        filter="url(#bloodGlow)"
+      />
+
+      {/* Central Glowing Blood Cruciform Sigil */}
+      <path
+        d="M32 16 L32 48 M23 26 L41 26"
+        stroke="url(#bloodPulse)"
+        strokeWidth="3.2"
+        strokeLinecap="square"
+        filter="url(#bloodGlow)"
+      />
+      <path
+        d="M32 16 L32 48 M23 26 L41 26"
+        stroke="#ffffff"
+        strokeWidth="1.2"
+        strokeLinecap="square"
+        opacity="0.9"
+      />
+
+      {/* Glowing Blood Core Drop */}
+      <circle cx="32" cy="26" r="3" fill="#ff1744" filter="url(#bloodGlow)" />
+      <circle cx="32" cy="26" r="1.4" fill="#ffffff" />
     </svg>
   );
 }
+
+export const PumpkinIcon = CoffinBloodLogo;
 
 export function CopyIcon({ size = 16, className = '' }: { size?: number; className?: string }) {
   return (

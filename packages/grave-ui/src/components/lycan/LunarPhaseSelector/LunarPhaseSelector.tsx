@@ -20,22 +20,95 @@ export type MoonPhase =
 export interface LunarPhaseOption {
   id: MoonPhase;
   name: string;
-  icon: string;
   illumination: number;
   dangerLevel: 'low' | 'medium' | 'high' | 'lethal';
 }
 
 export const MOON_PHASES: LunarPhaseOption[] = [
-  { id: 'new', name: 'New Moon', icon: '🌑', illumination: 0, dangerLevel: 'low' },
-  { id: 'waxing-crescent', name: 'Waxing Crescent', icon: '🌒', illumination: 25, dangerLevel: 'low' },
-  { id: 'first-quarter', name: 'First Quarter', icon: '🌓', illumination: 50, dangerLevel: 'medium' },
-  { id: 'waxing-gibbous', name: 'Waxing Gibbous', icon: '🌔', illumination: 75, dangerLevel: 'high' },
-  { id: 'full', name: 'Full Moon', icon: '🌕', illumination: 100, dangerLevel: 'lethal' },
-  { id: 'blood-moon', name: 'Blood Full Moon', icon: '🩸', illumination: 100, dangerLevel: 'lethal' },
-  { id: 'waning-gibbous', name: 'Waning Gibbous', icon: '🌖', illumination: 75, dangerLevel: 'high' },
-  { id: 'third-quarter', name: 'Third Quarter', icon: '🌗', illumination: 50, dangerLevel: 'medium' },
-  { id: 'waning-crescent', name: 'Waning Crescent', icon: '🌘', illumination: 25, dangerLevel: 'low' },
+  { id: 'new', name: 'New Moon', illumination: 0, dangerLevel: 'low' },
+  { id: 'waxing-crescent', name: 'Waxing Crescent', illumination: 25, dangerLevel: 'low' },
+  { id: 'first-quarter', name: 'First Quarter', illumination: 50, dangerLevel: 'medium' },
+  { id: 'waxing-gibbous', name: 'Waxing Gibbous', illumination: 75, dangerLevel: 'high' },
+  { id: 'full', name: 'Full Moon', illumination: 100, dangerLevel: 'lethal' },
+  { id: 'blood-moon', name: 'Blood Full Moon', illumination: 100, dangerLevel: 'lethal' },
+  { id: 'waning-gibbous', name: 'Waning Gibbous', illumination: 75, dangerLevel: 'high' },
+  { id: 'third-quarter', name: 'Third Quarter', illumination: 50, dangerLevel: 'medium' },
+  { id: 'waning-crescent', name: 'Waning Crescent', illumination: 25, dangerLevel: 'low' },
 ];
+
+export function MoonPhaseIcon({ id, className = "w-6 h-6" }: { id: MoonPhase; className?: string }) {
+  if (id === 'blood-moon') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#dc2626" />
+        <circle cx="12" cy="12" r="9" stroke="#991b1b" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+  if (id === 'full') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#fef08a" />
+        <circle cx="12" cy="12" r="9" stroke="#ca8a04" strokeWidth="1" />
+      </svg>
+    );
+  }
+  if (id === 'new') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#181a26" stroke="#475569" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+  if (id === 'first-quarter') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#181a26" stroke="#475569" strokeWidth="1" />
+        <path d="M12 3 A9 9 0 0 1 12 21 Z" fill="#e2e8f0" />
+      </svg>
+    );
+  }
+  if (id === 'third-quarter') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#181a26" stroke="#475569" strokeWidth="1" />
+        <path d="M12 3 A9 9 0 0 0 12 21 Z" fill="#e2e8f0" />
+      </svg>
+    );
+  }
+  if (id === 'waxing-crescent') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#181a26" stroke="#475569" strokeWidth="1" />
+        <path d="M12 3 A9 9 0 0 1 12 21 A6 9 0 0 0 12 3 Z" fill="#e2e8f0" />
+      </svg>
+    );
+  }
+  if (id === 'waning-crescent') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#181a26" stroke="#475569" strokeWidth="1" />
+        <path d="M12 3 A9 9 0 0 0 12 21 A6 9 0 0 1 12 3 Z" fill="#e2e8f0" />
+      </svg>
+    );
+  }
+  if (id === 'waxing-gibbous') {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none">
+        <circle cx="12" cy="12" r="9" fill="#e2e8f0" />
+        <path d="M12 3 A9 9 0 0 0 12 21 A5 9 0 0 1 12 3 Z" fill="#181a26" />
+        <circle cx="12" cy="12" r="9" stroke="#475569" strokeWidth="1" fill="none" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none">
+      <circle cx="12" cy="12" r="9" fill="#e2e8f0" />
+      <path d="M12 3 A9 9 0 0 1 12 21 A5 9 0 0 0 12 3 Z" fill="#181a26" />
+      <circle cx="12" cy="12" r="9" stroke="#475569" strokeWidth="1" fill="none" />
+    </svg>
+  );
+}
 
 export interface LunarPhaseSelectorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** Active phase */
@@ -65,10 +138,10 @@ export const LunarPhaseSelector = forwardRef<HTMLDivElement, LunarPhaseSelectorP
         <div className="flex justify-between items-center mb-6">
           <div>
             <h4 className="font-serif font-bold text-lg text-grave-bone-100 flex items-center gap-2">
-              <span>🐺 Lunar Cycle</span>
+              <span>Lunar Cycle</span>
               {activeOption.dangerLevel === 'lethal' && (
                 <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800 animate-pulse">
-                  Beast Frenzy Active
+                  Peak Frenzy
                 </span>
               )}
             </h4>
@@ -76,8 +149,8 @@ export const LunarPhaseSelector = forwardRef<HTMLDivElement, LunarPhaseSelectorP
               Illumination: {activeOption.illumination}% · {activeOption.name}
             </p>
           </div>
-          <div className="text-4xl filter drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]">
-            {activeOption.icon}
+          <div className="w-10 h-10 flex items-center justify-center filter drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]">
+            <MoonPhaseIcon id={activeOption.id} className="w-9 h-9" />
           </div>
         </div>
 
@@ -97,7 +170,9 @@ export const LunarPhaseSelector = forwardRef<HTMLDivElement, LunarPhaseSelectorP
                 }`}
                 title={phase.name}
               >
-                <span className="text-2xl mb-1">{phase.icon}</span>
+                <div className="mb-1.5 flex items-center justify-center">
+                  <MoonPhaseIcon id={phase.id} className="w-5 h-5" />
+                </div>
                 <span className="text-[10px] font-mono tracking-tighter truncate max-w-full">
                   {phase.illumination}%
                 </span>

@@ -95,8 +95,9 @@ export const BloodVialProgress = forwardRef<HTMLDivElement, BloodVialProgressPro
       >
         <div className="flex justify-between items-center text-xs">
           {label && (
-            <span className="font-mono uppercase tracking-widest text-grave-mist-300">
-              🩸 {label}
+            <span className="font-mono uppercase tracking-widest text-grave-mist-300 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              {label}
             </span>
           )}
           {showPercentage && (

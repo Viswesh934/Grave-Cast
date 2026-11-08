@@ -21,26 +21,32 @@ export function BadgeDoc() {
       category="Primitives"
       description="Status indicator badges and metadata pills styled with monospace typography, glowing dot indicators, and folklore warning colors."
       packageName="badge"
+      gothicPhilosophy={{
+        influence: 'Occult Crypt Seals & Inscription Badges',
+        movement: 'Glowing Status Embers & Monospace Crypt Typographics',
+      }}
       preview={
-        <div className="flex flex-col items-center gap-6">
-          <Badge
-            variant={variant}
-            size={size}
-            dot={dot}
-          >
-            Cursed Entity
-          </Badge>
+        <div className="flex flex-col items-center gap-6 w-full max-w-2xl">
+          <div className="w-full p-8 rounded-2xl bg-[#0c1813] border border-[#183425] shadow-xl flex flex-col items-center">
+            <Badge
+              variant={variant}
+              size={size}
+              dot={dot}
+            >
+              Cursed Entity
+            </Badge>
+          </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-            {(['default', 'success', 'warning', 'danger', 'info'] as BadgeVariant[]).map((v) => (
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
+            {(['wax-seal', 'talisman', 'danger', 'success', 'warning', 'info', 'default'] as BadgeVariant[]).map((v) => (
               <button
                 key={v}
                 type="button"
                 onClick={() => setVariant(v)}
-                className={`px-2.5 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                   variant === v
-                    ? 'bg-red-950 text-red-200 border border-red-800 font-bold'
-                    : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                    ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-emerald-700/60 hover:text-white'
                 }`}
               >
                 {v}
@@ -49,7 +55,7 @@ export function BadgeDoc() {
             <button
               type="button"
               onClick={() => setDot(!dot)}
-              className="px-2.5 py-1 text-xs rounded-lg font-mono text-stone-400 bg-[#151722] border border-[#262838] hover:text-white cursor-pointer"
+              className="px-3 py-1.5 text-xs rounded-xl font-mono text-emerald-300 bg-[#102219] border border-[#1b3a2a] hover:text-white cursor-pointer"
             >
               Dot: {dot ? 'ON' : 'OFF'}
             </button>
@@ -67,4 +73,3 @@ export function BadgeDoc() {
     />
   );
 }
-

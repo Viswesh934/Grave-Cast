@@ -7,3 +7,4 @@ export * from './useHorrorHover';
 export * from './useAnimationState';
 export * from './useMediaQuery';
 export * from './useThemeToken';
+export * from './useHorrorFallback';

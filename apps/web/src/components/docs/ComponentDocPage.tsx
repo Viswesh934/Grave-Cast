@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { CopyIcon, CheckIcon, SparklesIcon } from './DocsIcons';
+import { CopyIcon, CheckIcon } from './DocsIcons';
 import { CobwebCorner } from 'groove-ui';
 
 export interface PropItem {
@@ -8,6 +8,12 @@ export interface PropItem {
   type: string;
   default?: string;
   description: string;
+}
+
+export interface GothicPhilosophyMeta {
+  influence: string; // e.g. "Catacombs & Ancient Crypts"
+  movement: string;  // e.g. "Living Stone & Sacrificial Embers"
+  lore?: string;
 }
 
 export interface ComponentDocPageProps {
@@ -21,6 +27,12 @@ export interface ComponentDocPageProps {
   variants?: { title: string; description?: string; element: ReactNode }[];
   prevPage?: { title: string; path: string };
   nextPage?: { title: string; path: string };
+
+  // 3D Gothic vs 2D Flat Mode Controls
+  has3DMode?: boolean;
+  is3DMode?: boolean;
+  onToggle3D?: (is3D: boolean) => void;
+  gothicPhilosophy?: GothicPhilosophyMeta;
 }
 
 export function ComponentDocPage({
@@ -34,11 +46,14 @@ export function ComponentDocPage({
   variants = [],
   prevPage,
   nextPage,
+  has3DMode = false,
+  is3DMode = true,
+  onToggle3D,
+  gothicPhilosophy,
 }: ComponentDocPageProps) {
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedInstall, setCopiedInstall] = useState(false);
-  const [keyReset, setKeyReset] = useState(0);
 
   const installCommand = `npx grave-ui add ${packageName}`;
 
@@ -55,41 +70,60 @@ export function ComponentDocPage({
   };
 
   return (
-    <div className="relative max-w-4xl mx-auto px-6 py-10 space-y-12">
+    <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12">
       {/* Spiderweb in top-right corner of each doc page */}
       <CobwebCorner position="top-right" size="md" hasSpider={true} />
 
       {/* Breadcrumb & Header */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-mono text-grave-mist-400">
-          <Link to="/docs" className="hover:text-grave-bone-100 transition-colors">Docs</Link>
+          <Link to="/docs" className="hover:text-emerald-300 transition-colors">Docs</Link>
           <span>/</span>
           <span className="text-grave-bone-200">{category}</span>
           <span>/</span>
-          <span className="text-red-400 font-semibold">{title}</span>
+          <span className="text-emerald-400 font-semibold">{title}</span>
         </div>
 
         <div className="flex items-center gap-3">
-          <h1 className="text-4xl font-extrabold font-serif tracking-tight text-grave-bone-100">
+          <h1 className="text-4xl font-extrabold font-serif tracking-tight text-white">
             {title}
           </h1>
-          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-semibold bg-red-950/60 text-red-300 border border-red-800/60">
+          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 shadow-sm">
             {category}
           </span>
+          {has3DMode && (
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold bg-teal-950/60 text-teal-300 border border-teal-700/60">
+              3D WebGL
+            </span>
+          )}
         </div>
 
-        <p className="text-base text-grave-mist-300 max-w-2xl leading-relaxed">
+        <p className="text-base text-stone-300 max-w-3xl leading-relaxed">
           {description}
         </p>
 
+        {/* Gothic Design Architecture Badge */}
+        <div className="pt-1 flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono bg-[#0c1813] border border-emerald-900/60 text-emerald-200 shadow-inner">
+            <span className="text-emerald-400 font-bold">Archetype:</span>
+            <span className="text-stone-300">
+              {gothicPhilosophy?.influence ?? "Ancient Crypts & Catacombs"}
+            </span>
+            <span className="text-stone-500">·</span>
+            <span className="text-teal-400 font-medium">
+              {gothicPhilosophy?.movement ?? "Living Sculptural Reliefs"}
+            </span>
+          </div>
+        </div>
+
         {/* Quick CLI Install Pill */}
-        <div className="pt-2 flex items-center gap-3">
-          <div className="inline-flex items-center gap-3 bg-[#11121a] border border-[#232536] rounded-lg px-3.5 py-1.5 text-xs font-mono text-stone-300 shadow-inner">
-            <span className="text-red-400">$</span>
+        <div className="pt-1 flex items-center gap-3">
+          <div className="inline-flex items-center gap-3 bg-[#0c1813] border border-[#183425] rounded-xl px-3.5 py-1.5 text-xs font-mono text-stone-300 shadow-inner">
+            <span className="text-emerald-400 font-bold">$</span>
             <span>{installCommand}</span>
             <button
               onClick={handleCopyInstall}
-              className="ml-2 text-stone-400 hover:text-white transition-colors cursor-pointer"
+              className="ml-2 text-stone-400 hover:text-emerald-300 transition-colors cursor-pointer"
               title="Copy install command"
             >
               {copiedInstall ? <CheckIcon size={14} className="text-emerald-400" /> : <CopyIcon size={14} />}
@@ -98,20 +132,20 @@ export function ComponentDocPage({
         </div>
       </div>
 
-      {/* Main Interactive Showcase (Animate UI Tabbed Canvas) */}
+      {/* Main Interactive Showcase (Animate UI Tabbed Canvas with Extra Width) */}
       <section className="space-y-4">
-        <div className="border border-[#222434] rounded-2xl bg-[#0d0e14] overflow-hidden shadow-2xl">
+        <div className="border border-[#183425] rounded-2xl bg-[#09140f] overflow-hidden shadow-2xl">
           {/* Header Bar with Tabs & Controls */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#222434] bg-[#11121a]">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-[#183425] bg-[#0d1d16]">
             {/* Segmented Preview/Code Switch */}
-            <div className="flex items-center gap-1 bg-[#181a26] p-1 rounded-lg border border-[#282a3d]">
+            <div className="flex items-center gap-1 bg-[#13251c] p-1 rounded-xl border border-[#1b3d2b]">
               <button
                 type="button"
                 onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                   activeTab === 'preview'
-                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/60 font-semibold'
-                    : 'text-stone-400 hover:text-white'
+                    ? 'bg-emerald-950/90 text-emerald-200 shadow-sm border border-emerald-600/70 font-semibold shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
                 Preview
@@ -119,34 +153,52 @@ export function ComponentDocPage({
               <button
                 type="button"
                 onClick={() => setActiveTab('code')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                   activeTab === 'code'
-                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/60 font-semibold'
-                    : 'text-stone-400 hover:text-white'
+                    ? 'bg-emerald-950/90 text-emerald-200 shadow-sm border border-emerald-600/70 font-semibold shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
                 Code
               </button>
             </div>
 
-            {/* Toolbar Buttons */}
-            <div className="flex items-center gap-2">
-              {activeTab === 'preview' && (
-                <button
-                  type="button"
-                  onClick={() => setKeyReset((k) => k + 1)}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono text-stone-400 hover:text-white bg-[#181a26] border border-[#282a3d] hover:border-stone-500 transition-colors cursor-pointer"
-                  title="Re-mount component"
-                >
-                  <SparklesIcon size={13} />
-                  <span>Re-render</span>
-                </button>
+            {/* Toolbar: 3D Default vs 2D Surface Toggle */}
+            <div className="flex items-center gap-3">
+              {has3DMode && onToggle3D && (
+                <div className="flex items-center bg-[#13251c] p-0.5 rounded-xl border border-[#1b3d2b] shadow-inner">
+                  <button
+                    type="button"
+                    onClick={() => onToggle3D(true)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer ${
+                      is3DMode
+                        ? 'bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 text-emerald-100 border border-emerald-500/80 font-semibold shadow-md shadow-emerald-950/60'
+                        : 'text-stone-400 hover:text-stone-200'
+                    }`}
+                    title="3D WebGL Mode (Default)"
+                  >
+                    <span>3D WebGL</span>
+                    <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-emerald-600 text-white font-sans tracking-wider">Default</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onToggle3D(false)}
+                    className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer ${
+                      !is3DMode
+                        ? 'bg-[#173022] text-emerald-100 border border-[#27533b] font-semibold shadow-sm'
+                        : 'text-stone-400 hover:text-stone-200'
+                    }`}
+                    title="Switch to 2D Surface Mode"
+                  >
+                    2D Surface
+                  </button>
+                </div>
               )}
 
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono text-stone-300 hover:text-white bg-[#181a26] border border-[#282a3d] hover:border-stone-500 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono text-stone-300 hover:text-emerald-300 bg-[#13251c] border border-[#1b3d2b] hover:border-emerald-600/60 transition-colors cursor-pointer"
               >
                 {copiedCode ? (
                   <>
@@ -163,17 +215,18 @@ export function ComponentDocPage({
             </div>
           </div>
 
-          {/* Canvas Area */}
+          {/* Canvas Area: Atmospheric eerie green tinted obsidian with generous breathing room */}
           {activeTab === 'preview' ? (
             <div
-              key={keyReset}
-              className="relative min-h-[340px] flex items-center justify-center p-8 bg-[radial-gradient(#1f2233_1px,transparent_1px)] [background-size:16px_16px] bg-[#0c0d13]"
+              className={`relative flex items-center justify-center bg-[#09110d] bg-[radial-gradient(#1a3324_1px,transparent_1px)] [background-size:24px_24px] shadow-[inset_0_0_100px_rgba(4,10,7,0.95)] ${
+                has3DMode ? 'min-h-[560px] p-8 sm:p-14' : 'min-h-[400px] p-8 sm:p-12'
+              }`}
             >
               {preview}
             </div>
           ) : (
-            <div className="p-4 bg-[#08090d] overflow-x-auto font-mono text-xs text-stone-300 leading-relaxed max-h-[460px]">
-              <pre className="p-2">
+            <div className="p-6 bg-[#060e0a] overflow-x-auto font-mono text-xs text-stone-200 leading-relaxed max-h-[520px]">
+              <pre className="p-3">
                 <code>{codeSnippet}</code>
               </pre>
             </div>
@@ -184,19 +237,19 @@ export function ComponentDocPage({
       {/* Variants & States Section */}
       {variants.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-2xl font-bold font-serif text-grave-bone-100 border-b border-[#222434] pb-3">
+          <h2 className="text-2xl font-bold font-serif text-white border-b border-[#183425] pb-3">
             Variants & Presets
           </h2>
           <div className="grid grid-cols-1 gap-6">
             {variants.map((v, i) => (
-              <div key={i} className="border border-[#222434] rounded-xl bg-[#0f1017] p-6 space-y-4">
+              <div key={i} className="border border-[#183425] rounded-2xl bg-[#0c1813] p-6 space-y-4">
                 <div>
-                  <h3 className="text-base font-bold text-grave-bone-100">{v.title}</h3>
+                  <h3 className="text-base font-bold text-white">{v.title}</h3>
                   {v.description && (
-                    <p className="text-xs text-grave-mist-400 mt-0.5">{v.description}</p>
+                    <p className="text-xs text-stone-400 mt-0.5">{v.description}</p>
                   )}
                 </div>
-                <div className="p-6 bg-[#090a0f] rounded-lg border border-[#1b1d29] flex items-center justify-center min-h-[140px]">
+                <div className="p-6 bg-[#08120e] rounded-xl border border-[#162e20] flex items-center justify-center min-h-[140px]">
                   {v.element}
                 </div>
               </div>
@@ -205,29 +258,29 @@ export function ComponentDocPage({
         </section>
       )}
 
-      {/* Props & API Reference Table */}
+      {/* Props Reference Table */}
       {propsList.length > 0 && (
-        <section className="space-y-6">
-          <h2 className="text-2xl font-bold font-serif text-grave-bone-100 border-b border-[#222434] pb-3">
-            Props & API Reference
+        <section className="space-y-4">
+          <h2 className="text-2xl font-bold font-serif text-white border-b border-[#183425] pb-3">
+            Props
           </h2>
-          <div className="border border-[#222434] rounded-xl overflow-hidden bg-[#0e0f16]">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-[#141622] text-xs font-mono uppercase tracking-wider text-grave-mist-400 border-b border-[#222434]">
+          <div className="border border-[#183425] rounded-2xl overflow-hidden bg-[#0c1813]">
+            <table className="w-full text-left text-sm font-mono">
+              <thead className="bg-[#0e2118] text-emerald-400/80 text-xs uppercase tracking-wider border-b border-[#183425]">
                 <tr>
-                  <th className="py-3 px-4">Prop</th>
-                  <th className="py-3 px-4">Type</th>
-                  <th className="py-3 px-4">Default</th>
-                  <th className="py-3 px-4">Description</th>
+                  <th className="px-5 py-3.5">Prop</th>
+                  <th className="px-5 py-3.5">Type</th>
+                  <th className="px-5 py-3.5">Default</th>
+                  <th className="px-5 py-3.5">Description</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1b1c2b] font-mono text-xs">
-                {propsList.map((p, idx) => (
-                  <tr key={idx} className="hover:bg-[#141520] transition-colors">
-                    <td className="py-3 px-4 font-bold text-red-400">{p.name}</td>
-                    <td className="py-3 px-4 text-purple-300">{p.type}</td>
-                    <td className="py-3 px-4 text-stone-400">{p.default || '-'}</td>
-                    <td className="py-3 px-4 text-stone-300 font-sans text-xs">{p.description}</td>
+              <tbody className="divide-y divide-[#162e20] text-xs">
+                {propsList.map((p, i) => (
+                  <tr key={i} className="hover:bg-[#10241b] transition-colors">
+                    <td className="px-5 py-3.5 font-semibold text-emerald-300">{p.name}</td>
+                    <td className="px-5 py-3.5 text-teal-300/90">{p.type}</td>
+                    <td className="px-5 py-3.5 text-stone-400">{p.default ?? '—'}</td>
+                    <td className="px-5 py-3.5 text-stone-300 font-sans">{p.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -236,35 +289,28 @@ export function ComponentDocPage({
         </section>
       )}
 
-      {/* Pagination Footer (Previous / Next) */}
-      <div className="pt-8 border-t border-[#222434] flex justify-between items-center text-sm">
+      {/* Bottom Prev / Next Nav */}
+      <div className="flex items-center justify-between pt-8 border-t border-[#183425] text-sm font-mono">
         {prevPage ? (
           <Link
             to={prevPage.path}
-            className="flex flex-col text-left group p-3 rounded-xl border border-[#222434] hover:border-red-800 bg-[#0f1017] transition-all"
+            className="group flex items-center gap-2 text-stone-400 hover:text-emerald-300 transition-colors"
           >
-            <span className="text-xs text-grave-mist-400 font-mono">← Previous</span>
-            <span className="font-semibold text-grave-bone-100 group-hover:text-red-400 transition-colors">
-              {prevPage.title}
-            </span>
+            <span className="text-stone-500 group-hover:-translate-x-1 transition-transform">←</span>
+            <span>{prevPage.title}</span>
           </Link>
-        ) : (
-          <div />
-        )}
+        ) : <div />}
 
         {nextPage && (
           <Link
             to={nextPage.path}
-            className="flex flex-col text-right group p-3 rounded-xl border border-[#222434] hover:border-red-800 bg-[#0f1017] transition-all"
+            className="group flex items-center gap-2 text-stone-400 hover:text-emerald-300 transition-colors ml-auto"
           >
-            <span className="text-xs text-grave-mist-400 font-mono">Next →</span>
-            <span className="font-semibold text-grave-bone-100 group-hover:text-red-400 transition-colors">
-              {nextPage.title}
-            </span>
+            <span>{nextPage.title}</span>
+            <span className="text-stone-500 group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         )}
       </div>
     </div>
   );
 }
-

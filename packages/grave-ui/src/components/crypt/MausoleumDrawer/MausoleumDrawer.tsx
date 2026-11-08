@@ -5,7 +5,6 @@
 
 import { forwardRef, useEffect, useState } from 'react';
 import { Card, type CardProps } from '../../primitives/Card';
-import { Button } from '../../primitives/Button';
 import { Cross } from '../../../assets/svg/base/Cross';
 
 /**
@@ -118,7 +117,7 @@ export const MausoleumDrawer = forwardRef<HTMLDivElement, MausoleumDrawerProps>(
       if (open) {
         setIsVisible(true);
         setIsAnimating(true);
-        return () => {}; // No cleanup needed when opening
+        return () => { }; // No cleanup needed when opening
       } else {
         setIsAnimating(false);
         const timer = setTimeout(() => setIsVisible(false), 300);
@@ -129,7 +128,7 @@ export const MausoleumDrawer = forwardRef<HTMLDivElement, MausoleumDrawerProps>(
     // Handle escape key
     useEffect(() => {
       if (!open || preventEscapeClose) {
-        return () => {}; // No-op cleanup
+        return () => { }; // No-op cleanup
       }
 
       const handleEscape = (e: KeyboardEvent) => {
@@ -212,15 +211,17 @@ export const MausoleumDrawer = forwardRef<HTMLDivElement, MausoleumDrawerProps>(
                   </h2>
                 )}
                 {showCloseButton && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                  <button
+                    type="button"
                     onClick={onClose}
-                    aria-label="Close drawer"
-                    className="grave-mausoleum__close"
+                    aria-label="Close panel"
+                    className="p-1 rounded-md text-stone-400 hover:text-stone-100 hover:bg-white/5 transition-colors cursor-pointer"
                   >
-                    ✕
-                  </Button>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                      <line x1="2" y1="2" x2="12" y2="12" />
+                      <line x1="12" y1="2" x2="2" y2="12" />
+                    </svg>
+                  </button>
                 )}
               </div>
             )}
