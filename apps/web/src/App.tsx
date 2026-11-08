@@ -1,44 +1,73 @@
-/**
- * Grave-UI Showcase Application
- * Interactive demonstration of all Grave-UI components
- */
-
-import { useState } from 'react';
-import { Navigation } from './components/Navigation';
-import { PrimitivesShowcase } from './pages/PrimitivesShowcase';
-import { CryptShowcase } from './pages/CryptShowcase';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { DocsLayout } from './components/docs/DocsLayout';
+import { IntroductionPage } from './pages/docs/IntroductionPage';
+import { InstallationPage } from './pages/docs/InstallationPage';
 import { TokensShowcase } from './pages/TokensShowcase';
 import { HooksShowcase } from './pages/HooksShowcase';
-import { Welcome } from './pages/Welcome';
 
-export type Page = 'welcome' | 'tokens' | 'hooks' | 'primitives' | 'crypt';
+// Component Docs
+import { TombstoneDoc } from './pages/docs/TombstoneDoc';
+import { ExcavationDoc } from './pages/docs/ExcavationDoc';
+import { BoneOssuaryDoc } from './pages/docs/BoneOssuaryDoc';
+import { MausoleumDrawerDoc } from './pages/docs/MausoleumDrawerDoc';
+import { CoffinAccordionDoc } from './pages/docs/CoffinAccordionDoc';
+import { CauldronDoc } from './pages/docs/CauldronDoc';
+import { RunicButtonDoc } from './pages/docs/RunicButtonDoc';
+import { BloodVialDoc } from './pages/docs/BloodVialDoc';
+import { LunarPhaseDoc } from './pages/docs/LunarPhaseDoc';
+import { ChickenLegDoc } from './pages/docs/ChickenLegDoc';
+import { CobwebDoc } from './pages/docs/CobwebDoc';
+import { ButtonDoc } from './pages/docs/ButtonDoc';
+import { CardDoc } from './pages/docs/CardDoc';
+import { BadgeDoc } from './pages/docs/BadgeDoc';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('welcome');
-
-  console.log('App rendering, currentPage:', currentPage);
-
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100">
-      <Navigation currentPage={currentPage} onPageChange={setCurrentPage} />
-      
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
-        <div style={{ border: '2px solid red', padding: '20px' }}>
-          <p style={{ color: 'yellow', fontSize: '24px' }}>Current page: {currentPage}</p>
-          {currentPage === 'welcome' && <Welcome onNavigate={setCurrentPage} />}
-          {currentPage === 'tokens' && <TokensShowcase />}
-          {currentPage === 'hooks' && <HooksShowcase />}
-          {currentPage === 'primitives' && <PrimitivesShowcase />}
-          {currentPage === 'crypt' && <CryptShowcase />}
-        </div>
-      </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<DocsLayout />}>
+          <Route index element={<Navigate to="/docs/introduction" replace />} />
+          <Route path="docs" element={<Navigate to="/docs/introduction" replace />} />
+          <Route path="docs/introduction" element={<IntroductionPage />} />
+          <Route path="docs/installation" element={<InstallationPage />} />
+          <Route path="docs/tokens" element={<TokensShowcase />} />
+          <Route path="docs/audio" element={<HooksShowcase />} />
 
-      <footer className="border-t border-stone-800 mt-16 py-8">
-        <div className="container mx-auto px-4 text-center text-stone-600 text-sm">
-          <p>🎃 Grave-UI v0.1.0 - A horror-themed component library</p>
-          <p className="mt-2">Built for Gravecast</p>
-        </div>
-      </footer>
-    </div>
+          {/* Primitives */}
+          <Route path="docs/components/button" element={<ButtonDoc />} />
+          <Route path="docs/components/card" element={<CardDoc />} />
+          <Route path="docs/components/badge" element={<BadgeDoc />} />
+
+          {/* The Crypt */}
+          <Route path="docs/components/tombstone" element={<TombstoneDoc />} />
+          <Route path="docs/components/excavation" element={<ExcavationDoc />} />
+          <Route path="docs/components/ossuary" element={<BoneOssuaryDoc />} />
+          <Route path="docs/components/mausoleum" element={<MausoleumDrawerDoc />} />
+          <Route path="docs/components/coffin-accordion" element={<CoffinAccordionDoc />} />
+
+          {/* The Coven */}
+          <Route path="docs/components/cauldron" element={<CauldronDoc />} />
+          <Route path="docs/components/runic-button" element={<RunicButtonDoc />} />
+
+          {/* The Sanguine */}
+          <Route path="docs/components/blood-vial" element={<BloodVialDoc />} />
+
+          {/* The Lycan */}
+          <Route path="docs/components/lunar-phase" element={<LunarPhaseDoc />} />
+
+          {/* The Slavic */}
+          <Route path="docs/components/chicken-legs" element={<ChickenLegDoc />} />
+
+          {/* The Arachnid */}
+          <Route path="docs/components/cobweb" element={<CobwebDoc />} />
+
+          {/* Legacy redirects */}
+          <Route path="primitives" element={<Navigate to="/docs/components/button" replace />} />
+          <Route path="crypt" element={<Navigate to="/docs/components/tombstone" replace />} />
+          <Route path="tokens" element={<Navigate to="/docs/tokens" replace />} />
+          <Route path="hooks" element={<Navigate to="/docs/audio" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }

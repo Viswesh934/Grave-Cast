@@ -1,0 +1,738 @@
+/**
+ * Grave-UI Core Stylesheet
+ * Handcrafted gothic & horror design system styles
+ */
+
+/* ==========================================================================
+   Design Tokens & CSS Variables
+   ========================================================================== */
+:root {
+  /* Crypt Palette */
+  --grave-crypt-stone: #16161a;
+  --grave-crypt-slate: #22232a;
+  --grave-crypt-granite: #343642;
+  --grave-crypt-moss: #3d5a45;
+  --grave-crypt-lichen: #5b8a68;
+
+  /* Sanguine Palette */
+  --grave-sanguine-blood: #8a0303;
+  --grave-sanguine-crimson: #bd081c;
+  --grave-sanguine-coagulated: #4a0008;
+  --grave-sanguine-plasma: #e63946;
+
+  /* Witchcraft Palette */
+  --grave-witch-void: #0d0914;
+  --grave-witch-fire: #8b5cf6;
+  --grave-witch-emerald: #10b981;
+  --grave-witch-gold: #d4af37;
+
+  /* Bone Palette */
+  --grave-bone-100: #f5f2eb;
+  --grave-bone-200: #e8e0d5;
+  --grave-bone-300: #d6ccbe;
+  --grave-bone-decayed: #b8a99a;
+  --grave-bone-ash: #6b625b;
+
+  /* Abyss & Neutral Darks */
+  --grave-dark-950: #060608;
+  --grave-dark-900: #0a0a0f;
+  --grave-dark-850: #0f1017;
+  --grave-dark-800: #14151f;
+  --grave-dark-750: #1b1c29;
+  --grave-dark-700: #222434;
+  --grave-dark-600: #2e3146;
+
+  /* Mist & Text Tones */
+  --grave-mist-100: #e2e4ed;
+  --grave-mist-200: #c2c5d4;
+  --grave-mist-300: #9da1b6;
+  --grave-mist-400: #6d7186;
+  --grave-mist-500: #4a4d60;
+
+  /* Shadows */
+  --grave-shadow-crypt: 0 10px 30px -5px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.08);
+  --grave-shadow-glow-crimson: 0 0 20px rgba(189, 8, 28, 0.35);
+  --grave-shadow-glow-witchfire: 0 0 20px rgba(139, 92, 246, 0.35);
+}
+
+/* ==========================================================================
+   Screen Reader Utility (Strictly Visually Hidden)
+   ========================================================================== */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
+/* ==========================================================================
+   Keyframe Animations
+   ========================================================================== */
+@keyframes grave-dig-motion {
+  0% {
+    transform: rotate(0deg) translateY(0) scale(1);
+  }
+  25% {
+    transform: rotate(-25deg) translateY(-4px) scale(1.05);
+  }
+  45% {
+    transform: rotate(18deg) translateY(6px) scale(0.95);
+  }
+  70% {
+    transform: rotate(-10deg) translateY(-2px) scale(1.02);
+  }
+  100% {
+    transform: rotate(0deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes grave-particle-arc-1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-14px, -18px) scale(1.1);
+  }
+  75% {
+    opacity: 0.7;
+    transform: translate(-24px, -6px) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-30px, 12px) scale(0.2);
+  }
+}
+
+@keyframes grave-particle-arc-2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(12px, -24px) scale(1.2);
+  }
+  80% {
+    opacity: 0.6;
+    transform: translate(22px, -8px) scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(28px, 14px) scale(0.2);
+  }
+}
+
+@keyframes grave-particle-arc-3 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.3);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(-4px, -28px) scale(1);
+  }
+  85% {
+    opacity: 0.5;
+    transform: translate(-6px, -12px) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-8px, 16px) scale(0.2);
+  }
+}
+
+@keyframes grave-candle-flicker {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.6)); }
+  25% { opacity: 0.88; filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.4)); }
+  50% { opacity: 0.95; filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.7)); }
+  75% { opacity: 0.82; filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.3)); }
+}
+
+@keyframes grave-blood-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(189, 8, 28, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(189, 8, 28, 0.5); }
+}
+
+@keyframes grave-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Primitive: Button (.grave-button)
+   ========================================================================== */
+.grave-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  border: 1px solid transparent;
+  line-height: 1.25;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.grave-button:focus-visible {
+  outline: 2px solid var(--grave-witch-fire);
+  outline-offset: 2px;
+}
+
+/* Sizes */
+.grave-button--sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.grave-button--md {
+  padding: 0.5rem 1.125rem;
+  font-size: 0.875rem;
+}
+
+.grave-button--lg {
+  padding: 0.75rem 1.625rem;
+  font-size: 1rem;
+}
+
+/* Variants */
+.grave-button--primary {
+  background: linear-gradient(135deg, var(--grave-sanguine-crimson) 0%, var(--grave-sanguine-blood) 100%);
+  color: var(--grave-bone-100);
+  border-color: rgba(220, 38, 38, 0.5);
+  box-shadow: 0 2px 10px rgba(189, 8, 28, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.grave-button--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d30a21 0%, #9e0404 100%);
+  border-color: rgba(239, 68, 68, 0.8);
+  box-shadow: 0 0 18px rgba(189, 8, 28, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.grave-button--primary:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(189, 8, 28, 0.4);
+}
+
+.grave-button--secondary {
+  background: var(--grave-dark-800);
+  color: var(--grave-bone-200);
+  border-color: var(--grave-dark-600);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.grave-button--secondary:hover:not(:disabled) {
+  background: var(--grave-dark-700);
+  border-color: var(--grave-mist-400);
+  color: var(--grave-bone-100);
+  transform: translateY(-1px);
+}
+
+.grave-button--ghost {
+  background: transparent;
+  color: var(--grave-mist-300);
+  border-color: var(--grave-dark-700);
+}
+
+.grave-button--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--grave-dark-600);
+  color: var(--grave-bone-100);
+}
+
+.grave-button--danger {
+  background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+  color: #fecaca;
+  border-color: #991b1b;
+}
+
+.grave-button--danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #991b1b 0%, #590909 100%);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+.grave-button--disabled,
+.grave-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.grave-button__spinner {
+  display: inline-block;
+  animation: grave-spin-slow 1s linear infinite;
+}
+
+/* ==========================================================================
+   Primitive: Card (.grave-card)
+   ========================================================================== */
+.grave-card {
+  position: relative;
+  background: var(--grave-dark-850);
+  border-radius: 0.75rem;
+  border: 1px solid var(--grave-dark-700);
+  color: var(--grave-bone-200);
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.grave-card--default {
+  background: var(--grave-dark-850);
+  border: 1px solid var(--grave-dark-700);
+}
+
+.grave-card--elevated {
+  background: var(--grave-dark-800);
+  border: 1px solid var(--grave-dark-600);
+  box-shadow: var(--grave-shadow-crypt);
+}
+
+.grave-card--outlined {
+  background: rgba(14, 16, 23, 0.7);
+  border: 1px solid var(--grave-dark-600);
+  backdrop-filter: blur(8px);
+}
+
+.grave-card--flat {
+  background: var(--grave-dark-900);
+  border: 1px solid transparent;
+}
+
+.grave-card--padding-sm { padding: 1rem; }
+.grave-card--padding-md { padding: 1.5rem; }
+.grave-card--padding-lg { padding: 2rem; }
+
+.grave-card--interactive {
+  cursor: pointer;
+}
+
+.grave-card--interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--grave-dark-600);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(139, 92, 246, 0.12);
+}
+
+.grave-card__header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--grave-dark-750);
+}
+
+.grave-card__footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--grave-dark-750);
+}
+
+/* ==========================================================================
+   Primitive: Badge (.grave-badge)
+   ========================================================================== */
+.grave-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid;
+  line-height: 1;
+}
+
+.grave-badge--sm { padding: 0.2rem 0.5rem; font-size: 0.6875rem; }
+.grave-badge--md { padding: 0.275rem 0.65rem; font-size: 0.75rem; }
+.grave-badge--lg { padding: 0.375rem 0.85rem; font-size: 0.8125rem; }
+
+.grave-badge--default {
+  background: rgba(157, 161, 182, 0.1);
+  border-color: rgba(157, 161, 182, 0.25);
+  color: var(--grave-mist-200);
+}
+
+.grave-badge--info {
+  background: rgba(139, 92, 246, 0.14);
+  border-color: rgba(139, 92, 246, 0.35);
+  color: #c4b5fd;
+}
+
+.grave-badge--success {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+}
+
+.grave-badge--warning {
+  background: rgba(217, 119, 6, 0.15);
+  border-color: rgba(217, 119, 6, 0.35);
+  color: #fcd34d;
+}
+
+.grave-badge--danger {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.4);
+  color: #fca5a5;
+}
+
+.grave-badge__dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background-color: currentColor;
+}
+
+.grave-badge__remove {
+  background: none;
+  border: none;
+  color: currentColor;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.2rem;
+  opacity: 0.7;
+}
+
+.grave-badge__remove:hover { opacity: 1; }
+
+/* ==========================================================================
+   Crypt: TombstoneCard (.grave-tombstone)
+   ========================================================================== */
+.grave-tombstone {
+  position: relative;
+  background: linear-gradient(180deg, #181923 0%, #111218 100%);
+  border: 1px solid var(--grave-dark-600);
+  border-radius: 2rem 2rem 0.5rem 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.grave-tombstone:hover {
+  transform: translateY(-3px);
+  border-color: var(--grave-mist-400);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.8), 0 0 15px rgba(61, 90, 69, 0.2);
+}
+
+.grave-tombstone--pristine {
+  border-color: var(--grave-dark-600);
+}
+
+.grave-tombstone--aged {
+  border-color: #313545;
+  background: linear-gradient(180deg, #1a1c26 0%, #121319 80%, #111a14 100%);
+}
+
+.grave-tombstone--cracked {
+  border-color: #3e445a;
+  border-style: dashed;
+}
+
+.grave-tombstone--crumbling {
+  border-color: #4f3b3b;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(74, 0, 8, 0.15);
+}
+
+.grave-tombstone__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.grave-tombstone__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grave-mist-400);
+}
+
+.grave-tombstone__engraving {
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+.grave-tombstone__title {
+  font-family: Georgia, Cambria, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--grave-bone-100);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.grave-tombstone__subtitle {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  color: var(--grave-mist-400);
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+}
+
+.grave-tombstone__epitaph {
+  font-family: Georgia, Cambria, serif;
+  font-style: italic;
+  font-size: 0.875rem;
+  color: var(--grave-mist-300);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--grave-dark-700);
+}
+
+.grave-tombstone__content {
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   Crypt: ExcavationLoader (.grave-excavation)
+   ========================================================================== */
+.grave-excavation {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.grave-excavation__container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+}
+
+.grave-excavation__tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grave-bone-200);
+  animation: grave-dig-motion 1.4s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+.grave-excavation--slow .grave-excavation__tool { animation-duration: 2s; }
+.grave-excavation--normal .grave-excavation__tool { animation-duration: 1.4s; }
+.grave-excavation--fast .grave-excavation__tool { animation-duration: 0.8s; }
+
+.grave-excavation__particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.grave-excavation__particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--grave-bone-decayed);
+  opacity: 0;
+}
+
+.grave-excavation__particle--1 {
+  animation: grave-particle-arc-1 1.4s ease-out infinite;
+}
+
+.grave-excavation__particle--2 {
+  animation: grave-particle-arc-2 1.4s ease-out infinite 0.25s;
+}
+
+.grave-excavation__particle--3 {
+  animation: grave-particle-arc-3 1.4s ease-out infinite 0.5s;
+}
+
+.grave-excavation--slow .grave-excavation__particle { animation-duration: 2s; }
+.grave-excavation--fast .grave-excavation__particle { animation-duration: 0.8s; }
+
+.grave-excavation--sm .grave-excavation__container { width: 44px; height: 44px; }
+.grave-excavation--lg .grave-excavation__container { width: 88px; height: 88px; }
+
+.grave-excavation__message {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--grave-mist-400);
+  margin-top: 0.75rem;
+  animation: grave-candle-flicker 2s infinite ease-in-out;
+}
+
+/* ==========================================================================
+   Crypt: BoneOssuaryDivider (.grave-ossuary)
+   ========================================================================== */
+.grave-ossuary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.grave-ossuary__container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--grave-bone-decayed);
+}
+
+.grave-ossuary--crossed .grave-ossuary__bone:nth-child(1) {
+  transform: rotate(-45deg);
+}
+.grave-ossuary--crossed .grave-ossuary__bone:nth-child(2) {
+  transform: rotate(45deg);
+  margin-left: -18px;
+}
+
+.grave-ossuary__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--grave-dark-700) 20%, var(--grave-dark-600) 50%, var(--grave-dark-700) 80%, transparent);
+  border: none;
+}
+
+.grave-ossuary__label {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--grave-mist-400);
+  padding: 0 0.5rem;
+}
+
+/* ==========================================================================
+   Crypt: MausoleumDrawer (.grave-drawer)
+   ========================================================================== */
+.grave-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.grave-drawer--open {
+  pointer-events: auto;
+}
+
+.grave-drawer__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 6, 8, 0.75);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grave-drawer--open .grave-drawer__overlay {
+  opacity: 1;
+}
+
+.grave-drawer__content {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  max-width: 440px;
+  background: var(--grave-dark-900);
+  border-left: 1px solid var(--grave-dark-600);
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.85);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.grave-drawer--open .grave-drawer__content {
+  transform: translateX(0);
+}
+
+.grave-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--grave-dark-750);
+  margin-bottom: 1.5rem;
+}
+
+.grave-drawer__title {
+  font-family: Georgia, Cambria, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--grave-bone-100);
+  margin: 0;
+}
+
+.grave-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Crypt: CoffinAccordion (.grave-coffin-accordion)
+   ========================================================================== */
+.grave-coffin-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.grave-coffin-item {
+  border-radius: 0.625rem;
+  border: 1px solid var(--grave-dark-700);
+  background: var(--grave-dark-850);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.grave-coffin-item:hover {
+  border-color: var(--grave-dark-600);
+}
+
+.grave-coffin-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--grave-bone-200);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.grave-coffin-trigger:hover {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--grave-bone-100);
+}
+
+.grave-coffin-content {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--grave-dark-750);
+  background: var(--grave-dark-900);
+  color: var(--grave-mist-300);
+}
+

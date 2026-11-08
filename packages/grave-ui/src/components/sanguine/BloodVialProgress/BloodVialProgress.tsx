@@ -1,0 +1,130 @@
+/**
+ * BloodVialProgress - Vampire blood vial progress bar
+ * @module components/sanguine/BloodVialProgress
+ */
+
+import { forwardRef, type HTMLAttributes } from 'react';
+
+export interface BloodVialProgressProps extends HTMLAttributes<HTMLDivElement> {
+  /** Progress percentage (0 - 100) */
+  value: number;
+  /** Maximum capacity */
+  max?: number;
+  /** Label */
+  label?: string;
+  /** Show numerical percentage text */
+  showPercentage?: boolean;
+  /** Glass vial orientation */
+  orientation?: 'horizontal' | 'vertical';
+}
+
+export const BloodVialProgress = forwardRef<HTMLDivElement, BloodVialProgressProps>(
+  (
+    {
+      value,
+      max = 100,
+      label = 'Sanguine Essence',
+      showPercentage = true,
+      orientation = 'horizontal',
+      className = '',
+      ...props
+    },
+    ref
+  ) => {
+    const percentage = Math.min(100, Math.max(0, Math.round((value / max) * 100)));
+
+    if (orientation === 'vertical') {
+      return (
+        <div
+          ref={ref}
+          className={`inline-flex flex-col items-center gap-3 select-none ${className}`}
+          {...props}
+        >
+          {label && (
+            <span className="text-xs font-mono uppercase tracking-widest text-grave-mist-300">
+              {label}
+            </span>
+          )}
+
+          {/* Vertical Glass Test Tube */}
+          <div className="relative w-8 h-48 rounded-b-full rounded-t-sm border-2 border-[#454964]/60 bg-[#0e1017]/80 backdrop-blur-md p-1 flex flex-col justify-end overflow-hidden shadow-[inset_0_0_12px_rgba(0,0,0,0.8),0_4px_16px_rgba(0,0,0,0.6)]">
+            {/* Rubber / Cork Stopper at Top */}
+            <div className="absolute top-0 inset-x-0 h-2 bg-[#6b4226] border-b border-[#3e2515]" />
+
+            {/* Measurement Graduations */}
+            <div className="absolute inset-y-4 right-1 flex flex-col justify-between pointer-events-none opacity-40">
+              <span className="w-2 h-0.5 bg-white" />
+              <span className="w-1.5 h-0.5 bg-white" />
+              <span className="w-2 h-0.5 bg-white" />
+              <span className="w-1.5 h-0.5 bg-white" />
+              <span className="w-2 h-0.5 bg-white" />
+            </div>
+
+            {/* Rising Blood Liquid */}
+            <div
+              className="w-full rounded-b-full transition-all duration-700 ease-out relative overflow-hidden"
+              style={{
+                height: `${percentage}%`,
+                background: 'linear-gradient(180deg, #e63946 0%, #bd081c 40%, #59000a 100%)',
+                boxShadow: '0 0 16px rgba(189, 8, 28, 0.6)',
+              }}
+            >
+              {/* Liquid Meniscus Curve */}
+              <div className="absolute top-0 inset-x-0 h-2 bg-[#ff6b6b] rounded-full opacity-80" />
+
+              {/* Bubbles floating inside blood */}
+              <div className="absolute bottom-2 left-1.5 w-1.5 h-1.5 rounded-full bg-white/40 animate-ping" style={{ animationDuration: '2s' }} />
+              <div className="absolute bottom-6 right-1.5 w-1 h-1 rounded-full bg-white/50 animate-pulse" />
+            </div>
+          </div>
+
+          {showPercentage && (
+            <span className="text-xs font-mono font-bold text-red-400">
+              {percentage}%
+            </span>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div
+        ref={ref}
+        className={`w-full flex flex-col gap-2 select-none ${className}`}
+        {...props}
+      >
+        <div className="flex justify-between items-center text-xs">
+          {label && (
+            <span className="font-mono uppercase tracking-widest text-grave-mist-300">
+              🩸 {label}
+            </span>
+          )}
+          {showPercentage && (
+            <span className="font-mono font-bold text-red-400">
+              {percentage}%
+            </span>
+          )}
+        </div>
+
+        {/* Horizontal Glass Tube */}
+        <div className="relative h-6 rounded-full border-2 border-[#454964]/60 bg-[#0e1017]/90 p-0.5 overflow-hidden shadow-[inset_0_2px_8px_rgba(0,0,0,0.8),0_2px_12px_rgba(189,8,28,0.2)]">
+          {/* Blood fill */}
+          <div
+            className="h-full rounded-full transition-all duration-700 ease-out relative flex items-center justify-end pr-2 overflow-hidden"
+            style={{
+              width: `${percentage}%`,
+              background: 'linear-gradient(90deg, #4a0008 0%, #8a0303 50%, #dc2626 90%, #f87171 100%)',
+              boxShadow: '0 0 12px rgba(220, 38, 38, 0.7)',
+            }}
+          >
+            {/* Specular glass reflection bar across blood */}
+            <div className="absolute top-0.5 inset-x-2 h-1 rounded-full bg-white/30" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+);
+
+BloodVialProgress.displayName = 'BloodVialProgress';
+

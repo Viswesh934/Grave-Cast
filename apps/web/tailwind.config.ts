@@ -1,11 +1,11 @@
 import type { Config } from 'tailwindcss';
-import groovyPlugin from '@gravecast/groovy/tailwind';
+import groovyPlugin from 'groove-ui/tailwind';
 
 export default {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@gravecast/groovy/dist/**/*.js',
+    './node_modules/groove-ui/dist/**/*.js',
   ],
   theme: {
     extend: {},

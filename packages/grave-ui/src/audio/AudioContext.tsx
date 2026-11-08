@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useRef, useCallback, type ReactNode } from 'react';
 import { playSound, resumeAudioContext } from './SpookyAudio';
 import type { SoundEffectType } from './SpookyAudio';
 

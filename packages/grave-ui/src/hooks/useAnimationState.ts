@@ -77,7 +77,7 @@ export const useAnimationState = (
   const { resetDelay, onAnimationStart, onAnimationComplete } = options;
   
   const [state, setState] = useState<AnimationState>('idle');
-  const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
    * Clean up timeout on unmount

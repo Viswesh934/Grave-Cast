@@ -1,4 +1,33 @@
 @import "tailwindcss";
+@source "../../../packages/grave-ui/src";
+@import "../../../packages/grave-ui/src/styles/grave-ui.css";
+
+@theme {
+  --color-grave-dark-950: #060608;
+  --color-grave-dark-900: #0a0a0f;
+  --color-grave-dark-850: #0f1017;
+  --color-grave-dark-800: #14151f;
+  --color-grave-dark-750: #1b1c29;
+  --color-grave-dark-700: #222434;
+  --color-grave-dark-600: #2e3146;
+
+  --color-grave-bone-100: #f5f2eb;
+  --color-grave-bone-200: #e8e0d5;
+  --color-grave-bone-300: #d6ccbe;
+
+  --color-grave-mist-100: #e2e4ed;
+  --color-grave-mist-200: #c2c5d4;
+  --color-grave-mist-300: #9da1b6;
+  --color-grave-mist-400: #6d7186;
+  --color-grave-mist-500: #4a4d60;
+
+  --color-grave-crimson-500: #bd081c;
+  --color-grave-crimson-600: #8a0303;
+  --color-grave-crimson-700: #4a0008;
+
+  --color-grave-moss-500: #3d5a45;
+  --color-grave-witchfire-500: #8b5cf6;
+}
 
 :root {
   color-scheme: dark;
@@ -7,8 +36,8 @@
 body {
   margin: 0;
   background: #0a0a0f;
-  color: #d1c9c0;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: #e8e0d5;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
