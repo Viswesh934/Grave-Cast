@@ -6,66 +6,66 @@ import { playSound } from 'groove-ui';
 
 interface NavGroup {
   title: string;
-  items: { title: string; path: string; icon?: string; badge?: string }[];
+  items: { title: string; path: string; badge?: string }[];
 }
 
 const NAV_GROUPS: NavGroup[] = [
   {
     title: 'GETTING STARTED',
     items: [
-      { title: 'Introduction', path: '/docs/introduction', icon: '📖' },
-      { title: 'Installation', path: '/docs/installation', icon: '⚡' },
-      { title: 'Design Tokens', path: '/docs/tokens', icon: '🎨' },
-      { title: 'Web Audio Synth', path: '/docs/audio', icon: '🔊' },
+      { title: 'Introduction', path: '/docs/introduction' },
+      { title: 'Installation', path: '/docs/installation' },
+      { title: 'Design Tokens', path: '/docs/tokens' },
+      { title: 'Web Audio Synth', path: '/docs/audio' },
     ],
   },
   {
     title: 'PRIMITIVES',
     items: [
-      { title: 'Button', path: '/docs/components/button', icon: '🔘' },
-      { title: 'Card', path: '/docs/components/card', icon: '🃏' },
-      { title: 'Badge', path: '/docs/components/badge', icon: '🏷️' },
+      { title: 'Button', path: '/docs/components/button' },
+      { title: 'Card', path: '/docs/components/card' },
+      { title: 'Badge', path: '/docs/components/badge' },
     ],
   },
   {
-    title: 'THE CRYPT (GRAVES)',
+    title: 'THE CRYPT',
     items: [
-      { title: 'TombstoneCard', path: '/docs/components/tombstone', icon: '🪦', badge: 'Core' },
-      { title: 'ExcavationLoader', path: '/docs/components/excavation', icon: '🦴' },
-      { title: 'BoneOssuaryDivider', path: '/docs/components/ossuary', icon: '💀' },
-      { title: 'MausoleumDrawer', path: '/docs/components/mausoleum', icon: '🚪' },
-      { title: 'CoffinAccordion', path: '/docs/components/coffin-accordion', icon: '⚰️' },
+      { title: 'TombstoneCard', path: '/docs/components/tombstone', badge: 'Core' },
+      { title: 'ExcavationLoader', path: '/docs/components/excavation' },
+      { title: 'BoneOssuaryDivider', path: '/docs/components/ossuary' },
+      { title: 'MausoleumDrawer', path: '/docs/components/mausoleum' },
+      { title: 'CoffinAccordion', path: '/docs/components/coffin-accordion' },
     ],
   },
   {
-    title: 'THE COVEN (WITCHES)',
+    title: 'THE COVEN',
     items: [
-      { title: 'CauldronBrew', path: '/docs/components/cauldron', icon: '🧪', badge: 'New' },
-      { title: 'RunicButton', path: '/docs/components/runic-button', icon: 'ᚦ' },
+      { title: 'CauldronBrew', path: '/docs/components/cauldron', badge: '3D' },
+      { title: 'RunicButton', path: '/docs/components/runic-button', badge: '3D' },
     ],
   },
   {
-    title: 'THE SANGUINE (VAMPIRES)',
+    title: 'THE SANGUINE',
     items: [
-      { title: 'BloodVialProgress', path: '/docs/components/blood-vial', icon: '🩸', badge: 'New' },
+      { title: 'BloodVialProgress', path: '/docs/components/blood-vial', badge: '3D' },
     ],
   },
   {
-    title: 'THE LYCAN (WEREWOLVES)',
+    title: 'THE LYCAN',
     items: [
-      { title: 'LunarPhaseSelector', path: '/docs/components/lunar-phase', icon: '🌕', badge: 'New' },
+      { title: 'LunarPhaseSelector', path: '/docs/components/lunar-phase', badge: '3D' },
     ],
   },
   {
-    title: 'THE SLAVIC (BABA YAGA)',
+    title: 'THE SLAVIC',
     items: [
-      { title: 'ChickenLegStepper', path: '/docs/components/chicken-legs', icon: '🏚️', badge: 'New' },
+      { title: 'ChickenLegStepper', path: '/docs/components/chicken-legs', badge: '3D' },
     ],
   },
   {
-    title: 'THE ARACHNID (WEBS)',
+    title: 'THE ARACHNID',
     items: [
-      { title: 'CobwebCorner', path: '/docs/components/cobweb', icon: '🕸️', badge: 'New' },
+      { title: 'CobwebCorner', path: '/docs/components/cobweb', badge: '3D' },
     ],
   },
 ];
@@ -206,7 +206,6 @@ export function DocsLayout() {
                       }`}
                     >
                       <div className="flex items-center gap-2 truncate">
-                        {item.icon && <span>{item.icon}</span>}
                         <span className="truncate">{item.title}</span>
                       </div>
                       {item.badge && (
@@ -257,12 +256,12 @@ export function DocsLayout() {
 
           <div className="pt-6 border-t border-[#1f2130] space-y-2">
             <span className="text-[11px] font-mono text-stone-500 uppercase tracking-wider block">
-              Halloween Lore
+              Color Archetype
             </span>
             <div className="p-3 rounded-xl bg-[#11121a] border border-[#202231] text-[11px] text-stone-400 space-y-1">
-              <span className="text-amber-400 font-semibold block">🎃 Pumpkin Mode</span>
+              <span className="text-red-400 font-semibold block font-mono">Occult / Ritual</span>
               <p className="leading-tight text-[10px]">
-                Components designed for gothic graveyards, ancient covens, and eerie folklore.
+                Active theme: Baseline safe #0B0E08 with #FF3333 reaction shock.
               </p>
             </div>
           </div>

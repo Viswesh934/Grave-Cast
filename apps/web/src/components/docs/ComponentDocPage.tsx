@@ -93,7 +93,7 @@ export function ComponentDocPage({
           </span>
           {has3DMode && (
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold bg-amber-950/60 text-amber-300 border border-amber-700/60">
-              ⚡ WebGL 3D Ready
+              3D WebGL
             </span>
           )}
         </div>
@@ -105,7 +105,7 @@ export function ComponentDocPage({
         {/* Gothic Design Architecture Badge */}
         <div className="pt-1 flex flex-wrap items-center gap-2">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono bg-[#14121e] border border-red-900/60 text-red-200 shadow-inner">
-            <span className="text-red-400 font-bold">🏛️ Gothic Architecture:</span>
+            <span className="text-red-400 font-bold">Archetype:</span>
             <span className="text-stone-300">
               {gothicPhilosophy?.influence ?? "Ancient Crypts & Catacombs"}
             </span>
@@ -175,9 +175,9 @@ export function ComponentDocPage({
                         ? 'bg-gradient-to-r from-red-950 via-red-900 to-red-950 text-red-100 border border-red-700 font-bold shadow-md shadow-red-950/60'
                         : 'text-stone-400 hover:text-stone-200'
                     }`}
-                    title="3D Gothic WebGL Mode (Default)"
+                    title="3D WebGL Mode (Default)"
                   >
-                    <span>🗿 3D Gothic</span>
+                    <span>3D WebGL</span>
                     <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-red-800/90 text-red-100 font-sans tracking-wider">Default</span>
                   </button>
                   <button
@@ -188,9 +188,9 @@ export function ComponentDocPage({
                         ? 'bg-stone-800 text-stone-200 border border-stone-600 font-bold shadow-sm'
                         : 'text-stone-400 hover:text-stone-200'
                     }`}
-                    title="Switch to 2D Flat Card Mode"
+                    title="Switch to 2D Surface Mode"
                   >
-                    2D Flat
+                    2D Surface
                   </button>
                 </div>
               )}

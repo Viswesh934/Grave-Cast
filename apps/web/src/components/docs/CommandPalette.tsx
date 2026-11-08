@@ -7,43 +7,42 @@ interface SearchItem {
   title: string;
   category: string;
   path: string;
-  icon: string;
 }
 
 const SEARCH_ITEMS: SearchItem[] = [
   // Getting started
-  { id: 'intro', title: 'Introduction', category: 'Getting Started', path: '/docs/introduction', icon: '📖' },
-  { id: 'install', title: 'Installation & Setup', category: 'Getting Started', path: '/docs/installation', icon: '⚡' },
-  { id: 'tokens', title: 'Design Tokens', category: 'Getting Started', path: '/docs/tokens', icon: '🎨' },
-  { id: 'audio', title: 'Web Audio Synth', category: 'Getting Started', path: '/docs/audio', icon: '🔊' },
+  { id: 'intro', title: 'Introduction', category: 'Getting Started', path: '/docs/introduction' },
+  { id: 'install', title: 'Installation & Setup', category: 'Getting Started', path: '/docs/installation' },
+  { id: 'tokens', title: 'Design Tokens', category: 'Getting Started', path: '/docs/tokens' },
+  { id: 'audio', title: 'Web Audio Synth', category: 'Getting Started', path: '/docs/audio' },
 
   // Primitives
-  { id: 'btn', title: 'Button', category: 'Primitives', path: '/docs/components/button', icon: '🔘' },
-  { id: 'card', title: 'Card', category: 'Primitives', path: '/docs/components/card', icon: '🃏' },
-  { id: 'badge', title: 'Badge', category: 'Primitives', path: '/docs/components/badge', icon: '🏷️' },
+  { id: 'btn', title: 'Button', category: 'Primitives', path: '/docs/components/button' },
+  { id: 'card', title: 'Card', category: 'Primitives', path: '/docs/components/card' },
+  { id: 'badge', title: 'Badge', category: 'Primitives', path: '/docs/components/badge' },
 
   // The Crypt
-  { id: 'tombstone', title: 'TombstoneCard', category: 'The Crypt', path: '/docs/components/tombstone', icon: '🪦' },
-  { id: 'excavation', title: 'ExcavationLoader', category: 'The Crypt', path: '/docs/components/excavation', icon: '🦴' },
-  { id: 'ossuary', title: 'BoneOssuaryDivider', category: 'The Crypt', path: '/docs/components/ossuary', icon: '💀' },
-  { id: 'drawer', title: 'MausoleumDrawer', category: 'The Crypt', path: '/docs/components/mausoleum', icon: '🚪' },
-  { id: 'coffin', title: 'CoffinAccordion', category: 'The Crypt', path: '/docs/components/coffin-accordion', icon: '⚰️' },
+  { id: 'tombstone', title: 'TombstoneCard', category: 'The Crypt', path: '/docs/components/tombstone' },
+  { id: 'excavation', title: 'ExcavationLoader', category: 'The Crypt', path: '/docs/components/excavation' },
+  { id: 'ossuary', title: 'BoneOssuaryDivider', category: 'The Crypt', path: '/docs/components/ossuary' },
+  { id: 'drawer', title: 'MausoleumDrawer', category: 'The Crypt', path: '/docs/components/mausoleum' },
+  { id: 'coffin', title: 'CoffinAccordion', category: 'The Crypt', path: '/docs/components/coffin-accordion' },
 
   // The Coven
-  { id: 'cauldron', title: 'CauldronBrew', category: 'The Coven', path: '/docs/components/cauldron', icon: '🧪' },
-  { id: 'runic', title: 'RunicButton', category: 'The Coven', path: '/docs/components/runic-button', icon: 'ᚦ' },
+  { id: 'cauldron', title: 'CauldronBrew', category: 'The Coven', path: '/docs/components/cauldron' },
+  { id: 'runic', title: 'RunicButton', category: 'The Coven', path: '/docs/components/runic-button' },
 
   // The Sanguine
-  { id: 'blood', title: 'BloodVialProgress', category: 'The Sanguine', path: '/docs/components/blood-vial', icon: '🩸' },
+  { id: 'blood', title: 'BloodVialProgress', category: 'The Sanguine', path: '/docs/components/blood-vial' },
 
   // The Lycan
-  { id: 'lunar', title: 'LunarPhaseSelector', category: 'The Lycan', path: '/docs/components/lunar-phase', icon: '🌕' },
+  { id: 'lunar', title: 'LunarPhaseSelector', category: 'The Lycan', path: '/docs/components/lunar-phase' },
 
   // The Slavic
-  { id: 'chicken', title: 'ChickenLegStepper', category: 'The Slavic', path: '/docs/components/chicken-legs', icon: '🏚️' },
+  { id: 'chicken', title: 'ChickenLegStepper', category: 'The Slavic', path: '/docs/components/chicken-legs' },
 
   // The Arachnid
-  { id: 'cobweb', title: 'CobwebCorner', category: 'The Arachnid', path: '/docs/components/cobweb', icon: '🕸️' },
+  { id: 'cobweb', title: 'CobwebCorner', category: 'The Arachnid', path: '/docs/components/cobweb' },
 ];
 
 export interface CommandPaletteProps {
@@ -121,7 +120,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#1a1c29] cursor-pointer group transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">{item.icon}</span>
+                  <span className="text-xs font-mono px-2 py-1 rounded bg-[#181a26] text-red-400 border border-[#292c3f]">
+                    ›_
+                  </span>
                   <div>
                     <div className="text-sm font-semibold text-grave-bone-100 group-hover:text-red-400 transition-colors">
                       {item.title}

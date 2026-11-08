@@ -37,7 +37,7 @@ export function MausoleumDrawerDoc() {
       preview={
         <div className="flex flex-col items-center gap-4">
           <Button variant="primary" onClick={() => setOpen(true)}>
-            🚪 Unseal Ancient Mausoleum Vault
+            Unseal Mausoleum Vault
           </Button>
 
           <MausoleumDrawer

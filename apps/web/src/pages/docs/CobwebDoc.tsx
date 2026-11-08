@@ -61,9 +61,14 @@ export function CobwebDoc() {
                 interactive={true}
               />
               <div className="space-y-1">
-                <span className="text-3xl">🕷️</span>
+                <div className="w-8 h-8 mx-auto rounded-lg bg-[#181a28] border border-[#2b2d3d] flex items-center justify-center text-stone-400">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M12 3v18M3 12h18M6 6l12 12M6 18L18 6" />
+                  </svg>
+                </div>
                 <p className="text-xs text-stone-300 font-mono">
-                  Hover over the web corner to trigger silk physics!
+                  Hover corner to test filament spring physics
                 </p>
               </div>
 

@@ -7,13 +7,13 @@ export function CoffinAccordionDoc() {
 
   const codeSnippet2D = `<CoffinAccordion type="single" collapsible defaultValue="grave1">
   <CoffinAccordion.Item value="grave1">
-    <CoffinAccordion.Trigger>⚰️ Count Dracula's Sarcophagus</CoffinAccordion.Trigger>
+    <CoffinAccordion.Trigger>Count Dracula's Sarcophagus</CoffinAccordion.Trigger>
     <CoffinAccordion.Content>
       Resting within Transylvanian soil. Beware the sunset awakening.
     </CoffinAccordion.Content>
   </CoffinAccordion.Item>
   <CoffinAccordion.Item value="grave2">
-    <CoffinAccordion.Trigger>⚰️ Carmilla's Chamber</CoffinAccordion.Trigger>
+    <CoffinAccordion.Trigger>Carmilla's Chamber</CoffinAccordion.Trigger>
     <CoffinAccordion.Content>
       Draped in velvet and nightshade flowers.
     </CoffinAccordion.Content>
@@ -63,19 +63,19 @@ export function CoffinAccordionDoc() {
           ) : (
             <CoffinAccordion type="single" collapsible defaultValue="grave1">
               <CoffinAccordion.Item value="grave1">
-                <CoffinAccordion.Trigger>⚰️ Count Dracula's Sarcophagus</CoffinAccordion.Trigger>
+                <CoffinAccordion.Trigger>Count Dracula's Sarcophagus</CoffinAccordion.Trigger>
                 <CoffinAccordion.Content>
                   Resting within Transylvanian soil. Beware the sunset awakening.
                 </CoffinAccordion.Content>
               </CoffinAccordion.Item>
               <CoffinAccordion.Item value="grave2">
-                <CoffinAccordion.Trigger>⚰️ Carmilla's Chamber</CoffinAccordion.Trigger>
+                <CoffinAccordion.Trigger>Carmilla's Chamber</CoffinAccordion.Trigger>
                 <CoffinAccordion.Content>
                   Draped in velvet and nightshade flowers.
                 </CoffinAccordion.Content>
               </CoffinAccordion.Item>
               <CoffinAccordion.Item value="grave3">
-                <CoffinAccordion.Trigger>⚰️ Nosferatu's Crypt</CoffinAccordion.Trigger>
+                <CoffinAccordion.Trigger>Nosferatu's Crypt</CoffinAccordion.Trigger>
                 <CoffinAccordion.Content>
                   Infested with shadows and plague-carrying rats.
                 </CoffinAccordion.Content>

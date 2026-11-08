@@ -37,13 +37,15 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
         <div className="flex items-center justify-between mb-8">
           <div>
             <h4 className="font-serif font-bold text-lg text-grave-bone-100 flex items-center gap-2">
-              <span>🏚️ Baba Yaga's Hut Stepper</span>
+              <span>Slavic Hut Stepper</span>
             </h4>
             <p className="text-xs text-grave-mist-400 font-mono mt-0.5">
-              Step {currentStep + 1} of {steps.length} · Standing on chicken claws
+              Step {currentStep + 1} of {steps.length} · Articulated Perch
             </p>
           </div>
-          <div className="text-3xl">🐔</div>
+          <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#1c1e2b] text-amber-400 border border-amber-900/40">
+            Phase 0{currentStep + 1}
+          </span>
         </div>
 
         {/* Stepper Track */}
@@ -71,7 +73,7 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
                       : 'bg-[#181a26] border-[#313548] text-grave-mist-400 hover:border-grave-mist-300'
                   }`}
                 >
-                  {isCompleted ? '🦴' : isCurrent ? '🏚️' : idx + 1}
+                  {isCompleted ? '✓' : idx + 1}
                 </div>
 
                 {/* Step Title */}
@@ -87,11 +89,10 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
                   {step.title}
                 </span>
 
-                {/* Baba Yaga's Scaly Yellow Chicken Claws underneath active step */}
+                {/* Minimal Talon Indicator underneath active step */}
                 {isCurrent && (
-                  <div className="mt-2 flex gap-3 text-amber-500 animate-bounce text-sm" style={{ animationDuration: '1.2s' }}>
-                    <span title="Left Talon">🐾</span>
-                    <span title="Right Talon">🐾</span>
+                  <div className="mt-2 text-amber-400/80 text-[10px] font-mono tracking-widest uppercase">
+                    ▲
                   </div>
                 )}
               </div>

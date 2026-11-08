@@ -12,8 +12,8 @@ export function HooksShowcase() {
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-12">
       <div>
-        <h1 className="text-4xl font-bold text-grave-bone-100 mb-2">
-          🪝 Hooks & Procedural Audio
+        <h1 className="text-4xl font-bold text-grave-bone-100 mb-2 font-serif">
+          Hooks & Procedural Audio
         </h1>
         <p className="text-grave-mist-400">
           Synthesized procedural sound effects and custom horror UI hooks
@@ -38,7 +38,9 @@ export function HooksShowcase() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card variant="elevated" className="text-center p-6 space-y-4">
-            <div className="text-3xl">🪨</div>
+            <div className="w-10 h-10 mx-auto rounded-lg bg-stone-900 border border-stone-700 flex items-center justify-center text-stone-300 font-mono text-xs font-bold">
+              HZ-1
+            </div>
             <div>
               <h3 className="font-bold text-grave-bone-100">Stone Grind</h3>
               <p className="text-xs text-grave-mist-400 mt-1">Filtered brown noise bandpass sweep</p>
@@ -54,7 +56,9 @@ export function HooksShowcase() {
           </Card>
 
           <Card variant="elevated" className="text-center p-6 space-y-4">
-            <div className="text-3xl">⚰️</div>
+            <div className="w-10 h-10 mx-auto rounded-lg bg-stone-900 border border-stone-700 flex items-center justify-center text-red-400 font-mono text-xs font-bold">
+              HZ-2
+            </div>
             <div>
               <h3 className="font-bold text-grave-bone-100">Coffin Creak</h3>
               <p className="text-xs text-grave-mist-400 mt-1">Modulated square wave with pitch drop</p>
@@ -70,7 +74,9 @@ export function HooksShowcase() {
           </Card>
 
           <Card variant="elevated" className="text-center p-6 space-y-4">
-            <div className="text-3xl">🦴</div>
+            <div className="w-10 h-10 mx-auto rounded-lg bg-stone-900 border border-stone-700 flex items-center justify-center text-amber-300 font-mono text-xs font-bold">
+              HZ-3
+            </div>
             <div>
               <h3 className="font-bold text-grave-bone-100">Bone Click</h3>
               <p className="text-xs text-grave-mist-400 mt-1">Sharp transient high-frequency snap</p>
@@ -86,7 +92,9 @@ export function HooksShowcase() {
           </Card>
 
           <Card variant="elevated" className="text-center p-6 space-y-4">
-            <div className="text-3xl">🧪</div>
+            <div className="w-10 h-10 mx-auto rounded-lg bg-stone-900 border border-stone-700 flex items-center justify-center text-emerald-400 font-mono text-xs font-bold">
+              HZ-4
+            </div>
             <div>
               <h3 className="font-bold text-grave-bone-100">Cauldron Bubble</h3>
               <p className="text-xs text-grave-mist-400 mt-1">Frequency swept resonant pop</p>

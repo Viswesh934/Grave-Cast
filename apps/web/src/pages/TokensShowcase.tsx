@@ -4,8 +4,8 @@ export function TokensShowcase() {
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-12">
       <div>
-        <h1 className="text-4xl font-bold text-grave-bone-100 mb-2">
-          🎨 Design Tokens
+        <h1 className="text-4xl font-bold text-grave-bone-100 mb-2 font-serif">
+          Design Tokens
         </h1>
         <p className="text-grave-mist-400">
           Grave-UI's folklore and gothic horror token system
@@ -21,7 +21,7 @@ export function TokensShowcase() {
         {/* Crypt */}
         <div className="space-y-3">
           <h3 className="text-sm font-mono uppercase tracking-wider text-grave-mist-400">
-            🪦 The Crypt (Weathered stone, moss, granite)
+            The Crypt (Weathered stone, moss, granite)
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {Object.entries(colors.crypt).map(([name, hex]) => (
@@ -40,7 +40,7 @@ export function TokensShowcase() {
         {/* Sanguine */}
         <div className="space-y-3 pt-4">
           <h3 className="text-sm font-mono uppercase tracking-wider text-grave-mist-400">
-            🧛 The Sanguine (Vampiric blood, crimson, coagulated)
+            The Sanguine (Vampiric blood, crimson, coagulated)
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Object.entries(colors.sanguine).map(([name, hex]) => (
@@ -59,7 +59,7 @@ export function TokensShowcase() {
         {/* Witchcraft */}
         <div className="space-y-3 pt-4">
           <h3 className="text-sm font-mono uppercase tracking-wider text-grave-mist-400">
-            🧙‍♀️ The Witchcraft (Cauldron void, witchfire, spectral emerald)
+            The Witchcraft (Cauldron void, witchfire, spectral emerald)
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Object.entries(colors.witchcraft).map(([name, hex]) => (
@@ -78,7 +78,7 @@ export function TokensShowcase() {
         {/* Bone */}
         <div className="space-y-3 pt-4">
           <h3 className="text-sm font-mono uppercase tracking-wider text-grave-mist-400">
-            🦴 The Ossuary (Ivory, decayed, ash)
+            The Ossuary (Ivory, decayed, ash)
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {Object.entries(colors.bone).map(([name, hex]) => (
