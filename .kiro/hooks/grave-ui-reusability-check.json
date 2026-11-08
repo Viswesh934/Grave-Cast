@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Grave-UI Reusability Guard",
+      "trigger": "PreToolUse",
+      "description": "Enforces reusability standards for Grave-UI library development",
+      "matcher": "fs_write|str_replace",
+      "action": {
+        "type": "agent",
+        "prompt": "ONLY check if the file path contains 'packages/grave-ui'. If it does NOT, allow the operation without any checks.\n\nIf the file IS in packages/grave-ui, verify adherence to Grave-UI development rules:\n\n1. **No hardcoded values**: Check for inline hex colors (#...), raw pixel values, or magic numbers that should reference tokens\n2. **Component composition**: Verify new components compose from primitives when possible\n3. **Hook extraction**: Check if logic being added duplicates existing hook patterns\n4. **Token usage**: Ensure all styling references the token system\n5. **Prop interfaces**: Verify TypeScript interfaces are exported and documented\n6. **Reusable patterns**: Confirm SVGs, animations, and utilities are generic enough for reuse\n\nIf violations found, suggest refactoring to align with reusability principles from grave-ui-rules.md steering file."
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Auto-load Grave-UI Rules",
+      "trigger": "SessionStart",
+      "description": "Automatically loads Grave-UI development rules at session start when working on the library",
+      "action": {
+        "type": "agent",
+        "prompt": "Review the .kiro/steering/grave-ui-rules.md file to understand the reusability principles and development standards for the Grave-UI component library. These rules should guide all development work on packages/grave-ui."
+      }
+    }
+  ]
+}
