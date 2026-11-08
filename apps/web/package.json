@@ -10,9 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@gravecast/groovy": "file:../../packages/grave-ui",
+    "groove-ui": "^0.1.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.3.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.4",

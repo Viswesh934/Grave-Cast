@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import groovyPlugin from '@gravecast/groovy/tailwind';
+import groovyPlugin from 'groove-ui/tailwind';
 
 export default {
   content: [
