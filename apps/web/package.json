@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@gravecast/grave-ui": "file:../../packages/grave-ui",
+    "@gravecast/groovy": "file:../../packages/grave-ui",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

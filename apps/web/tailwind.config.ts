@@ -1,14 +1,14 @@
 import type { Config } from 'tailwindcss';
-import graveUIPlugin from '@gravecast/grave-ui/tailwind';
+import groovyPlugin from '@gravecast/groovy/tailwind';
 
 export default {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@gravecast/grave-ui/dist/**/*.js',
+    './node_modules/@gravecast/groovy/dist/**/*.js',
   ],
   theme: {
     extend: {},
   },
-  plugins: [graveUIPlugin],
+  plugins: [groovyPlugin],
 } satisfies Config;
