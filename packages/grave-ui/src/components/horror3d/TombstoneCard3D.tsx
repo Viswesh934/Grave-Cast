@@ -307,10 +307,11 @@ export function TombstoneCard3D({
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
     >
-      {/* High-visibility ambient light fill */}
-      <ambientLight intensity={0.6} color="#36453d" />
-      <directionalLight position={[3, 5, 4]} intensity={0.7} color="#d1fae5" />
-      <directionalLight position={[-3, -2, -3]} intensity={0.4} color="#059669" />
+      {/* High-visibility ambient light fill - Weathered Grey Granite Illumination */}
+      <ambientLight intensity={0.95} color="#cbd5e1" />
+      <directionalLight position={[3, 5, 4]} intensity={1.3} color="#ffffff" castShadow />
+      <directionalLight position={[-3, 2, -2]} intensity={0.7} color="#94a3b8" />
+      <pointLight position={[0, 0, 3.2]} intensity={0.8} color="#f1f5f9" distance={5} />
 
       {/* MIST: Rising fog */}
       <Float
@@ -322,15 +323,15 @@ export function TombstoneCard3D({
         <mesh position={[0, -0.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[width * 1.6, 2.2]} />
           <meshBasicMaterial 
-            color="#08140e" 
+            color="#14241b" 
             transparent 
-            opacity={0.45}
+            opacity={0.35}
             depthWrite={false}
           />
         </mesh>
       </Float>
 
-      {/* MAIN TOMBSTONE: Gothic stone monolith with arched top & beveled edges */}
+      {/* MAIN TOMBSTONE: Weathered Grey Granite Monolith with arched crown & chamfered bevels */}
       <mesh
         ref={meshRef}
         castShadow
@@ -339,9 +340,9 @@ export function TombstoneCard3D({
       >
         <extrudeGeometry args={[tombstoneShape, extrudeSettings]} />
         <meshStandardMaterial
-          color="#38443d"
-          roughness={0.88}
-          metalness={0.12}
+          color="#6b7c76"
+          roughness={0.82}
+          metalness={0.15}
         />
       </mesh>
 
@@ -349,17 +350,17 @@ export function TombstoneCard3D({
       <mesh position={[0, -height * 0.5 - 0.16, 0]} castShadow receiveShadow>
         <boxGeometry args={[width * 1.22, 0.32, depth * 1.6]} />
         <meshStandardMaterial
-          color="#2d3731"
-          roughness={0.92}
-          metalness={0.1}
+          color="#54635d"
+          roughness={0.85}
+          metalness={0.12}
         />
       </mesh>
       <mesh position={[0, -height * 0.5 - 0.36, 0]} castShadow receiveShadow>
         <boxGeometry args={[width * 1.38, 0.22, depth * 1.9]} />
         <meshStandardMaterial
-          color="#232b26"
-          roughness={0.95}
-          metalness={0.08}
+          color="#46544e"
+          roughness={0.88}
+          metalness={0.1}
         />
       </mesh>
 

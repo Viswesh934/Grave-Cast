@@ -48,7 +48,7 @@ export function CoffinAccordionDoc() {
       preview={
         <div className="w-full max-w-2xl">
           {is3DMode ? (
-            <div className="w-full h-[440px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
+            <div className="w-full h-[440px] rounded-2xl overflow-hidden border border-[#224430] bg-[#0d1c15] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0, 6.2], fov: 42 }}>
                 <CoffinAccordion3D
                   title="Count Dracula's Sarcophagus"
@@ -56,7 +56,7 @@ export function CoffinAccordionDoc() {
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#0d1c15]/85 py-1 border-t border-[#224430]">
                 Click casket to unseal lid · Drag to rotate in 3D
               </div>
             </div>

@@ -16,29 +16,30 @@ export function CoffinBloodLogo({ size = 28, className = '', ...props }: { size?
     >
       <defs>
         {/* Blood glow filter */}
-        <filter id="bloodGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
+        <filter id="bloodGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3.5" result="blur" />
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 0.1 0 0 0  0 0 0.2 0 0  0 0 0 2 0" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
         {/* Pulsing blood gradient */}
         <linearGradient id="bloodPulse" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ff1744" />
-          <stop offset="50%" stopColor="#ef4444" />
-          <stop offset="100%" stopColor="#991b1b" />
+          <stop offset="0%" stopColor="#ff4d6d" />
+          <stop offset="50%" stopColor="#ff1744" />
+          <stop offset="100%" stopColor="#b91c1c" />
         </linearGradient>
         {/* Obsidian casket gradient */}
         <linearGradient id="casketStone" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#1e2d24" />
-          <stop offset="60%" stopColor="#0d1813" />
-          <stop offset="100%" stopColor="#080f0b" />
+          <stop offset="0%" stopColor="#283a30" />
+          <stop offset="60%" stopColor="#14221b" />
+          <stop offset="100%" stopColor="#0c1712" />
         </linearGradient>
       </defs>
 
-      {/* Ambient Red Glow halo */}
+      {/* Intense Ambient Red Glow halo */}
       <polygon
-        points="32,4 49,18 43,58 21,58 15,18"
+        points="32,2 51,17 45,60 19,60 13,17"
         fill="#ff1744"
-        opacity="0.35"
+        opacity="0.65"
         filter="url(#bloodGlow)"
       />
 
@@ -46,8 +47,9 @@ export function CoffinBloodLogo({ size = 28, className = '', ...props }: { size?
       <polygon
         points="32,4 49,18 43,58 21,58 15,18"
         fill="url(#casketStone)"
-        stroke="#274635"
-        strokeWidth="2"
+        stroke="#ff1744"
+        strokeWidth="1.8"
+        strokeOpacity="0.8"
       />
 
       {/* Inner Inset Facet */}

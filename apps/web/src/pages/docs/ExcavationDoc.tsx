@@ -43,7 +43,7 @@ export function ExcavationDoc() {
       preview={
         <div className="w-full max-w-2xl flex flex-col items-center gap-5">
           {is3DMode ? (
-            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
+            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#224430] bg-[#0d1c15] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0.4, 5.0], fov: 42 }}>
                 <ExcavationLoader3D
                   speed={speed}
@@ -51,7 +51,7 @@ export function ExcavationDoc() {
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.15} minPolarAngle={0.3} />
               </Canvas>
-              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#0d1c15]/85 py-1 border-t border-[#224430]">
                 Real excavation trench · Iron spade digging cycle · Parabolic dirt physics
               </div>
             </div>

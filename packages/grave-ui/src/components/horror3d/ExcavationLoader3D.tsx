@@ -1,4 +1,4 @@
-﻿import { useRef } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Float, Text } from '@react-three/drei';
 import { type Group } from 'three';
@@ -84,81 +84,81 @@ function GraveDiggerShovel({ speedMultiplier }: { speedMultiplier: number }) {
     <group ref={shovelGroupRef} position={[0, 0, 0.15]}>
       {/* Ashwood Shovel Shaft */}
       <mesh position={[0, 0.7, 0]} castShadow>
-        <cylinderGeometry args={[0.035, 0.035, 1.45, 12]} />
-        <meshStandardMaterial color="#5c4033" roughness={0.8} />
+        <cylinderGeometry args={[0.038, 0.038, 1.45, 12]} />
+        <meshStandardMaterial color="#966038" roughness={0.7} />
       </mesh>
 
-      {/* Forged Iron D-Grip Collar */}
+      {/* Forged Steel D-Grip Collar */}
       <mesh position={[0, 1.45, 0]}>
-        <cylinderGeometry args={[0.045, 0.045, 0.12, 10]} />
-        <meshStandardMaterial color="#334155" metalness={0.7} roughness={0.4} />
+        <cylinderGeometry args={[0.048, 0.048, 0.12, 10]} />
+        <meshStandardMaterial color="#64748b" metalness={0.85} roughness={0.3} />
       </mesh>
       {/* Top Crossbar */}
       <mesh position={[0, 1.52, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.032, 0.032, 0.28, 10]} />
-        <meshStandardMaterial color="#334155" metalness={0.7} roughness={0.4} />
+        <cylinderGeometry args={[0.035, 0.035, 0.28, 10]} />
+        <meshStandardMaterial color="#64748b" metalness={0.85} roughness={0.3} />
       </mesh>
 
-      {/* Forged Iron Shovel Blade Socket */}
+      {/* Forged Steel Shovel Blade Socket */}
       <mesh position={[0, -0.05, 0]}>
-        <cylinderGeometry args={[0.05, 0.045, 0.18, 10]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.75} roughness={0.35} />
+        <cylinderGeometry args={[0.052, 0.048, 0.18, 10]} />
+        <meshStandardMaterial color="#475569" metalness={0.85} roughness={0.3} />
       </mesh>
 
-      {/* Heavy Curved Iron Shovel Blade */}
+      {/* Highly Visible Polished Steel Shovel Blade */}
       <group position={[0, -0.32, 0.04]}>
         <mesh rotation={[-0.1, 0, 0]} castShadow>
-          <boxGeometry args={[0.42, 0.52, 0.03]} />
+          <boxGeometry args={[0.44, 0.52, 0.03]} />
           <meshStandardMaterial
-            color="#273238"
-            metalness={0.8}
-            roughness={0.3}
+            color="#94a3b8"
+            metalness={0.85}
+            roughness={0.25}
           />
         </mesh>
-        {/* Shovel Beveled Chiseled Tip */}
+        {/* Shovel Beveled Chiseled Cutting Tip */}
         <mesh position={[0, -0.28, 0.02]} rotation={[0, 0, Math.PI]}>
           <coneGeometry args={[0.22, 0.14, 4]} />
-          <meshStandardMaterial color="#475569" metalness={0.85} roughness={0.25} />
+          <meshStandardMaterial color="#cbd5e1" metalness={0.9} roughness={0.2} />
         </mesh>
 
         {/* Moist Dirt Clod Piled on Blade */}
         <group ref={soilOnBladeRef} position={[0, 0.08, 0.05]}>
           <mesh>
             <sphereGeometry args={[0.18, 10, 8]} />
-            <meshStandardMaterial color="#2d2013" roughness={0.95} />
+            <meshStandardMaterial color="#5c432d" roughness={0.95} />
           </mesh>
           <mesh position={[-0.08, -0.04, 0.04]}>
             <sphereGeometry args={[0.11, 8, 8]} />
-            <meshStandardMaterial color="#1c140d" roughness={0.95} />
+            <meshStandardMaterial color="#4a3523" roughness={0.95} />
           </mesh>
           <mesh position={[0.09, -0.02, 0.03]}>
             <sphereGeometry args={[0.12, 8, 8]} />
-            <meshStandardMaterial color="#38291a" roughness={0.95} />
+            <meshStandardMaterial color="#6e5037" roughness={0.95} />
           </mesh>
         </group>
       </group>
 
-      {/* Skeletal Gravedigger Arm Gripping Shaft */}
+      {/* Skeletal Gravedigger Arm Gripping Shaft (Ivory Bone) */}
       <group position={[0.14, 0.75, 0.08]} rotation={[0.2, 0, -0.5]}>
         {/* Forearm Radius & Ulna */}
         <mesh position={[0.16, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.022, 0.022, 0.42, 8]} />
-          <meshStandardMaterial color="#cbd5e1" roughness={0.7} />
+          <cylinderGeometry args={[0.024, 0.024, 0.42, 8]} />
+          <meshStandardMaterial color="#f8fafc" roughness={0.6} />
         </mesh>
         <mesh position={[0.16, 0.04, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.018, 0.018, 0.42, 8]} />
-          <meshStandardMaterial color="#cbd5e1" roughness={0.7} />
+          <cylinderGeometry args={[0.02, 0.02, 0.42, 8]} />
+          <meshStandardMaterial color="#f8fafc" roughness={0.6} />
         </mesh>
         {/* Skeletal Wrist & Knuckles Clenched Around Handle */}
         <mesh position={[-0.05, 0, 0]}>
-          <sphereGeometry args={[0.045, 8, 8]} />
-          <meshStandardMaterial color="#cbd5e1" roughness={0.7} />
+          <sphereGeometry args={[0.048, 8, 8]} />
+          <meshStandardMaterial color="#e2e8f0" roughness={0.6} />
         </mesh>
         {/* Clenched Bony Fingers */}
         {[-0.04, 0, 0.04].map((offset, i) => (
           <mesh key={i} position={[-0.06, offset, -0.04]} rotation={[0, 1.2, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.12, 6]} />
-            <meshStandardMaterial color="#e2e8f0" roughness={0.65} />
+            <cylinderGeometry args={[0.014, 0.014, 0.12, 6]} />
+            <meshStandardMaterial color="#f8fafc" roughness={0.55} />
           </mesh>
         ))}
       </group>
@@ -207,8 +207,8 @@ function FlyingDirtParticles({ speedMultiplier }: { speedMultiplier: number }) {
         <mesh key={i} castShadow>
           <dodecahedronGeometry args={[0.8, 0]} />
           <meshStandardMaterial
-            color={i % 2 === 0 ? '#2b1e13' : '#3d2b1b'}
-            roughness={0.95}
+            color={i % 2 === 0 ? '#6b4e37' : '#8c6843'}
+            roughness={0.9}
           />
         </mesh>
       ))}
@@ -225,63 +225,74 @@ function ExcavationGravePit() {
       {/* Ground Surface Rim (Mossy Grass/Earth border) */}
       <mesh position={[0, 0.15, 0]} receiveShadow>
         <boxGeometry args={[3.2, 0.1, 2.6]} />
-        <meshStandardMaterial color="#1a251d" roughness={0.9} />
+        <meshStandardMaterial color="#2e4836" roughness={0.85} />
       </mesh>
 
-      {/* Excavated Grave Pit Void (Sunken trench) */}
+      {/* Excavated Grave Pit Void (Sunken trench with visible geological strata) */}
       {/* Back Wall - Layered Geological Strata */}
       <mesh position={[0, -0.4, -0.85]} receiveShadow>
         <boxGeometry args={[2.2, 1.1, 0.1]} />
-        <meshStandardMaterial color="#2d2217" roughness={0.95} />
+        <meshStandardMaterial color="#6b4e37" roughness={0.9} />
       </mesh>
+      {/* Bedrock Strata Band on Back Wall */}
+      <mesh position={[0, -0.7, -0.84]} receiveShadow>
+        <boxGeometry args={[2.18, 0.28, 0.1]} />
+        <meshStandardMaterial color="#64748b" roughness={0.85} />
+      </mesh>
+
       {/* Front Pit Wall */}
       <mesh position={[0, -0.4, 0.85]} receiveShadow>
         <boxGeometry args={[2.2, 1.1, 0.1]} />
-        <meshStandardMaterial color="#38291b" roughness={0.95} />
+        <meshStandardMaterial color="#785940" roughness={0.9} />
       </mesh>
       {/* Left Wall with Carved Depth Gauge */}
       <mesh position={[-1.15, -0.4, 0]} receiveShadow>
         <boxGeometry args={[0.1, 1.1, 1.7]} />
-        <meshStandardMaterial color="#22180f" roughness={0.95} />
+        <meshStandardMaterial color="#634832" roughness={0.9} />
       </mesh>
       {/* Right Wall */}
       <mesh position={[1.15, -0.4, 0]} receiveShadow>
         <boxGeometry args={[0.1, 1.1, 1.7]} />
-        <meshStandardMaterial color="#241a11" roughness={0.95} />
+        <meshStandardMaterial color="#6a4d36" roughness={0.9} />
       </mesh>
 
-      {/* Trench Floor - Freshly Dug Bedrock & Broken Bones */}
+      {/* Trench Floor - Freshly Dug Earth & Pale Broken Bones */}
       <mesh position={[0, -0.92, 0]} receiveShadow>
         <boxGeometry args={[2.2, 0.1, 1.7]} />
-        <meshStandardMaterial color="#19120b" roughness={0.95} />
+        <meshStandardMaterial color="#543e2b" roughness={0.92} />
+      </mesh>
+      {/* Exposed Ivory Bone Fragment on Floor */}
+      <mesh position={[0.45, -0.86, 0.2]} rotation={[0, 0.6, 0]}>
+        <cylinderGeometry args={[0.025, 0.025, 0.45, 6]} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.5} />
       </mesh>
 
       {/* Spoil Heap Dirt Mounds Banked on Left and Right of Pit */}
       <mesh position={[-1.4, 0.3, 0]} castShadow>
         <sphereGeometry args={[0.45, 12, 10, 0, Math.PI * 2, 0, Math.PI * 0.45]} />
-        <meshStandardMaterial color="#3a2a1a" roughness={0.95} />
+        <meshStandardMaterial color="#75553b" roughness={0.9} />
       </mesh>
       <mesh position={[1.4, 0.32, 0.1]} castShadow>
         <sphereGeometry args={[0.48, 12, 10, 0, Math.PI * 2, 0, Math.PI * 0.45]} />
-        <meshStandardMaterial color="#3a2a1a" roughness={0.95} />
+        <meshStandardMaterial color="#805d42" roughness={0.9} />
       </mesh>
 
       {/* Exposed Jagged Roots Jutting from Soil */}
       <mesh position={[-0.8, -0.1, -0.8]} rotation={[0.4, 0.2, 0.8]}>
-        <cylinderGeometry args={[0.02, 0.035, 0.5, 6]} />
-        <meshStandardMaterial color="#422006" roughness={0.9} />
+        <cylinderGeometry args={[0.022, 0.04, 0.5, 6]} />
+        <meshStandardMaterial color="#5c3818" roughness={0.85} />
       </mesh>
       <mesh position={[0.7, -0.2, -0.82]} rotation={[-0.3, -0.2, -0.7]}>
-        <cylinderGeometry args={[0.018, 0.03, 0.45, 6]} />
-        <meshStandardMaterial color="#422006" roughness={0.9} />
+        <cylinderGeometry args={[0.02, 0.035, 0.45, 6]} />
+        <meshStandardMaterial color="#5c3818" roughness={0.85} />
       </mesh>
 
       {/* Depth Gauge Inscription Marks on Left Wall */}
       <Text
         position={[-1.08, -0.15, 0]}
         rotation={[0, Math.PI / 2, 0]}
-        fontSize={0.11}
-        color="#4ade80"
+        fontSize={0.12}
+        color="#86efac"
         font="monospace"
         anchorX="center"
       >
@@ -290,8 +301,8 @@ function ExcavationGravePit() {
       <Text
         position={[-1.08, -0.45, 0]}
         rotation={[0, Math.PI / 2, 0]}
-        fontSize={0.11}
-        color="#4ade80"
+        fontSize={0.12}
+        color="#86efac"
         font="monospace"
         anchorX="center"
       >
@@ -300,8 +311,8 @@ function ExcavationGravePit() {
       <Text
         position={[-1.08, -0.75, 0]}
         rotation={[0, Math.PI / 2, 0]}
-        fontSize={0.11}
-        color="#22c55e"
+        fontSize={0.12}
+        color="#4ade80"
         font="monospace"
         anchorX="center"
       >
@@ -321,7 +332,7 @@ function HangingGravediggerLantern() {
     if (!lightRef.current) return;
     const t = state.clock.elapsedTime;
     // Lantern flicker
-    lightRef.current.intensity = 1.4 + Math.sin(t * 11) * 0.25 + Math.sin(t * 19) * 0.15;
+    lightRef.current.intensity = 2.8 + Math.sin(t * 11) * 0.4 + Math.sin(t * 19) * 0.2;
   });
 
   return (
@@ -329,30 +340,30 @@ function HangingGravediggerLantern() {
       {/* Iron Support Post */}
       <mesh position={[0, 0.35, 0]}>
         <cylinderGeometry args={[0.025, 0.025, 0.9, 8]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.8} />
+        <meshStandardMaterial color="#475569" metalness={0.85} />
       </mesh>
       {/* Curved Hanging Hook */}
       <mesh position={[-0.1, 0.78, 0]} rotation={[0, 0, -Math.PI / 4]}>
         <cylinderGeometry args={[0.02, 0.02, 0.25, 8]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.8} />
+        <meshStandardMaterial color="#475569" metalness={0.85} />
       </mesh>
 
       {/* Iron Lantern Body */}
       <group position={[-0.2, 0.65, 0]}>
         <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.16, 0.22, 0.16]} />
-          <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.3} wireframe />
+          <boxGeometry args={[0.18, 0.24, 0.18]} />
+          <meshStandardMaterial color="#334155" metalness={0.9} roughness={0.3} wireframe />
         </mesh>
         {/* Burning Flame Core */}
         <mesh position={[0, -0.02, 0]}>
-          <sphereGeometry args={[0.05, 8, 8]} />
-          <meshBasicMaterial color="#f59e0b" />
+          <sphereGeometry args={[0.06, 8, 8]} />
+          <meshBasicMaterial color="#fbbf24" />
         </mesh>
         <pointLight
           ref={lightRef}
-          color="#f59e0b"
-          intensity={1.5}
-          distance={3.5}
+          color="#fbbf24"
+          intensity={3.2}
+          distance={4.8}
           decay={2}
           castShadow
         />
@@ -366,10 +377,11 @@ function HangingGravediggerLantern() {
  * 
  * An authentic 3D grave-excavation loading scene:
  * - Real subterranean excavation trench with geological strata and depth markers
- * - Forged iron graveyard spade with ashwood handle
- * - Skeletal gravedigger arm vigorously digging, scooping, and flinging dirt
+ * - Polished steel grave spade with ashwood handle
+ * - Ivory skeletal gravedigger arm vigorously digging, scooping, and flinging dirt
  * - Parabolic flying dirt clods with gravity physics
- * - Hanging iron miner's lantern casting flickering illumination into the pit
+ * - Hanging iron miner's lantern casting warm amber illumination into the pit
+ * - High-visibility lighting avoiding pitch blackness
  * - Atmospheric depth HUD readout
  */
 export function ExcavationLoader3D({
@@ -383,11 +395,11 @@ export function ExcavationLoader3D({
 
   return (
     <group scale={[scale, scale, scale]} position={[0, 0.1, 0]}>
-      {/* Ambient & Directional Scene Lighting */}
-      <ambientLight intensity={0.5} color="#182c20" />
-      <directionalLight position={[3, 5, 4]} intensity={1.1} color="#f0fdf4" castShadow />
-      <directionalLight position={[-3, 4, -2]} intensity={0.6} color="#34d399" />
-      <pointLight position={[0, 1.2, 1.5]} intensity={0.9} color="#10b981" distance={5} />
+      {/* High-Visibility Ambient & Directional Scene Lighting */}
+      <ambientLight intensity={1.15} color="#cbd5e1" />
+      <directionalLight position={[4, 6, 5]} intensity={1.5} color="#ffffff" castShadow />
+      <directionalLight position={[-4, 3, -2]} intensity={0.8} color="#94a3b8" />
+      <pointLight position={[0, 1.2, 2.5]} intensity={1.2} color="#f1f5f9" distance={6} />
 
       <Float speed={0.8} rotationIntensity={0.02} floatIntensity={0.04}>
         {/* Layered Subterranean Grave Pit & Spoil Mounds */}

@@ -55,14 +55,14 @@ const [speed, setSpeed] = useState<'glide' | 'hunt' | 'warp'>('${flightSpeed}');
       preview={
         <div className="w-full max-w-3xl space-y-5">
           {is3DMode ? (
-            <div className="w-full h-[450px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
+            <div className="w-full h-[450px] rounded-2xl overflow-hidden border border-[#224430] bg-[#0d1c15] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0, 5.5], fov: 42 }}>
                 <WitchOnBroom3D
                   flightSpeed={flightSpeed}
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.15} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#0d1c15]/85 py-1 border-t border-[#224430]">
                 Move mouse to bank witch flight · Click witch to cast spell shockwave
               </div>
             </div>
