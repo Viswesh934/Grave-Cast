@@ -6,5 +6,5 @@
 // Primitive components
 export * from './primitives';
 
-// Crypt components will be exported as they're built
-// export * from './crypt';
+// Crypt components
+export * from './crypt';
