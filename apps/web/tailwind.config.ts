@@ -5,7 +5,7 @@ export default {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@gravecast/groovy/dist/**/*.js',
+    './node_modules/groove-ui/dist/**/*.js',
   ],
   theme: {
     extend: {},
