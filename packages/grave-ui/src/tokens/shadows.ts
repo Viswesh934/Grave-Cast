@@ -4,8 +4,8 @@
  * @module tokens/shadows
  */
 
-import type { ShadowSystem } from './types.js';
-import { colors } from './colors.js';
+import type { ShadowSystem } from './types';
+import { colors } from './colors';
 
 /**
  * Shadow system for depth and atmospheric effects.

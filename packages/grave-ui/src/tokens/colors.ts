@@ -4,7 +4,7 @@
  * @module tokens/colors
  */
 
-import type { ColorSystem } from './types.js';
+import type { ColorSystem } from './types';
 
 /**
  * Complete color system organized by folklore archetype.

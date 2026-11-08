@@ -4,11 +4,13 @@
  */
 
 import { useState, useCallback } from 'react';
+import { useSpookyAudio } from '../audio';
+import type { SpookySound } from '../audio';
 
 /**
  * Sound effect names that can be played on hover
  */
-export type SoundEffect = 'stoneGrind' | 'boneClick' | 'coffinCreak' | 'cauldronBubble';
+export type SoundEffect = SpookySound;
 
 /**
  * Props interface for hover behavior configuration
@@ -43,7 +45,7 @@ export interface HorrorHoverReturn {
  * Reusable hook for managing hover state with optional horror sound effects.
  * 
  * Provides hover state management and optional audio playback on hover.
- * Respects global audio enable/disable setting.
+ * Integrates with AudioProvider context for global audio control.
  * 
  * @example
  * ```tsx
@@ -72,19 +74,18 @@ export interface HorrorHoverReturn {
  */
 export const useHorrorHover = (options: HorrorHoverOptions = {}): HorrorHoverReturn => {
   const { soundEffect, soundEnabled = true, onHoverStart, onHoverEnd } = options;
+  const { playSound: playAudio } = useSpookyAudio();
   
   const [isHovered, setIsHovered] = useState(false);
 
   /**
-   * Play sound effect (placeholder until audio engine is built in Task 6)
-   * TODO: Wire up to actual audio engine when available
+   * Play sound effect using the audio context
    */
   const playSound = useCallback(() => {
     if (soundEffect && soundEnabled) {
-      // Placeholder: will integrate with Web Audio API in Task 6
-      console.log(`[Horror Audio] Playing: ${soundEffect}`);
+      playAudio(soundEffect);
     }
-  }, [soundEffect, soundEnabled]);
+  }, [soundEffect, soundEnabled, playAudio]);
 
   /**
    * Handle mouse enter event

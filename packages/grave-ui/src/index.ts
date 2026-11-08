@@ -6,19 +6,27 @@
  * 
  * @example
  * ```tsx
- * import { TombstoneCard } from '@gravecast/grave-ui';
+ * import { TombstoneCard, AudioProvider } from '@gravecast/grave-ui';
  * 
- * <TombstoneCard title="Here Lies..." subtitle="1847-1923" cracked />
+ * <AudioProvider initialEnabled={true}>
+ *   <TombstoneCard title="Here Lies..." subtitle="1847-1923" cracked />
+ * </AudioProvider>
  * ```
  * 
  * @packageDocumentation
  */
 
-// Tokens will be exported from here
-export * from './tokens/index.js';
+// Design tokens
+export * from './tokens';
 
-// Components will be exported as they're built
-// export * from './components/index.js';
+// React hooks
+export * from './hooks';
 
-// Hooks will be exported as they're built
-// export * from './hooks/index.js';
+// SVG assets and filters
+export * from './assets';
+
+// Audio system
+export * from './audio';
+
+// Components
+export * from './components';
