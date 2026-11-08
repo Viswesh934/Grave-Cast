@@ -1,4 +1,4 @@
-﻿import { Button, Card, Badge } from '@gravecast/grave-ui';
+﻿import { Button, Card, Badge } from '@gravecast/groovy';
 
 export function PrimitivesShowcase() {
   return (

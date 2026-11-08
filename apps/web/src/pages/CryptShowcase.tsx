@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react';
-import { Button, TombstoneCard, ExcavationLoader, MausoleumDrawer, BoneOssuaryDivider, CoffinAccordion } from '@gravecast/grave-ui';
+import { Button, TombstoneCard, ExcavationLoader, MausoleumDrawer, BoneOssuaryDivider, CoffinAccordion } from '@gravecast/groovy';
 
 export function CryptShowcase() {
   const [drawerOpen, setDrawerOpen] = useState(false);
