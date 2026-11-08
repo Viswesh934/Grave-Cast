@@ -66,30 +66,30 @@ export function Welcome({ onNavigate }: { onNavigate: (page: Page) => void }) {
       </div>
 
       <div className="border border-stone-700 rounded-lg p-8 bg-stone-800/50">
-        <h2 className="text-2xl font-bold mb-4">Core Principles</h2>
+        <h2 className="text-2xl font-bold mb-4">Features</h2>
         <ul className="space-y-3 text-stone-300">
           <li className="flex items-start">
             <span className="text-red-500 mr-2">▸</span>
             <div>
-              <strong>Radical Reusability:</strong> Every component built for maximum composability
+              <strong>Horror-Themed:</strong> Dark, gothic aesthetic for spooky experiences
             </div>
           </li>
           <li className="flex items-start">
             <span className="text-red-500 mr-2">▸</span>
             <div>
-              <strong>Token-Driven:</strong> Zero hardcoded values, all via design tokens
+              <strong>Composable:</strong> Mix and match components to build custom layouts
             </div>
           </li>
           <li className="flex items-start">
             <span className="text-red-500 mr-2">▸</span>
             <div>
-              <strong>Primitive Composition:</strong> Complex components compose simple ones
+              <strong>Flexible:</strong> Advanced patterns like compound components and portals
             </div>
           </li>
           <li className="flex items-start">
             <span className="text-red-500 mr-2">▸</span>
             <div>
-              <strong>Advanced Patterns:</strong> Compound components, render props, portals
+              <strong>TypeScript:</strong> Full type safety out of the box
             </div>
           </li>
         </ul>
