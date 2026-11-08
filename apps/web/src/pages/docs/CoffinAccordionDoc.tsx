@@ -46,9 +46,9 @@ export function CoffinAccordionDoc() {
         movement: 'Creaking 3D Hinged Lid Swing & Velvet Interior Disclosure',
       }}
       preview={
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-2xl">
           {is3DMode ? (
-            <div className="w-full h-84 rounded-2xl overflow-hidden border border-[#2b2e45] bg-[#07080f] relative shadow-2xl">
+            <div className="w-full h-[440px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0, 6.2], fov: 42 }}>
                 <CoffinAccordion3D
                   title="Count Dracula's Sarcophagus"
@@ -56,31 +56,33 @@ export function CoffinAccordionDoc() {
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-stone-400 bg-black/40 py-0.5">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
                 Click casket to unseal lid · Drag to rotate in 3D
               </div>
             </div>
           ) : (
-            <CoffinAccordion type="single" collapsible defaultValue="grave1">
-              <CoffinAccordion.Item value="grave1">
-                <CoffinAccordion.Trigger>Count Dracula's Sarcophagus</CoffinAccordion.Trigger>
-                <CoffinAccordion.Content>
-                  Resting within Transylvanian soil. Beware the sunset awakening.
-                </CoffinAccordion.Content>
-              </CoffinAccordion.Item>
-              <CoffinAccordion.Item value="grave2">
-                <CoffinAccordion.Trigger>Carmilla's Chamber</CoffinAccordion.Trigger>
-                <CoffinAccordion.Content>
-                  Draped in velvet and nightshade flowers.
-                </CoffinAccordion.Content>
-              </CoffinAccordion.Item>
-              <CoffinAccordion.Item value="grave3">
-                <CoffinAccordion.Trigger>Nosferatu's Crypt</CoffinAccordion.Trigger>
-                <CoffinAccordion.Content>
-                  Infested with shadows and plague-carrying rats.
-                </CoffinAccordion.Content>
-              </CoffinAccordion.Item>
-            </CoffinAccordion>
+            <div className="p-4 rounded-2xl bg-[#0c1813] border border-[#183425] shadow-xl">
+              <CoffinAccordion type="single" collapsible defaultValue="grave1">
+                <CoffinAccordion.Item value="grave1">
+                  <CoffinAccordion.Trigger>Count Dracula's Sarcophagus</CoffinAccordion.Trigger>
+                  <CoffinAccordion.Content>
+                    Resting within Transylvanian soil. Beware the sunset awakening.
+                  </CoffinAccordion.Content>
+                </CoffinAccordion.Item>
+                <CoffinAccordion.Item value="grave2">
+                  <CoffinAccordion.Trigger>Carmilla's Chamber</CoffinAccordion.Trigger>
+                  <CoffinAccordion.Content>
+                    Draped in velvet and nightshade flowers.
+                  </CoffinAccordion.Content>
+                </CoffinAccordion.Item>
+                <CoffinAccordion.Item value="grave3">
+                  <CoffinAccordion.Trigger>Nosferatu's Crypt</CoffinAccordion.Trigger>
+                  <CoffinAccordion.Content>
+                    Infested with shadows and plague-carrying rats.
+                  </CoffinAccordion.Content>
+                </CoffinAccordion.Item>
+              </CoffinAccordion>
+            </div>
           )}
         </div>
       }

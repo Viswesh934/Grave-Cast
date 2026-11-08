@@ -40,9 +40,9 @@ export function BoneOssuaryDoc() {
         movement: 'Living Calcium Bone Breathing & Spectral Soul Eye Flames',
       }}
       preview={
-        <div className="w-full max-w-xl space-y-4">
+        <div className="w-full max-w-3xl space-y-5">
           {is3DMode ? (
-            <div className="w-full h-80 rounded-2xl overflow-hidden border border-[#2b2e45] bg-[#07080f] relative shadow-2xl">
+            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0, 5.5], fov: 42 }}>
                 <BoneOssuaryDivider3D
                   label="Catacombs Reliquary"
@@ -50,14 +50,14 @@ export function BoneOssuaryDoc() {
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-stone-400 bg-black/40 py-0.5">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
                 Drag to inspect sculpted skulls · Watch flickering soul flames in eye sockets
               </div>
             </div>
           ) : (
             <div className="space-y-4">
               <p className="text-xs text-stone-400 font-mono text-center tracking-wider uppercase">Upper Chamber (Sacrifice)</p>
-              <div className="p-6 rounded-2xl bg-[#090a10] border border-[#232536] shadow-xl">
+              <div className="p-6 rounded-2xl bg-[#0c1813] border border-[#183425] shadow-xl">
                 <BoneOssuaryDivider
                   pattern={pattern}
                   size="md"
@@ -69,16 +69,16 @@ export function BoneOssuaryDoc() {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
             {(['crossed', 'row', 'scattered', 'stacked'] as OssuaryPattern[]).map((p) => (
               <button
                 key={p}
                 type="button"
                 onClick={() => setPattern(p)}
-                className={`px-3 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                   pattern === p
-                    ? 'bg-red-950 text-red-200 border border-red-700 font-bold shadow-sm'
-                    : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                    ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-emerald-700/60 hover:text-white'
                 }`}
               >
                 Pattern: {p}
@@ -88,7 +88,7 @@ export function BoneOssuaryDoc() {
               <button
                 type="button"
                 onClick={() => setShowRule(!showRule)}
-                className="px-3 py-1 text-xs rounded-lg font-mono text-stone-300 bg-[#151722] border border-[#262838] hover:text-white cursor-pointer"
+                className="px-3 py-1.5 text-xs rounded-xl font-mono text-emerald-300 bg-[#102219] border border-[#1b3a2a] hover:text-white cursor-pointer"
               >
                 Rule: {showRule ? 'ON' : 'OFF'}
               </button>

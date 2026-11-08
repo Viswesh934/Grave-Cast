@@ -63,9 +63,9 @@ export function TombstoneDoc() {
         movement: 'Living Basalt Breathing (±1.8%) & Sacrificial Embers',
       }}
       preview={
-        <div className="w-full max-w-md space-y-4">
+        <div className="w-full max-w-3xl space-y-5">
           {is3DMode ? (
-            <div className="w-full h-96 rounded-2xl overflow-hidden border border-[#2b2e45] bg-[#080911] relative shadow-2xl">
+            <div className="w-full h-[460px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0, 7.2], fov: 42 }}>
                 <TorchlightCursor intensity={intensity} />
                 <TombstoneCard3D
@@ -78,12 +78,12 @@ export function TombstoneDoc() {
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.18} minPolarAngle={Math.PI / 2 - 0.28} />
               </Canvas>
-              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-stone-400 bg-black/40 backdrop-blur-xs py-1 border-t border-white/5">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 backdrop-blur-xs py-1.5 border-t border-[#1b3d2b]">
                 Move cursor to direct flickering torchlight · Drag to inspect sculpted relief
               </div>
             </div>
           ) : (
-            <div className="flex justify-center p-4">
+            <div className="flex justify-center p-6">
               <TombstoneCard
                 title="Jonathan Harker"
                 subtitle="1854 - 1925"
@@ -97,21 +97,21 @@ export function TombstoneDoc() {
           )}
 
           {/* Interactive Controls Bar */}
-          <div className="space-y-2 pt-2">
+          <div className="space-y-3 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-4 shadow-xl">
             {/* Gothic Relief Selector (3D Mode) */}
             {is3DMode && (
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-stone-400 font-semibold text-[11px] uppercase tracking-wider">Gothic Relief:</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+                <span className="text-stone-300 font-semibold text-[11px] uppercase tracking-wider">Gothic Relief:</span>
                 <div className="flex flex-wrap gap-1.5">
                   {(['sigil', 'reaper', 'skull', 'gargoyle', 'talisman'] as GothicRelief[]).map((r) => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setRelief(r)}
-                      className={`px-2.5 py-1 text-[11px] rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                         relief === r
-                          ? 'bg-red-950 text-red-200 border border-red-700 font-bold shadow-sm'
-                          : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                          ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                          : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white hover:border-emerald-700/60'
                       }`}
                     >
                       {r}
@@ -122,18 +122,18 @@ export function TombstoneDoc() {
             )}
 
             {/* Weathering Decay Selector */}
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-stone-400 font-semibold text-[11px] uppercase tracking-wider">Weathering:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+              <span className="text-stone-300 font-semibold text-[11px] uppercase tracking-wider">Weathering:</span>
               <div className="flex flex-wrap gap-1.5">
                 {(['pristine', 'aged', 'cracked', 'crumbling'] as TombstoneWeathering[]).map((w) => (
                   <button
                     key={w}
                     type="button"
                     onClick={() => setWeathering(w)}
-                    className={`px-2.5 py-1 text-[11px] rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                       weathering === w
-                        ? 'bg-amber-950 text-amber-200 border border-amber-700 font-bold shadow-sm'
-                        : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                        ? 'bg-teal-950/80 text-teal-200 border border-teal-600/80 font-bold shadow-md shadow-teal-950/40'
+                        : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white hover:border-teal-700/60'
                     }`}
                   >
                     {w}
@@ -144,18 +144,18 @@ export function TombstoneDoc() {
 
             {/* Intensity / Torchlight Selector */}
             {is3DMode ? (
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-stone-400 font-semibold text-[11px] uppercase tracking-wider">Torchlight:</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+                <span className="text-stone-300 font-semibold text-[11px] uppercase tracking-wider">Torchlight:</span>
                 <div className="flex gap-1.5">
                   {(['ghastly', 'cursed', 'abyssal'] as HorrorIntensity[]).map((i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setIntensity(i)}
-                      className={`px-2.5 py-1 text-[11px] rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                         intensity === i
-                          ? 'bg-purple-950 text-purple-200 border border-purple-700 font-bold shadow-sm'
-                          : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                          ? 'bg-emerald-900/70 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                          : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white hover:border-emerald-700/60'
                       }`}
                     >
                       {i}
@@ -165,11 +165,11 @@ export function TombstoneDoc() {
               </div>
             ) : (
               <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-stone-400 font-semibold text-[11px] uppercase tracking-wider">Icon Badge:</span>
+                <span className="text-stone-300 font-semibold text-[11px] uppercase tracking-wider">Icon Badge:</span>
                 <button
                   type="button"
                   onClick={() => setShowIcon(!showIcon)}
-                  className="px-3 py-1 text-xs rounded-lg font-mono text-stone-300 bg-[#151722] border border-[#262838] hover:text-white cursor-pointer"
+                  className="px-3 py-1.5 text-xs rounded-xl font-mono text-emerald-300 bg-[#102219] border border-[#1b3a2a] hover:text-white cursor-pointer"
                 >
                   {showIcon ? 'Shown' : 'Hidden'}
                 </button>

@@ -1,154 +1,157 @@
 import { Link } from 'react-router-dom';
-import { Button, Card, Badge, CobwebCorner } from 'groove-ui';
+import { CobwebCorner, Badge } from 'groove-ui';
 
 export function IntroductionPage() {
   return (
-    <div className="relative max-w-4xl mx-auto px-6 py-10 space-y-10">
+    <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12">
       <CobwebCorner position="top-right" size="md" hasSpider={true} />
 
       {/* Header Banner */}
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-full bg-red-950/70 border border-red-800/80 text-[11px] font-mono font-semibold uppercase tracking-wider text-red-300">
-            Horror Design System
+      <div className="space-y-5 max-w-4xl">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <span className="px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-xs font-mono font-semibold uppercase tracking-wider text-emerald-300">
+            Grave Design System
           </span>
-          <span className="px-2.5 py-0.5 rounded-full bg-stone-900 border border-stone-700 text-[11px] font-mono uppercase tracking-wider text-stone-300">
+          <span className="px-3 py-1 rounded-full bg-[#0c1813] border border-[#183425] text-xs font-mono uppercase tracking-wider text-stone-300">
             WebGL 3D + 2D Primitives
           </span>
-          <span className="px-2.5 py-0.5 rounded-full bg-purple-950/60 border border-purple-800/60 text-[11px] font-mono uppercase tracking-wider text-purple-300">
-            Procedural Web Audio
+          <span className="px-3 py-1 rounded-full bg-teal-950/60 border border-teal-800/60 text-xs font-mono uppercase tracking-wider text-teal-300">
+            Procedural Audio
           </span>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold font-serif tracking-tight text-white leading-tight">
+        <h1 className="text-4xl sm:text-6xl font-extrabold font-serif tracking-tight text-white leading-tight">
           Grave UI
         </h1>
 
-        <p className="text-base sm:text-lg text-stone-300 max-w-2xl leading-relaxed">
+        <p className="text-base sm:text-lg text-stone-300 leading-relaxed">
           A mechanics-driven horror and gothic design system for React. Built on deep cognitive unease,
-          reaction shock states, procedural Three.js WebGL monoliths, and zero-asset synthesized audio.
+          procedural Three.js WebGL monoliths, smooth organic surfaces, and zero-asset synthesized audio.
         </p>
 
-        <div className="flex items-center gap-3 pt-2">
-          <Link to="/docs/components/tombstone">
-            <Button variant="primary" size="md">
-              Explore 3D Components →
-            </Button>
+        <div className="flex flex-wrap items-center gap-4 pt-2">
+          <Link
+            to="/docs/components/tombstone"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-800 via-emerald-700 to-emerald-800 text-white font-medium text-sm border border-emerald-500/60 shadow-lg shadow-emerald-950/60 hover:shadow-[0_0_25px_rgba(16,185,129,0.35)] transition-all cursor-pointer"
+          >
+            <span>Explore 3D Components</span>
+            <span>→</span>
           </Link>
-          <Link to="/docs/installation">
-            <Button variant="secondary" size="md">
-              Quickstart Guide
-            </Button>
+          <Link
+            to="/docs/installation"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0c1813] hover:bg-[#12241c] text-stone-300 hover:text-white border border-[#183425] hover:border-emerald-700/60 font-medium text-sm transition-all cursor-pointer"
+          >
+            Quickstart Guide
           </Link>
         </div>
       </div>
 
-      {/* Quick CLI Install */}
-      <div className="p-4 rounded-xl bg-[#0e0f17] border border-[#232536] flex items-center justify-between">
+      {/* Quick CLI Install (v.001 text removed) */}
+      <div className="p-5 rounded-2xl bg-[#0c1813] border border-[#183425] flex items-center justify-between shadow-xl">
         <div className="flex items-center gap-3 font-mono text-xs sm:text-sm text-stone-300">
-          <span className="text-red-400 font-bold">$</span>
+          <span className="text-emerald-400 font-bold">$</span>
           <span>npm install grave-ui three @react-three/fiber</span>
         </div>
-        <span className="text-[11px] font-mono text-stone-500 uppercase tracking-wider">
-          v0.1.0
+        <span className="text-xs font-mono text-emerald-400/80 uppercase tracking-widest hidden sm:inline">
+          Ready to install
         </span>
       </div>
 
       {/* Visual Archetypes & Color Theory */}
-      <section className="space-y-4">
-        <div className="border-b border-[#222434] pb-2 flex items-center justify-between">
-          <h2 className="text-xl font-bold font-serif text-white">
+      <section className="space-y-5">
+        <div className="border-b border-[#183425] pb-3 flex items-center justify-between">
+          <h2 className="text-2xl font-bold font-serif text-white">
             Visual Archetypes
           </h2>
-          <span className="text-xs font-mono text-stone-400">
-            Color Theory Architecture
+          <span className="text-xs font-mono text-emerald-400/80">
+            Atmospheric Color Framework
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Archetype 1 */}
-          <div className="p-5 rounded-xl border border-[#1d261e] bg-[#0b0e08] space-y-3">
+          <div className="p-6 rounded-2xl border border-[#1b3d2b] bg-[#0c1813] space-y-4 shadow-xl hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.15)] transition-all">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#4af2a1]">
                 Haunted Terminal
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#152316] text-[#4af2a1] border border-[#234226]">
-                Retro / Dead Tech
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#12271c] text-[#4af2a1] border border-[#1e4832]">
+                Phosphor Green
               </span>
             </div>
             <p className="text-xs text-stone-300 leading-relaxed">
-              Evokes corrupted terminals and uncontainable anomalies.
+              Evokes corrupted retro monitors, eerie luminescence, and ancient digital anomalies.
             </p>
-            <div className="space-y-1.5 pt-2 text-[11px] font-mono">
+            <div className="space-y-2 pt-2 text-[11px] font-mono">
               <div className="flex items-center justify-between text-stone-400">
-                <span>Base: <code className="text-white">#0B0E08</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#0B0E08]" />
+                <span>Base: <code className="text-white">#08120E</code></span>
+                <span className="w-5 h-5 rounded-md border border-stone-700 bg-[#08120E]" />
               </div>
               <div className="flex items-center justify-between text-stone-400">
                 <span>UI: <code className="text-[#4af2a1]">#4AF2A1</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#4AF2A1]" />
+                <span className="w-5 h-5 rounded-md border border-emerald-800 bg-[#4AF2A1]" />
               </div>
               <div className="flex items-center justify-between text-stone-400">
-                <span>Shock: <code className="text-[#ff3333]">#FF3333</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#FF3333]" />
+                <span>Accent: <code className="text-[#34d399]">#34D399</code></span>
+                <span className="w-5 h-5 rounded-md border border-emerald-700 bg-[#34D399]" />
               </div>
             </div>
           </div>
 
           {/* Archetype 2 */}
-          <div className="p-5 rounded-xl border border-[#1b222a] bg-[#12161a] space-y-3">
+          <div className="p-6 rounded-2xl border border-[#183425] bg-[#0c1813] space-y-4 shadow-xl hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.15)] transition-all">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#98a6b5]">
                 Clinical Isolation
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#19222b] text-[#98a6b5] border border-[#2b3948]">
-                Liminal / Corp
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#152329] text-[#98a6b5] border border-[#233c46]">
+                Slate Liminal
               </span>
             </div>
             <p className="text-xs text-stone-300 leading-relaxed">
-              Devoid of human warmth; corporate sterile isolation.
+              Sterile liminal facility lighting devoid of human warmth; cold institutional detachment.
             </p>
-            <div className="space-y-1.5 pt-2 text-[11px] font-mono">
+            <div className="space-y-2 pt-2 text-[11px] font-mono">
               <div className="flex items-center justify-between text-stone-400">
-                <span>Base: <code className="text-white">#12161A</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#12161A]" />
+                <span>Base: <code className="text-white">#0f1715</code></span>
+                <span className="w-5 h-5 rounded-md border border-stone-700 bg-[#0f1715]" />
               </div>
               <div className="flex items-center justify-between text-stone-400">
                 <span>UI: <code className="text-[#98a6b5]">#98A6B5</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#98A6B5]" />
+                <span className="w-5 h-5 rounded-md border border-stone-700 bg-[#98A6B5]" />
               </div>
               <div className="flex items-center justify-between text-stone-400">
-                <span>Shock: <code className="text-white">#FFFFFF</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#FFFFFF]" />
+                <span>Accent: <code className="text-white">#FFFFFF</code></span>
+                <span className="w-5 h-5 rounded-md border border-stone-700 bg-[#FFFFFF]" />
               </div>
             </div>
           </div>
 
           {/* Archetype 3 */}
-          <div className="p-5 rounded-xl border border-[#261730] bg-[#0f0a14] space-y-3">
+          <div className="p-6 rounded-2xl border border-[#183425] bg-[#0c1813] space-y-4 shadow-xl hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.15)] transition-all">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#d4af37]">
-                Occult / Ritual
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#2dd4bf]">
+                Spectral Witchfire
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#20102b] text-[#d4af37] border border-[#3e1f54]">
-                Cosmic Dread
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#122a27] text-[#2dd4bf] border border-[#1b4a45]">
+                Occult Mist
               </span>
             </div>
             <p className="text-xs text-stone-300 leading-relaxed">
-              Signals forbidden knowledge and supernatural tension.
+              Signals ancient alchemical crucibles, ethereal spirits, and glowing marsh lights.
             </p>
-            <div className="space-y-1.5 pt-2 text-[11px] font-mono">
+            <div className="space-y-2 pt-2 text-[11px] font-mono">
               <div className="flex items-center justify-between text-stone-400">
-                <span>Base: <code className="text-white">#0F0A14</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#0F0A14]" />
+                <span>Base: <code className="text-white">#091814</code></span>
+                <span className="w-5 h-5 rounded-md border border-stone-700 bg-[#091814]" />
               </div>
               <div className="flex items-center justify-between text-stone-400">
-                <span>UI: <code className="text-[#d4af37]">#D4AF37</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#D4AF37]" />
+                <span>UI: <code className="text-[#2dd4bf]">#2DD4BF</code></span>
+                <span className="w-5 h-5 rounded-md border border-teal-800 bg-[#2DD4BF]" />
               </div>
               <div className="flex items-center justify-between text-stone-400">
-                <span>Shock: <code className="text-[#7b1fa2]">#7B1FA2</code></span>
-                <span className="w-4 h-4 rounded border border-stone-700 bg-[#7B1FA2]" />
+                <span>Accent: <code className="text-[#5eead4]">#5EEAD4</code></span>
+                <span className="w-5 h-5 rounded-md border border-teal-700 bg-[#5EEAD4]" />
               </div>
             </div>
           </div>
@@ -156,60 +159,61 @@ export function IntroductionPage() {
       </section>
 
       {/* Mechanics-Driven State Feedback */}
-      <section className="space-y-4">
-        <div className="border-b border-[#222434] pb-2">
-          <h2 className="text-xl font-bold font-serif text-white">
+      <section className="space-y-5">
+        <div className="border-b border-[#183425] pb-3">
+          <h2 className="text-2xl font-bold font-serif text-white">
             Mechanics-Driven States
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl bg-[#0f111a] border border-[#222538] space-y-2">
-            <h3 className="font-mono font-bold text-xs uppercase tracking-wider text-stone-300">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="p-6 rounded-2xl bg-[#0c1813] border border-[#183425] space-y-2 shadow-xl">
+            <h3 className="font-mono font-bold text-xs uppercase tracking-wider text-emerald-400">
               1. Baseline Safe
             </h3>
             <p className="text-xs text-stone-400 leading-relaxed">
-              Deep muted darks (<code className="text-stone-300">#0B0E08</code>) with body text luminosity calibrated at 60–70% (<code className="text-stone-300">#94A3B8</code>) to maintain readable atmosphere without washing out shadows.
+              Deep muted darks (<code className="text-stone-300">#08120E</code>) with body text luminosity calibrated at 60–70% (<code className="text-stone-300">#94A3B8</code>) to maintain readable atmosphere without washing out shadows.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#0f111a] border border-[#222538] space-y-2">
-            <h3 className="font-mono font-bold text-xs uppercase tracking-wider text-red-400">
-              2. Reaction Shock
+          <div className="p-6 rounded-2xl bg-[#0c1813] border border-[#183425] space-y-2 shadow-xl">
+            <h3 className="font-mono font-bold text-xs uppercase tracking-wider text-teal-400">
+              2. Reaction Feedback
             </h3>
             <p className="text-xs text-stone-400 leading-relaxed">
-              When an error, trap, or bad mechanic triggers, saturated neon crimson (<code className="text-red-400">#FF3333</code>) or sterile white flash breaks layout harmony to mimic nervous shock.
+              When an interactive event or state change occurs, glowing spectral phosphor (<code className="text-teal-400">#34D399</code>) pulses smoothly to signal user input.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#0f111a] border border-[#222538] space-y-2">
-            <h3 className="font-mono font-bold text-xs uppercase tracking-wider text-purple-400">
+          <div className="p-6 rounded-2xl bg-[#0c1813] border border-[#183425] space-y-2 shadow-xl">
+            <h3 className="font-mono font-bold text-xs uppercase tracking-wider text-stone-300">
               3. Chamber Isolation
             </h3>
             <p className="text-xs text-stone-400 leading-relaxed">
-              Color temperature partitions zones: toxic green for madness chambers vs cold slate blue for sterile logic rooms.
+              Color temperature partitions zones: toxic moss green for supernatural crypts versus cold slate blue for sterile logic rooms.
             </p>
           </div>
         </div>
       </section>
 
       {/* Zero Asset Audio Engine */}
-      <div className="p-6 rounded-xl bg-[#11121d] border border-purple-900/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-serif font-bold text-base text-white">
+      <div className="p-8 rounded-2xl bg-[#0c1813] border border-[#183425] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-2xl">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <h3 className="font-serif font-bold text-lg text-white">
               Procedural Web Audio Engine
             </h3>
-            <Badge variant="info">Zero MP3s</Badge>
+            <Badge variant="success">Zero MP3s</Badge>
           </div>
-          <p className="text-xs text-stone-400 max-w-xl">
+          <p className="text-xs text-stone-400 max-w-2xl leading-relaxed">
             All stone grinding, bone clicks, iron locks, and cauldron bubbles are synthesized in real-time via Web Audio API oscillators and biquad filters.
           </p>
         </div>
-        <Link to="/docs/audio" className="shrink-0">
-          <Button variant="secondary" size="sm">
-            Audio Playground →
-          </Button>
+        <Link
+          to="/docs/audio"
+          className="shrink-0 px-5 py-2.5 rounded-xl bg-[#12251c] hover:bg-[#183425] border border-[#1d422f] hover:border-emerald-600/60 text-xs font-mono text-emerald-300 transition-all cursor-pointer"
+        >
+          Audio Playground →
         </Link>
       </div>
     </div>

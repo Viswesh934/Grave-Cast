@@ -42,9 +42,9 @@ export function RunicButtonDoc() {
         movement: 'Magnetic Levitation, Stone Tremble & Physical Click Depression',
       }}
       preview={
-        <div className="w-full max-w-sm flex flex-col items-center gap-4">
+        <div className="w-full max-w-2xl flex flex-col items-center gap-5">
           {is3DMode ? (
-            <div className="w-full h-80 rounded-2xl overflow-hidden border border-[#2b2e45] bg-[#07080f] relative shadow-2xl">
+            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0, 5.2], fov: 40 }}>
                 <RunicButton3D
                   element={element}
@@ -54,12 +54,12 @@ export function RunicButtonDoc() {
                 </RunicButton3D>
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-stone-400 bg-black/40 py-0.5">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
                 Hover to levitate stone · Click tablet to depress into cradle
               </div>
             </div>
           ) : (
-            <div className="p-8 rounded-2xl bg-[#090a12] border border-[#24263a] shadow-2xl flex flex-col items-center">
+            <div className="p-8 rounded-2xl bg-[#0c1813] border border-[#183425] shadow-2xl flex flex-col items-center">
               <RunicButton
                 element={element}
                 sigils="ᚦ ᚨ ᚱ ᚲ ᚷ"
@@ -70,16 +70,16 @@ export function RunicButtonDoc() {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-            {(['blood', 'spectral', 'fire', 'frost'] as RuneElement[]).map((el) => (
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
+            {(['spectral', 'frost', 'blood', 'fire'] as RuneElement[]).map((el) => (
               <button
                 key={el}
                 type="button"
                 onClick={() => setElement(el)}
-                className={`px-3 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                   element === el
-                    ? 'bg-red-950 text-red-200 border border-red-600 font-bold shadow-md shadow-red-950/50'
-                    : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                    ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-emerald-700/60 hover:text-white'
                 }`}
               >
                 {el}

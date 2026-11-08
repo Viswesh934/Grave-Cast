@@ -43,28 +43,28 @@ export function BloodVialDoc() {
         movement: 'Viscous Meniscus Wave & Rising Micro-Bubbles',
       }}
       preview={
-        <div className="w-full max-w-sm flex flex-col items-center gap-4">
+        <div className="w-full max-w-2xl flex flex-col items-center gap-5">
           {is3DMode ? (
-            <div className="w-full h-80 rounded-2xl overflow-hidden border border-[#2b2e45] bg-[#07080f] relative shadow-2xl">
+            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
               <Canvas camera={{ position: [0, 0, 6.5], fov: 42 }}>
                 <BloodVialProgress3D
                   value={val}
                   max={100}
-                  label="Vampiric Vitality"
-                  liquidColor="#e11d48"
+                  label="Spectral Vitality"
+                  liquidColor="#10b981"
                 />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-stone-400 bg-black/40 py-0.5">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
                 Move mouse to tilt phial · Drag to inspect glass refraction
               </div>
             </div>
           ) : (
-            <div className="w-full p-6 rounded-2xl bg-[#090b12] border border-[#24263a] shadow-xl">
+            <div className="w-full p-6 rounded-2xl bg-[#0c1813] border border-[#183425] shadow-xl">
               <BloodVialProgress
                 value={val}
                 max={100}
-                label="Vampiric Vitality"
+                label="Spectral Vitality"
                 orientation={orientation}
                 showPercentage={true}
               />
@@ -72,22 +72,22 @@ export function BloodVialDoc() {
           )}
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <div className="flex items-center gap-2 bg-[#141624] px-3.5 py-1.5 rounded-lg border border-[#282a3d]">
-              <span className="text-xs font-mono text-red-300 font-semibold">Volume: {val}%</span>
+            <div className="flex items-center gap-3 bg-[#0c1813] px-4 py-2 rounded-xl border border-[#183425] shadow-md">
+              <span className="text-xs font-mono text-emerald-300 font-semibold">Volume: {val}%</span>
               <input
                 type="range"
                 min="0"
                 max="100"
                 value={val}
                 onChange={(e) => setVal(Number(e.target.value))}
-                className="accent-red-600 cursor-pointer w-32"
+                className="accent-emerald-500 cursor-pointer w-32"
               />
             </div>
             {!is3DMode && (
               <button
                 type="button"
                 onClick={() => setOrientation(orientation === 'horizontal' ? 'vertical' : 'horizontal')}
-                className="px-3 py-1.5 text-xs rounded-lg font-mono text-stone-300 bg-[#141624] border border-[#282a3d] hover:text-white cursor-pointer"
+                className="px-3.5 py-2 text-xs rounded-xl font-mono text-stone-300 bg-[#0c1813] border border-[#183425] hover:text-white cursor-pointer"
               >
                 Mode: {orientation}
               </button>

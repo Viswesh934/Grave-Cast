@@ -89,10 +89,10 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         aria-hidden="true"
       />
 
-      <div className="relative w-full max-w-lg bg-[#11121b] border border-[#2b2d3d] rounded-2xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-lg bg-[#0c1813] border border-[#183425] rounded-2xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-150">
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#222434] bg-[#141622]">
-          <SearchIcon size={18} className="text-red-400" />
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#183425] bg-[#0e1d16]">
+          <SearchIcon size={18} className="text-emerald-400" />
           <input
             type="text"
             autoFocus
@@ -101,7 +101,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             placeholder="Search spooky components, folklore archetypes..."
             className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-stone-500 outline-none font-sans"
           />
-          <kbd className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1c1e2d] border border-[#313548] text-stone-400">
+          <kbd className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#12251c] border border-[#1d422f] text-emerald-300">
             ESC
           </kbd>
         </div>
@@ -117,22 +117,22 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               <div
                 key={item.id}
                 onClick={() => handleSelect(item.path)}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#1a1c29] cursor-pointer group transition-colors"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#12251c] cursor-pointer group transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono px-2 py-1 rounded bg-[#181a26] text-red-400 border border-[#292c3f]">
+                  <span className="text-xs font-mono px-2 py-1 rounded bg-[#12251c] text-emerald-400 border border-[#1d422f]">
                     ›_
                   </span>
                   <div>
-                    <div className="text-sm font-semibold text-grave-bone-100 group-hover:text-red-400 transition-colors">
+                    <div className="text-sm font-semibold text-stone-100 group-hover:text-emerald-300 transition-colors">
                       {item.title}
                     </div>
-                    <div className="text-[11px] font-mono text-grave-mist-400">
+                    <div className="text-[11px] font-mono text-stone-400">
                       {item.category}
                     </div>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-stone-500 group-hover:text-stone-300">
+                <span className="text-xs font-mono text-stone-500 group-hover:text-emerald-400">
                   Jump →
                 </span>
               </div>

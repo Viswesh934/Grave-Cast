@@ -30,7 +30,7 @@ export function CardDoc() {
         movement: 'Hover Lift Physics & Deep Ambient Occlusion Shadows',
       }}
       preview={
-        <div className="w-full max-w-sm space-y-4">
+        <div className="w-full max-w-2xl space-y-5">
           <Card
             variant={variant}
             padding={padding}
@@ -43,16 +43,16 @@ export function CardDoc() {
             </p>
           </Card>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
             {(['default', 'elevated', 'outlined', 'flat'] as CardVariant[]).map((v) => (
               <button
                 key={v}
                 type="button"
                 onClick={() => setVariant(v)}
-                className={`px-3 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                   variant === v
-                    ? 'bg-red-950 text-red-200 border border-red-700 font-bold shadow-sm'
-                    : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                    ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-emerald-700/60 hover:text-white'
                 }`}
               >
                 {v}

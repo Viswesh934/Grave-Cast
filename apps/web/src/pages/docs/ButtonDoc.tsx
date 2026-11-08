@@ -27,8 +27,8 @@ export function ButtonDoc() {
         movement: 'Vein Pulse Glow & High-Frequency Awakening Tremble',
       }}
       preview={
-        <div className="flex flex-col items-center gap-6">
-          <div className="p-8 rounded-2xl bg-[#0a0a12] border border-[#24263a] shadow-xl flex flex-col items-center">
+        <div className="flex flex-col items-center gap-6 w-full max-w-2xl">
+          <div className="w-full p-8 rounded-2xl bg-[#0c1813] border border-[#183425] shadow-xl flex flex-col items-center">
             <Button
               variant={variant}
               size={size}
@@ -38,16 +38,16 @@ export function ButtonDoc() {
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
             {(['primary', 'secondary', 'ghost', 'danger'] as ButtonVariant[]).map((v) => (
               <button
                 key={v}
                 type="button"
                 onClick={() => setVariant(v)}
-                className={`px-3 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs rounded-xl font-mono capitalize transition-all cursor-pointer ${
                   variant === v
-                    ? 'bg-red-950 text-red-200 border border-red-700 font-bold shadow-sm'
-                    : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                    ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-emerald-700/60 hover:text-white'
                 }`}
               >
                 {v}
@@ -58,10 +58,10 @@ export function ButtonDoc() {
                 key={s}
                 type="button"
                 onClick={() => setSize(s)}
-                className={`px-3 py-1 text-xs rounded-lg font-mono uppercase transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs rounded-xl font-mono uppercase transition-all cursor-pointer ${
                   size === s
-                    ? 'bg-amber-950 text-amber-200 border border-amber-700 font-bold shadow-sm'
-                    : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
+                    ? 'bg-teal-950/80 text-teal-200 border border-teal-600/80 font-bold shadow-md shadow-teal-950/40'
+                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-teal-700/60 hover:text-white'
                 }`}
               >
                 {s}
@@ -70,7 +70,7 @@ export function ButtonDoc() {
             <button
               type="button"
               onClick={() => setLoading(!loading)}
-              className="px-3 py-1 text-xs rounded-lg font-mono text-stone-300 bg-[#151722] border border-[#262838] hover:text-white cursor-pointer"
+              className="px-3 py-1.5 text-xs rounded-xl font-mono text-emerald-300 bg-[#102219] border border-[#1b3a2a] hover:text-white cursor-pointer"
             >
               Loading: {loading ? 'ON' : 'OFF'}
             </button>

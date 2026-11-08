@@ -70,47 +70,47 @@ export function ComponentDocPage({
   };
 
   return (
-    <div className="relative max-w-4xl mx-auto px-6 py-10 space-y-12">
+    <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12">
       {/* Spiderweb in top-right corner of each doc page */}
       <CobwebCorner position="top-right" size="md" hasSpider={true} />
 
       {/* Breadcrumb & Header */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-mono text-grave-mist-400">
-          <Link to="/docs" className="hover:text-grave-bone-100 transition-colors">Docs</Link>
+          <Link to="/docs" className="hover:text-emerald-300 transition-colors">Docs</Link>
           <span>/</span>
           <span className="text-grave-bone-200">{category}</span>
           <span>/</span>
-          <span className="text-red-400 font-semibold">{title}</span>
+          <span className="text-emerald-400 font-semibold">{title}</span>
         </div>
 
         <div className="flex items-center gap-3">
-          <h1 className="text-4xl font-extrabold font-serif tracking-tight text-grave-bone-100">
+          <h1 className="text-4xl font-extrabold font-serif tracking-tight text-white">
             {title}
           </h1>
-          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-semibold bg-red-950/70 text-red-300 border border-red-800/70 shadow-sm">
+          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 shadow-sm">
             {category}
           </span>
           {has3DMode && (
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold bg-amber-950/60 text-amber-300 border border-amber-700/60">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold bg-teal-950/60 text-teal-300 border border-teal-700/60">
               3D WebGL
             </span>
           )}
         </div>
 
-        <p className="text-base text-stone-300 max-w-2xl leading-relaxed">
+        <p className="text-base text-stone-300 max-w-3xl leading-relaxed">
           {description}
         </p>
 
         {/* Gothic Design Architecture Badge */}
         <div className="pt-1 flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono bg-[#14121e] border border-red-900/60 text-red-200 shadow-inner">
-            <span className="text-red-400 font-bold">Archetype:</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono bg-[#0c1813] border border-emerald-900/60 text-emerald-200 shadow-inner">
+            <span className="text-emerald-400 font-bold">Archetype:</span>
             <span className="text-stone-300">
               {gothicPhilosophy?.influence ?? "Ancient Crypts & Catacombs"}
             </span>
             <span className="text-stone-500">·</span>
-            <span className="text-amber-400 font-medium">
+            <span className="text-teal-400 font-medium">
               {gothicPhilosophy?.movement ?? "Living Sculptural Reliefs"}
             </span>
           </div>
@@ -118,12 +118,12 @@ export function ComponentDocPage({
 
         {/* Quick CLI Install Pill */}
         <div className="pt-1 flex items-center gap-3">
-          <div className="inline-flex items-center gap-3 bg-[#11121a] border border-[#232536] rounded-lg px-3.5 py-1.5 text-xs font-mono text-stone-300 shadow-inner">
-            <span className="text-red-400">$</span>
+          <div className="inline-flex items-center gap-3 bg-[#0c1813] border border-[#183425] rounded-xl px-3.5 py-1.5 text-xs font-mono text-stone-300 shadow-inner">
+            <span className="text-emerald-400 font-bold">$</span>
             <span>{installCommand}</span>
             <button
               onClick={handleCopyInstall}
-              className="ml-2 text-stone-400 hover:text-white transition-colors cursor-pointer"
+              className="ml-2 text-stone-400 hover:text-emerald-300 transition-colors cursor-pointer"
               title="Copy install command"
             >
               {copiedInstall ? <CheckIcon size={14} className="text-emerald-400" /> : <CopyIcon size={14} />}
@@ -132,20 +132,20 @@ export function ComponentDocPage({
         </div>
       </div>
 
-      {/* Main Interactive Showcase (Animate UI Tabbed Canvas) */}
+      {/* Main Interactive Showcase (Animate UI Tabbed Canvas with Extra Width) */}
       <section className="space-y-4">
-        <div className="border border-[#26283b] rounded-2xl bg-[#0d0e16] overflow-hidden shadow-2xl">
+        <div className="border border-[#183425] rounded-2xl bg-[#09140f] overflow-hidden shadow-2xl">
           {/* Header Bar with Tabs & Controls */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#242638] bg-[#12131d]">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-[#183425] bg-[#0d1d16]">
             {/* Segmented Preview/Code Switch */}
-            <div className="flex items-center gap-1 bg-[#181a28] p-1 rounded-lg border border-[#282a3d]">
+            <div className="flex items-center gap-1 bg-[#13251c] p-1 rounded-xl border border-[#1b3d2b]">
               <button
                 type="button"
                 onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                   activeTab === 'preview'
-                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/80 font-bold'
-                    : 'text-stone-400 hover:text-white'
+                    ? 'bg-emerald-950/90 text-emerald-200 shadow-sm border border-emerald-600/70 font-semibold shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
                 Preview
@@ -153,39 +153,39 @@ export function ComponentDocPage({
               <button
                 type="button"
                 onClick={() => setActiveTab('code')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                   activeTab === 'code'
-                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/80 font-bold'
-                    : 'text-stone-400 hover:text-white'
+                    ? 'bg-emerald-950/90 text-emerald-200 shadow-sm border border-emerald-600/70 font-semibold shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                    : 'text-stone-300 hover:text-white'
                 }`}
               >
                 Code
               </button>
             </div>
 
-            {/* Toolbar: 3D Gothic Default vs 2D Flat Toggle replaces the old Re-render button */}
-            <div className="flex items-center gap-2">
+            {/* Toolbar: 3D Default vs 2D Surface Toggle */}
+            <div className="flex items-center gap-3">
               {has3DMode && onToggle3D && (
-                <div className="flex items-center bg-[#181a28] p-0.5 rounded-lg border border-[#2d3045] shadow-inner">
+                <div className="flex items-center bg-[#13251c] p-0.5 rounded-xl border border-[#1b3d2b] shadow-inner">
                   <button
                     type="button"
                     onClick={() => onToggle3D(true)}
-                    className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer ${
                       is3DMode
-                        ? 'bg-gradient-to-r from-red-950 via-red-900 to-red-950 text-red-100 border border-red-700 font-bold shadow-md shadow-red-950/60'
+                        ? 'bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 text-emerald-100 border border-emerald-500/80 font-semibold shadow-md shadow-emerald-950/60'
                         : 'text-stone-400 hover:text-stone-200'
                     }`}
                     title="3D WebGL Mode (Default)"
                   >
                     <span>3D WebGL</span>
-                    <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-red-800/90 text-red-100 font-sans tracking-wider">Default</span>
+                    <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-emerald-600 text-white font-sans tracking-wider">Default</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => onToggle3D(false)}
-                    className={`px-2.5 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer ${
                       !is3DMode
-                        ? 'bg-stone-800 text-stone-200 border border-stone-600 font-bold shadow-sm'
+                        ? 'bg-[#173022] text-emerald-100 border border-[#27533b] font-semibold shadow-sm'
                         : 'text-stone-400 hover:text-stone-200'
                     }`}
                     title="Switch to 2D Surface Mode"
@@ -198,7 +198,7 @@ export function ComponentDocPage({
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono text-stone-300 hover:text-white bg-[#181a28] border border-[#2d3045] hover:border-stone-500 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono text-stone-300 hover:text-emerald-300 bg-[#13251c] border border-[#1b3d2b] hover:border-emerald-600/60 transition-colors cursor-pointer"
               >
                 {copiedCode ? (
                   <>
@@ -215,16 +215,18 @@ export function ComponentDocPage({
             </div>
           </div>
 
-          {/* Canvas Area: High-visibility gothic atmosphere */}
+          {/* Canvas Area: Atmospheric eerie green tinted obsidian with generous breathing room */}
           {activeTab === 'preview' ? (
             <div
-              className="relative min-h-[380px] flex items-center justify-center p-8 bg-[#0b0c13] bg-[radial-gradient(#25283d_1px,transparent_1px)] [background-size:20px_20px] shadow-[inset_0_0_90px_rgba(0,0,0,0.85)]"
+              className={`relative flex items-center justify-center bg-[#09110d] bg-[radial-gradient(#1a3324_1px,transparent_1px)] [background-size:24px_24px] shadow-[inset_0_0_100px_rgba(4,10,7,0.95)] ${
+                has3DMode ? 'min-h-[560px] p-8 sm:p-14' : 'min-h-[400px] p-8 sm:p-12'
+              }`}
             >
               {preview}
             </div>
           ) : (
-            <div className="p-4 bg-[#07080d] overflow-x-auto font-mono text-xs text-stone-200 leading-relaxed max-h-[480px]">
-              <pre className="p-2">
+            <div className="p-6 bg-[#060e0a] overflow-x-auto font-mono text-xs text-stone-200 leading-relaxed max-h-[520px]">
+              <pre className="p-3">
                 <code>{codeSnippet}</code>
               </pre>
             </div>
@@ -235,19 +237,19 @@ export function ComponentDocPage({
       {/* Variants & States Section */}
       {variants.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-2xl font-bold font-serif text-grave-bone-100 border-b border-[#222434] pb-3">
+          <h2 className="text-2xl font-bold font-serif text-white border-b border-[#183425] pb-3">
             Variants & Presets
           </h2>
           <div className="grid grid-cols-1 gap-6">
             {variants.map((v, i) => (
-              <div key={i} className="border border-[#222434] rounded-xl bg-[#0f1017] p-6 space-y-4">
+              <div key={i} className="border border-[#183425] rounded-2xl bg-[#0c1813] p-6 space-y-4">
                 <div>
-                  <h3 className="text-base font-bold text-grave-bone-100">{v.title}</h3>
+                  <h3 className="text-base font-bold text-white">{v.title}</h3>
                   {v.description && (
-                    <p className="text-xs text-grave-mist-400 mt-0.5">{v.description}</p>
+                    <p className="text-xs text-stone-400 mt-0.5">{v.description}</p>
                   )}
                 </div>
-                <div className="p-6 bg-[#090a0f] rounded-lg border border-[#1b1d29] flex items-center justify-center min-h-[140px]">
+                <div className="p-6 bg-[#08120e] rounded-xl border border-[#162e20] flex items-center justify-center min-h-[140px]">
                   {v.element}
                 </div>
               </div>
@@ -259,26 +261,26 @@ export function ComponentDocPage({
       {/* Props Reference Table */}
       {propsList.length > 0 && (
         <section className="space-y-4">
-          <h2 className="text-2xl font-bold font-serif text-grave-bone-100 border-b border-[#222434] pb-3">
+          <h2 className="text-2xl font-bold font-serif text-white border-b border-[#183425] pb-3">
             Props
           </h2>
-          <div className="border border-[#222434] rounded-xl overflow-hidden bg-[#0d0e14]">
+          <div className="border border-[#183425] rounded-2xl overflow-hidden bg-[#0c1813]">
             <table className="w-full text-left text-sm font-mono">
-              <thead className="bg-[#12131c] text-stone-400 text-xs uppercase tracking-wider border-b border-[#222434]">
+              <thead className="bg-[#0e2118] text-emerald-400/80 text-xs uppercase tracking-wider border-b border-[#183425]">
                 <tr>
-                  <th className="px-4 py-3">Prop</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Default</th>
-                  <th className="px-4 py-3">Description</th>
+                  <th className="px-5 py-3.5">Prop</th>
+                  <th className="px-5 py-3.5">Type</th>
+                  <th className="px-5 py-3.5">Default</th>
+                  <th className="px-5 py-3.5">Description</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e202e] text-xs">
+              <tbody className="divide-y divide-[#162e20] text-xs">
                 {propsList.map((p, i) => (
-                  <tr key={i} className="hover:bg-[#141520]/50 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-red-300">{p.name}</td>
-                    <td className="px-4 py-3 text-amber-300/90">{p.type}</td>
-                    <td className="px-4 py-3 text-stone-500">{p.default ?? '—'}</td>
-                    <td className="px-4 py-3 text-stone-300 font-sans">{p.description}</td>
+                  <tr key={i} className="hover:bg-[#10241b] transition-colors">
+                    <td className="px-5 py-3.5 font-semibold text-emerald-300">{p.name}</td>
+                    <td className="px-5 py-3.5 text-teal-300/90">{p.type}</td>
+                    <td className="px-5 py-3.5 text-stone-400">{p.default ?? '—'}</td>
+                    <td className="px-5 py-3.5 text-stone-300 font-sans">{p.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -288,11 +290,11 @@ export function ComponentDocPage({
       )}
 
       {/* Bottom Prev / Next Nav */}
-      <div className="flex items-center justify-between pt-8 border-t border-[#222434] text-sm font-mono">
+      <div className="flex items-center justify-between pt-8 border-t border-[#183425] text-sm font-mono">
         {prevPage ? (
           <Link
             to={prevPage.path}
-            className="group flex items-center gap-2 text-stone-400 hover:text-white transition-colors"
+            className="group flex items-center gap-2 text-stone-400 hover:text-emerald-300 transition-colors"
           >
             <span className="text-stone-500 group-hover:-translate-x-1 transition-transform">←</span>
             <span>{prevPage.title}</span>
@@ -302,7 +304,7 @@ export function ComponentDocPage({
         {nextPage && (
           <Link
             to={nextPage.path}
-            className="group flex items-center gap-2 text-stone-400 hover:text-white transition-colors ml-auto"
+            className="group flex items-center gap-2 text-stone-400 hover:text-emerald-300 transition-colors ml-auto"
           >
             <span>{nextPage.title}</span>
             <span className="text-stone-500 group-hover:translate-x-1 transition-transform">→</span>

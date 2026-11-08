@@ -143,3 +143,4 @@ Jump scare clutter                 │ Sustained chiaroscuro & psychological fri
    - Error state: the border violently flashes `--grave-terminal-glitch` (`#FF3333`), while non-critical elements drop to 20% opacity.
 3. **Controlled Luminosity:**
    - Resting text at 65% brightness ensures that when a 100% luminous trigger or torchlight passes over it, the contrast dynamic range is maximized.
+

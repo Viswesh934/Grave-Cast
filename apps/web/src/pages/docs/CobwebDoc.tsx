@@ -41,27 +41,27 @@ export function CobwebDoc() {
         movement: 'Dangling Silk Physics & Springy Arachnid Descent',
       }}
       preview={
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-2xl">
           {is3DMode ? (
-            <div className="w-full h-80 rounded-2xl overflow-hidden border border-[#2b2e45] bg-[#07080f] relative shadow-2xl">
+            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
               <Canvas camera={{ position: [0.5, -0.2, 4.8], fov: 42 }}>
                 <CobwebCorner3D />
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-stone-400 bg-black/40 py-0.5">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
                 Hover over web to watch 3D arachnid descend on silk
               </div>
             </div>
           ) : (
-            <div className="relative w-full h-56 rounded-2xl border border-[#2b2d3d] bg-[#101119] p-6 overflow-hidden flex items-center justify-center text-center shadow-xl">
+            <div className="relative w-full h-64 rounded-2xl border border-[#183425] bg-[#0c1813] p-6 overflow-hidden flex items-center justify-center text-center shadow-xl">
               <CobwebCorner
                 position={position}
                 size={size}
                 hasSpider={spider}
                 interactive={true}
               />
-              <div className="space-y-1">
-                <div className="w-8 h-8 mx-auto rounded-lg bg-[#181a28] border border-[#2b2d3d] flex items-center justify-center text-stone-400">
+              <div className="space-y-2">
+                <div className="w-9 h-9 mx-auto rounded-xl bg-[#102219] border border-[#1b3a2a] flex items-center justify-center text-emerald-400 shadow-inner">
                   <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <circle cx="12" cy="12" r="3" />
                     <path d="M12 3v18M3 12h18M6 6l12 12M6 18L18 6" />
@@ -78,10 +78,10 @@ export function CobwebDoc() {
                     key={pos}
                     type="button"
                     onClick={() => setPosition(pos)}
-                    className={`px-2.5 py-1 text-[11px] rounded-lg font-mono transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 text-xs rounded-xl font-mono transition-all cursor-pointer ${
                       position === pos
-                        ? 'bg-red-950 text-red-200 border border-red-700 font-bold'
-                        : 'bg-[#151722] text-stone-400 border border-[#262838]'
+                        ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
+                        : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white'
                     }`}
                   >
                     {pos}
@@ -90,7 +90,7 @@ export function CobwebDoc() {
                 <button
                   type="button"
                   onClick={() => setSpider(!spider)}
-                  className="px-2.5 py-1 text-[11px] rounded-lg font-mono text-stone-300 bg-[#151722] border border-[#262838] cursor-pointer"
+                  className="px-3 py-1.5 text-xs rounded-xl font-mono text-emerald-300 bg-[#102219] border border-[#1b3a2a] hover:text-white cursor-pointer"
                 >
                   Spider: {spider ? 'ON' : 'OFF'}
                 </button>

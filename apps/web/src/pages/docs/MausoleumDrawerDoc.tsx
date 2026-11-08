@@ -49,8 +49,8 @@ export function MausoleumDrawerDoc() {
               <p>
                 Inside the sealed crypt lies the forgotten archives of dead branches and ancient sacrificial repositories.
               </p>
-              <div className="p-4 rounded-xl bg-[#090a0f] border border-[#232537] space-y-2 font-mono text-xs">
-                <div className="text-red-400 font-bold">Heretical Artifacts:</div>
+              <div className="p-5 rounded-2xl bg-[#0c1813] border border-[#183425] space-y-2 font-mono text-xs">
+                <div className="text-emerald-400 font-bold">Heretical Artifacts:</div>
                 <div>· 48 unmerged pull requests</div>
                 <div>· 12 deprecated NPM packages</div>
                 <div>· 1 Ancient Relic dormant in shadows</div>
