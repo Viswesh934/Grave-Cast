@@ -3,8 +3,7 @@
  * @module primitives
  */
 
-// Primitives will be exported as they're built
-// export * from './Card/index.js';
-// export * from './Surface/index.js';
-// export * from './IconButton/index.js';
-// export * from './AnimatedGroup/index.js';
+export * from './Button';
+export * from './Card';
+export * from './Badge';
+

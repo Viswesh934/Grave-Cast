@@ -18,9 +18,9 @@
  * @module tokens
  */
 
-export * from './types.js';
-export * from './colors.js';
-export * from './shadows.js';
-export * from './typography.js';
-export * from './animations.js';
-export * from './spacing.js';
+export * from './types';
+export * from './colors';
+export * from './shadows';
+export * from './typography';
+export * from './animations';
+export * from './spacing';

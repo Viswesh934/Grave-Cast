@@ -1,7 +1,9 @@
 /**
- * Tailwind CSS preset for Grave-UI tokens
+ * Tailwind CSS integration
  * @module tailwind
  */
 
-// Tailwind preset will be created in Task 8
-// export { default } from './preset.js';
+export { graveUIPlugin } from './plugin';
+
+// Re-export for convenience
+export { graveUIPlugin as default } from './plugin';
