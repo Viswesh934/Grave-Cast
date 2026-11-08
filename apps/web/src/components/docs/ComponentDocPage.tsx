@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { CopyIcon, CheckIcon, SparklesIcon } from './DocsIcons';
+import { CopyIcon, CheckIcon } from './DocsIcons';
 import { CobwebCorner } from 'groove-ui';
 
 export interface PropItem {
@@ -8,6 +8,12 @@ export interface PropItem {
   type: string;
   default?: string;
   description: string;
+}
+
+export interface GothicPhilosophyMeta {
+  influence: string; // e.g. "Catacombs & Ancient Crypts"
+  movement: string;  // e.g. "Living Stone & Sacrificial Embers"
+  lore?: string;
 }
 
 export interface ComponentDocPageProps {
@@ -21,6 +27,12 @@ export interface ComponentDocPageProps {
   variants?: { title: string; description?: string; element: ReactNode }[];
   prevPage?: { title: string; path: string };
   nextPage?: { title: string; path: string };
+
+  // 3D Gothic vs 2D Flat Mode Controls
+  has3DMode?: boolean;
+  is3DMode?: boolean;
+  onToggle3D?: (is3D: boolean) => void;
+  gothicPhilosophy?: GothicPhilosophyMeta;
 }
 
 export function ComponentDocPage({
@@ -34,11 +46,14 @@ export function ComponentDocPage({
   variants = [],
   prevPage,
   nextPage,
+  has3DMode = false,
+  is3DMode = true,
+  onToggle3D,
+  gothicPhilosophy,
 }: ComponentDocPageProps) {
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedInstall, setCopiedInstall] = useState(false);
-  const [keyReset, setKeyReset] = useState(0);
 
   const installCommand = `npx grave-ui add ${packageName}`;
 
@@ -73,17 +88,36 @@ export function ComponentDocPage({
           <h1 className="text-4xl font-extrabold font-serif tracking-tight text-grave-bone-100">
             {title}
           </h1>
-          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-semibold bg-red-950/60 text-red-300 border border-red-800/60">
+          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-semibold bg-red-950/70 text-red-300 border border-red-800/70 shadow-sm">
             {category}
           </span>
+          {has3DMode && (
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold bg-amber-950/60 text-amber-300 border border-amber-700/60">
+              ⚡ WebGL 3D Ready
+            </span>
+          )}
         </div>
 
-        <p className="text-base text-grave-mist-300 max-w-2xl leading-relaxed">
+        <p className="text-base text-stone-300 max-w-2xl leading-relaxed">
           {description}
         </p>
 
+        {/* Gothic Design Architecture Badge */}
+        <div className="pt-1 flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono bg-[#14121e] border border-red-900/60 text-red-200 shadow-inner">
+            <span className="text-red-400 font-bold">🏛️ Gothic Architecture:</span>
+            <span className="text-stone-300">
+              {gothicPhilosophy?.influence ?? "Ancient Crypts & Catacombs"}
+            </span>
+            <span className="text-stone-500">·</span>
+            <span className="text-amber-400 font-medium">
+              {gothicPhilosophy?.movement ?? "Living Sculptural Reliefs"}
+            </span>
+          </div>
+        </div>
+
         {/* Quick CLI Install Pill */}
-        <div className="pt-2 flex items-center gap-3">
+        <div className="pt-1 flex items-center gap-3">
           <div className="inline-flex items-center gap-3 bg-[#11121a] border border-[#232536] rounded-lg px-3.5 py-1.5 text-xs font-mono text-stone-300 shadow-inner">
             <span className="text-red-400">$</span>
             <span>{installCommand}</span>
@@ -100,17 +134,17 @@ export function ComponentDocPage({
 
       {/* Main Interactive Showcase (Animate UI Tabbed Canvas) */}
       <section className="space-y-4">
-        <div className="border border-[#222434] rounded-2xl bg-[#0d0e14] overflow-hidden shadow-2xl">
+        <div className="border border-[#26283b] rounded-2xl bg-[#0d0e16] overflow-hidden shadow-2xl">
           {/* Header Bar with Tabs & Controls */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#222434] bg-[#11121a]">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#242638] bg-[#12131d]">
             {/* Segmented Preview/Code Switch */}
-            <div className="flex items-center gap-1 bg-[#181a26] p-1 rounded-lg border border-[#282a3d]">
+            <div className="flex items-center gap-1 bg-[#181a28] p-1 rounded-lg border border-[#282a3d]">
               <button
                 type="button"
                 onClick={() => setActiveTab('preview')}
                 className={`px-3 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
                   activeTab === 'preview'
-                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/60 font-semibold'
+                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/80 font-bold'
                     : 'text-stone-400 hover:text-white'
                 }`}
               >
@@ -121,7 +155,7 @@ export function ComponentDocPage({
                 onClick={() => setActiveTab('code')}
                 className={`px-3 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
                   activeTab === 'code'
-                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/60 font-semibold'
+                    ? 'bg-red-950 text-red-200 shadow-sm border border-red-800/80 font-bold'
                     : 'text-stone-400 hover:text-white'
                 }`}
               >
@@ -129,24 +163,42 @@ export function ComponentDocPage({
               </button>
             </div>
 
-            {/* Toolbar Buttons */}
+            {/* Toolbar: 3D Gothic Default vs 2D Flat Toggle replaces the old Re-render button */}
             <div className="flex items-center gap-2">
-              {activeTab === 'preview' && (
-                <button
-                  type="button"
-                  onClick={() => setKeyReset((k) => k + 1)}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono text-stone-400 hover:text-white bg-[#181a26] border border-[#282a3d] hover:border-stone-500 transition-colors cursor-pointer"
-                  title="Re-mount component"
-                >
-                  <SparklesIcon size={13} />
-                  <span>Re-render</span>
-                </button>
+              {has3DMode && onToggle3D && (
+                <div className="flex items-center bg-[#181a28] p-0.5 rounded-lg border border-[#2d3045] shadow-inner">
+                  <button
+                    type="button"
+                    onClick={() => onToggle3D(true)}
+                    className={`flex items-center gap-1.5 px-3 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
+                      is3DMode
+                        ? 'bg-gradient-to-r from-red-950 via-red-900 to-red-950 text-red-100 border border-red-700 font-bold shadow-md shadow-red-950/60'
+                        : 'text-stone-400 hover:text-stone-200'
+                    }`}
+                    title="3D Gothic WebGL Mode (Default)"
+                  >
+                    <span>🗿 3D Gothic</span>
+                    <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-red-800/90 text-red-100 font-sans tracking-wider">Default</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onToggle3D(false)}
+                    className={`px-2.5 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
+                      !is3DMode
+                        ? 'bg-stone-800 text-stone-200 border border-stone-600 font-bold shadow-sm'
+                        : 'text-stone-400 hover:text-stone-200'
+                    }`}
+                    title="Switch to 2D Flat Card Mode"
+                  >
+                    2D Flat
+                  </button>
+                </div>
               )}
 
               <button
                 type="button"
                 onClick={handleCopyCode}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono text-stone-300 hover:text-white bg-[#181a26] border border-[#282a3d] hover:border-stone-500 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono text-stone-300 hover:text-white bg-[#181a28] border border-[#2d3045] hover:border-stone-500 transition-colors cursor-pointer"
               >
                 {copiedCode ? (
                   <>
@@ -163,16 +215,15 @@ export function ComponentDocPage({
             </div>
           </div>
 
-          {/* Canvas Area */}
+          {/* Canvas Area: High-visibility gothic atmosphere */}
           {activeTab === 'preview' ? (
             <div
-              key={keyReset}
-              className="relative min-h-[340px] flex items-center justify-center p-8 bg-[radial-gradient(#1f2233_1px,transparent_1px)] [background-size:16px_16px] bg-[#0c0d13]"
+              className="relative min-h-[380px] flex items-center justify-center p-8 bg-[#0b0c13] bg-[radial-gradient(#25283d_1px,transparent_1px)] [background-size:20px_20px] shadow-[inset_0_0_90px_rgba(0,0,0,0.85)]"
             >
               {preview}
             </div>
           ) : (
-            <div className="p-4 bg-[#08090d] overflow-x-auto font-mono text-xs text-stone-300 leading-relaxed max-h-[460px]">
+            <div className="p-4 bg-[#07080d] overflow-x-auto font-mono text-xs text-stone-200 leading-relaxed max-h-[480px]">
               <pre className="p-2">
                 <code>{codeSnippet}</code>
               </pre>
@@ -205,29 +256,29 @@ export function ComponentDocPage({
         </section>
       )}
 
-      {/* Props & API Reference Table */}
+      {/* Props Reference Table */}
       {propsList.length > 0 && (
-        <section className="space-y-6">
+        <section className="space-y-4">
           <h2 className="text-2xl font-bold font-serif text-grave-bone-100 border-b border-[#222434] pb-3">
-            Props & API Reference
+            Props
           </h2>
-          <div className="border border-[#222434] rounded-xl overflow-hidden bg-[#0e0f16]">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-[#141622] text-xs font-mono uppercase tracking-wider text-grave-mist-400 border-b border-[#222434]">
+          <div className="border border-[#222434] rounded-xl overflow-hidden bg-[#0d0e14]">
+            <table className="w-full text-left text-sm font-mono">
+              <thead className="bg-[#12131c] text-stone-400 text-xs uppercase tracking-wider border-b border-[#222434]">
                 <tr>
-                  <th className="py-3 px-4">Prop</th>
-                  <th className="py-3 px-4">Type</th>
-                  <th className="py-3 px-4">Default</th>
-                  <th className="py-3 px-4">Description</th>
+                  <th className="px-4 py-3">Prop</th>
+                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3">Default</th>
+                  <th className="px-4 py-3">Description</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1b1c2b] font-mono text-xs">
-                {propsList.map((p, idx) => (
-                  <tr key={idx} className="hover:bg-[#141520] transition-colors">
-                    <td className="py-3 px-4 font-bold text-red-400">{p.name}</td>
-                    <td className="py-3 px-4 text-purple-300">{p.type}</td>
-                    <td className="py-3 px-4 text-stone-400">{p.default || '-'}</td>
-                    <td className="py-3 px-4 text-stone-300 font-sans text-xs">{p.description}</td>
+              <tbody className="divide-y divide-[#1e202e] text-xs">
+                {propsList.map((p, i) => (
+                  <tr key={i} className="hover:bg-[#141520]/50 transition-colors">
+                    <td className="px-4 py-3 font-semibold text-red-300">{p.name}</td>
+                    <td className="px-4 py-3 text-amber-300/90">{p.type}</td>
+                    <td className="px-4 py-3 text-stone-500">{p.default ?? '—'}</td>
+                    <td className="px-4 py-3 text-stone-300 font-sans">{p.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -236,35 +287,28 @@ export function ComponentDocPage({
         </section>
       )}
 
-      {/* Pagination Footer (Previous / Next) */}
-      <div className="pt-8 border-t border-[#222434] flex justify-between items-center text-sm">
+      {/* Bottom Prev / Next Nav */}
+      <div className="flex items-center justify-between pt-8 border-t border-[#222434] text-sm font-mono">
         {prevPage ? (
           <Link
             to={prevPage.path}
-            className="flex flex-col text-left group p-3 rounded-xl border border-[#222434] hover:border-red-800 bg-[#0f1017] transition-all"
+            className="group flex items-center gap-2 text-stone-400 hover:text-white transition-colors"
           >
-            <span className="text-xs text-grave-mist-400 font-mono">← Previous</span>
-            <span className="font-semibold text-grave-bone-100 group-hover:text-red-400 transition-colors">
-              {prevPage.title}
-            </span>
+            <span className="text-stone-500 group-hover:-translate-x-1 transition-transform">←</span>
+            <span>{prevPage.title}</span>
           </Link>
-        ) : (
-          <div />
-        )}
+        ) : <div />}
 
         {nextPage && (
           <Link
             to={nextPage.path}
-            className="flex flex-col text-right group p-3 rounded-xl border border-[#222434] hover:border-red-800 bg-[#0f1017] transition-all"
+            className="group flex items-center gap-2 text-stone-400 hover:text-white transition-colors ml-auto"
           >
-            <span className="text-xs text-grave-mist-400 font-mono">Next →</span>
-            <span className="font-semibold text-grave-bone-100 group-hover:text-red-400 transition-colors">
-              {nextPage.title}
-            </span>
+            <span>{nextPage.title}</span>
+            <span className="text-stone-500 group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         )}
       </div>
     </div>
   );
 }
-

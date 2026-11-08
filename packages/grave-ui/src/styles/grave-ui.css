@@ -736,3 +736,58 @@
   color: var(--grave-mist-300);
 }
 
+
+/* ==========================================================================
+   Gothic Movement Keyframes & Visibility System
+   ========================================================================== */
+@keyframes grave-breathing {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes grave-vein-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(255, 23, 68, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 23, 68, 0.95)) drop-shadow(0 0 24px rgba(185, 28, 28, 0.55));
+  }
+}
+
+@keyframes grave-tremble {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-1.5px, 1px) rotate(-0.5deg); }
+  40% { transform: translate(1.5px, -1px) rotate(0.5deg); }
+  60% { transform: translate(-1px, -1px) rotate(-0.3deg); }
+  80% { transform: translate(1px, 1px) rotate(0.3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes grave-occult-flare {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3), inset 0 0 15px rgba(220, 38, 38, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.7), 0 0 70px rgba(185, 28, 28, 0.4), inset 0 0 25px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.animate-grave-breathe {
+  animation: grave-breathing 4.5s ease-in-out infinite;
+}
+
+.animate-grave-pulse {
+  animation: grave-vein-pulse 2.2s ease-in-out infinite;
+}
+
+.animate-grave-flare {
+  animation: grave-occult-flare 3s ease-in-out infinite;
+}
+
+.hover-grave-tremble:hover {
+  animation: grave-tremble 0.15s ease-in-out infinite;
+}

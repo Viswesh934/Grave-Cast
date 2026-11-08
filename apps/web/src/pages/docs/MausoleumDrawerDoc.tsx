@@ -8,16 +8,16 @@ export function MausoleumDrawerDoc() {
   const codeSnippet = `const [open, setOpen] = useState(false);
 
 <Button variant="primary" onClick={() => setOpen(true)}>
-  Unseal Tomb Door
+  Unseal Ancient Mausoleum Vault
 </Button>
 
 <MausoleumDrawer
   open={open}
   onClose={() => setOpen(false)}
-  title="Mausoleum Inner Vault"
+  title="Mausoleum Inner Sanctum"
 >
   <div className="space-y-4">
-    <p>Inside the sealed crypt lies the lost knowledge of old commits...</p>
+    <p>Inside the sealed vault lies the forgotten archives of the elders...</p>
     <Button variant="secondary" onClick={() => setOpen(false)}>
       Reseal Crypt
     </Button>
@@ -28,31 +28,35 @@ export function MausoleumDrawerDoc() {
     <ComponentDocPage
       title="MausoleumDrawer"
       category="The Crypt"
-      description="An animated drawer and overlay component themed as a heavy stone tomb entrance with dark atmospheric mist backdrop and smooth entrance slide transitions."
+      description="An animated drawer and overlay component themed as a massive sliding basalt tomb entrance with dark atmospheric mist backdrop and heavy stone slide transitions."
       packageName="mausoleum-drawer"
+      gothicPhilosophy={{
+        influence: 'Subterranean Crypt Architecture',
+        movement: 'Heavy Basalt Sliding Physics & Oppressive Mist Overlay',
+      }}
       preview={
         <div className="flex flex-col items-center gap-4">
           <Button variant="primary" onClick={() => setOpen(true)}>
-            🚪 Unseal Tomb Door
+            🚪 Unseal Ancient Mausoleum Vault
           </Button>
 
           <MausoleumDrawer
             open={open}
             onClose={() => setOpen(false)}
-            title="Mausoleum Inner Vault"
+            title="Mausoleum Inner Sanctum"
           >
             <div className="space-y-4 text-stone-300 text-sm">
               <p>
-                Inside the sealed crypt lies ancient knowledge from dead branches and abandoned repositories.
+                Inside the sealed crypt lies the forgotten archives of dead branches and ancient sacrificial repositories.
               </p>
               <div className="p-4 rounded-xl bg-[#090a0f] border border-[#232537] space-y-2 font-mono text-xs">
-                <div className="text-red-400 font-bold">Unclaimed Heritage:</div>
+                <div className="text-red-400 font-bold">Heretical Artifacts:</div>
                 <div>· 48 unmerged pull requests</div>
                 <div>· 12 deprecated NPM packages</div>
-                <div>· 3 cursed circular dependencies</div>
+                <div>· 1 Ancient Relic dormant in shadows</div>
               </div>
               <Button variant="secondary" onClick={() => setOpen(false)} fullWidth>
-                Reseal Crypt Door
+                Reseal Crypt Monolith
               </Button>
             </div>
           </MausoleumDrawer>
@@ -70,4 +74,3 @@ export function MausoleumDrawerDoc() {
     />
   );
 }
-

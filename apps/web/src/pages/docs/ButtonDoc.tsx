@@ -11,9 +11,9 @@ export function ButtonDoc() {
   variant="${variant}"
   size="${size}"
   loading={${loading}}
-  onClick={() => console.log('Spooky Action!')}
+  onClick={() => console.log('Gothic Action!')}
 >
-  Summon Spirits
+  Summon Ancient Spirit
 </Button>`;
 
   return (
@@ -22,15 +22,21 @@ export function ButtonDoc() {
       category="Primitives"
       description="The fundamental interactive element styled with dark gothic gradients, deep crimson hover pulses, stone crypt slate borders, and built-in procedural audio clicks."
       packageName="button"
+      gothicPhilosophy={{
+        influence: 'Gothic Brutalism & Ancient Stone Relics',
+        movement: 'Vein Pulse Glow & High-Frequency Awakening Tremble',
+      }}
       preview={
         <div className="flex flex-col items-center gap-6">
-          <Button
-            variant={variant}
-            size={size}
-            loading={loading}
-          >
-            Summon Spirits
-          </Button>
+          <div className="p-8 rounded-2xl bg-[#0a0a12] border border-[#24263a] shadow-xl flex flex-col items-center">
+            <Button
+              variant={variant}
+              size={size}
+              loading={loading}
+            >
+              Summon Ancient Spirit
+            </Button>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
             {(['primary', 'secondary', 'ghost', 'danger'] as ButtonVariant[]).map((v) => (
@@ -38,9 +44,9 @@ export function ButtonDoc() {
                 key={v}
                 type="button"
                 onClick={() => setVariant(v)}
-                className={`px-2.5 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
                   variant === v
-                    ? 'bg-red-950 text-red-200 border border-red-800 font-bold'
+                    ? 'bg-red-950 text-red-200 border border-red-700 font-bold shadow-sm'
                     : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
                 }`}
               >
@@ -52,9 +58,9 @@ export function ButtonDoc() {
                 key={s}
                 type="button"
                 onClick={() => setSize(s)}
-                className={`px-2.5 py-1 text-xs rounded-lg font-mono uppercase transition-all cursor-pointer ${
+                className={`px-3 py-1 text-xs rounded-lg font-mono uppercase transition-all cursor-pointer ${
                   size === s
-                    ? 'bg-red-950 text-red-200 border border-red-800 font-bold'
+                    ? 'bg-amber-950 text-amber-200 border border-amber-700 font-bold shadow-sm'
                     : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
                 }`}
               >
@@ -64,7 +70,7 @@ export function ButtonDoc() {
             <button
               type="button"
               onClick={() => setLoading(!loading)}
-              className="px-2.5 py-1 text-xs rounded-lg font-mono text-stone-400 bg-[#151722] border border-[#262838] hover:text-white cursor-pointer"
+              className="px-3 py-1 text-xs rounded-lg font-mono text-stone-300 bg-[#151722] border border-[#262838] hover:text-white cursor-pointer"
             >
               Loading: {loading ? 'ON' : 'OFF'}
             </button>
@@ -84,4 +90,3 @@ export function ButtonDoc() {
     />
   );
 }
-

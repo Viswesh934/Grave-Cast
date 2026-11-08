@@ -11,11 +11,11 @@ export function CardDoc() {
   variant="${variant}"
   padding="${padding}"
   interactive={${interactive}}
-  header={<h3 className="font-bold">Crypt Chamber</h3>}
-  footer={<Button size="sm">Explore</Button>}
+  header={<h3 className="font-bold">Ancient Catacombs Crypt</h3>}
+  footer={<Button size="sm">Inspect Remains</Button>}
 >
   <p className="text-sm text-stone-300">
-    Carved into granite slabs with subtle stone bevel borders and occult shadows.
+    Carved from ancient slate with subtle stone bevel borders and deep occult shadows.
   </p>
 </Card>`;
 
@@ -25,17 +25,21 @@ export function CardDoc() {
       category="Primitives"
       description="The base container component with chiseled stone borders, dark granite backgrounds, subtle atmospheric blur, and lift-on-hover physics."
       packageName="card"
+      gothicPhilosophy={{
+        influence: 'Gothic Basalt Monuments & Crypt Vaults',
+        movement: 'Hover Lift Physics & Deep Ambient Occlusion Shadows',
+      }}
       preview={
         <div className="w-full max-w-sm space-y-4">
           <Card
             variant={variant}
             padding={padding}
             interactive={interactive}
-            header={<h3 className="font-serif font-bold text-base text-white">Crypt Chamber</h3>}
-            footer={<Button size="sm" variant="ghost">Explore Chamber →</Button>}
+            header={<h3 className="font-serif font-bold text-base text-white">Ancient Catacombs Crypt</h3>}
+            footer={<Button size="sm" variant="ghost">Inspect Remains →</Button>}
           >
             <p className="text-xs text-stone-300 leading-relaxed">
-              Carved from ancient slate with subtle stone bevel borders and deep occult drop shadows.
+              Carved from ancient basalt with subtle stone bevel borders and deep sacrificial occult drop shadows.
             </p>
           </Card>
 
@@ -45,9 +49,9 @@ export function CardDoc() {
                 key={v}
                 type="button"
                 onClick={() => setVariant(v)}
-                className={`px-2.5 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
+                className={`px-3 py-1 text-xs rounded-lg font-mono capitalize transition-all cursor-pointer ${
                   variant === v
-                    ? 'bg-red-950 text-red-200 border border-red-800 font-bold'
+                    ? 'bg-red-950 text-red-200 border border-red-700 font-bold shadow-sm'
                     : 'bg-[#151722] text-stone-400 border border-[#262838] hover:text-white'
                 }`}
               >
@@ -68,4 +72,3 @@ export function CardDoc() {
     />
   );
 }
-

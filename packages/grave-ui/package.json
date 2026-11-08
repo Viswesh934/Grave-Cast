@@ -77,5 +77,11 @@
   },
   "bugs": {
     "url": "https://github.com/yourusername/grave-cast/issues"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "@react-three/postprocessing": "^3.2.2",
+    "three": "^0.187.0"
   }
 }
