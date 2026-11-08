@@ -1,0 +1,79 @@
+{
+  "name": "@gravecast/grave-ui",
+  "version": "0.1.0",
+  "description": "Horror-themed React component library with folklore-inspired design primitives",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./primitives": {
+      "import": "./dist/components/primitives/index.js",
+      "types": "./dist/components/primitives/index.d.ts"
+    },
+    "./hooks": {
+      "import": "./dist/hooks/index.js",
+      "types": "./dist/hooks/index.d.ts"
+    },
+    "./tokens": {
+      "import": "./dist/tokens/index.js",
+      "types": "./dist/tokens/index.d.ts"
+    },
+    "./tailwind": {
+      "import": "./dist/tailwind/index.js",
+      "types": "./dist/tailwind/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup && tsc --emitDeclarationOnly",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "ui-library",
+    "horror",
+    "gothic",
+    "folklore",
+    "design-system",
+    "halloween",
+    "spooky",
+    "grave",
+    "gravecast"
+  ],
+  "author": "Gravecast Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.3.5",
+    "typescript": "~7.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/grave-cast",
+    "directory": "packages/grave-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/grave-cast/issues"
+  }
+}
