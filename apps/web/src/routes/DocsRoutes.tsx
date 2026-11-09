@@ -18,6 +18,7 @@ import { LunarPhaseDoc } from '../pages/docs/LunarPhaseDoc';
 import { ChickenLegDoc } from '../pages/docs/ChickenLegDoc';
 import { CobwebDoc } from '../pages/docs/CobwebDoc';
 import { HorrorCursorDoc } from '../pages/docs/HorrorCursorDoc';
+import { HauntedKeyboardDoc } from '../pages/docs/HauntedKeyboardDoc';
 import { BestiaryDoc } from '../pages/docs/BestiaryDoc';
 import { BestiaryCharacterDoc } from '../pages/docs/BestiaryCharacterDoc';
 import { ButtonDoc } from '../pages/docs/ButtonDoc';
@@ -75,6 +76,7 @@ export function docsRoutes() {
 
       {/* The Effects */}
       <Route path="docs/components/horror-cursor" element={<HorrorCursorDoc />} />
+      <Route path="docs/components/haunted-keyboard" element={<HauntedKeyboardDoc />} />
 
       {/* The Bestiary */}
       <Route path="docs/components/bestiary" element={<BestiaryDoc />} />

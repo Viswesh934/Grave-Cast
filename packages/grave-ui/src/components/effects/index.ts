@@ -8,3 +8,4 @@
  */
 
 export * from './HorrorCursor';
+export * from './HauntedKeyboard';

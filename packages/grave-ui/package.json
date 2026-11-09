@@ -51,6 +51,10 @@
       "import": "./dist/components/effects/index.js",
       "types": "./dist/components/effects/index.d.ts"
     },
+    "./audio": {
+      "import": "./dist/audio/index.js",
+      "types": "./dist/audio/index.d.ts"
+    },
     "./hooks": {
       "import": "./dist/hooks/index.js",
       "types": "./dist/hooks/index.d.ts"

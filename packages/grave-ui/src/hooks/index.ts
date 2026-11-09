@@ -9,3 +9,5 @@ export * from './useMediaQuery';
 export * from './useThemeToken';
 export * from './useHorrorFallback';
 export * from './useCursorTracker';
+export * from './useSpookyMusic';
+export * from './useHauntedKeystrokes';
