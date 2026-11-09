@@ -24,6 +24,9 @@ export default defineConfig({
   clean: true,
   external: ['react', 'react-dom'],
   treeshake: true,
-  splitting: false,
+  // Share code between entries as common chunks. Without this, every sub-path
+  // (audio, hooks, effects, ...) bundles its own copy of shared modules, which
+  // splits React contexts and singletons like the AudioContext in two.
+  splitting: true,
   minify: false, // Keep readable for initial development
 });
