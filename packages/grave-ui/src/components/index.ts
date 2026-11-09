@@ -29,3 +29,6 @@ export * from './bestiary';
 
 // 3D Horror Infrastructure
 export * from './horror3d';
+
+// Effects - cross-cutting cursors, backgrounds, overlays
+export * from './effects';

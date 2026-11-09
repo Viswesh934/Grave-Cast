@@ -12,6 +12,7 @@ export default defineConfig({
     'components/slavic/index': 'src/components/slavic/index.ts',
     'components/bestiary/index': 'src/components/bestiary/index.ts',
     'components/horror3d/index': 'src/components/horror3d/index.ts',
+    'components/effects/index': 'src/components/effects/index.ts',
     'hooks/index': 'src/hooks/index.ts',
     'tokens/index': 'src/tokens/index.ts',
     'tailwind/index': 'src/tailwind/index.ts',

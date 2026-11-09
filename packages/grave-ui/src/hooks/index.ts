@@ -8,3 +8,4 @@ export * from './useAnimationState';
 export * from './useMediaQuery';
 export * from './useThemeToken';
 export * from './useHorrorFallback';
+export * from './useCursorTracker';

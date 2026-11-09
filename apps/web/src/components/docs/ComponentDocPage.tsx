@@ -49,7 +49,7 @@ export function ComponentDocPage({
   has3DMode = false,
   is3DMode = true,
   onToggle3D,
-  gothicPhilosophy,
+  gothicPhilosophy: _gothicPhilosophy,
 }: ComponentDocPageProps) {
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
   const [copiedCode, setCopiedCode] = useState(false);
@@ -101,20 +101,6 @@ export function ComponentDocPage({
         <p className="text-base text-stone-300 max-w-3xl leading-relaxed">
           {description}
         </p>
-
-        {/* Gothic Design Architecture Badge */}
-        <div className="pt-1 flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono bg-[#0c1813] border border-emerald-900/60 text-emerald-200 shadow-inner">
-            <span className="text-emerald-400 font-bold">Archetype:</span>
-            <span className="text-stone-300">
-              {gothicPhilosophy?.influence ?? "Ancient Crypts & Catacombs"}
-            </span>
-            <span className="text-stone-500">·</span>
-            <span className="text-teal-400 font-medium">
-              {gothicPhilosophy?.movement ?? "Living Sculptural Reliefs"}
-            </span>
-          </div>
-        </div>
 
         {/* Quick CLI Install Pill */}
         <div className="pt-1 flex items-center gap-3">
