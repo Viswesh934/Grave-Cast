@@ -11,3 +11,4 @@ export * from './useHorrorFallback';
 export * from './useCursorTracker';
 export * from './useSpookyMusic';
 export * from './useHauntedKeystrokes';
+export * from './useSoundLibrary';

@@ -7,7 +7,7 @@
  * @module audio/music/voice
  */
 
-import { getAudioContext } from '../SpookyAudio';
+import { getAudioContext, getMasterBus } from '../context';
 import type { InstrumentDefinition } from './instruments';
 
 /** Hard cap on simultaneous voices. New notes beyond this are dropped. */
@@ -37,16 +37,6 @@ const NYQUIST_SAFETY = 0.45;
 /** Seconds over which vibrato fades in once its delay has passed. */
 const VIBRATO_FADE_IN = 0.4;
 
-/** Shared output stage: a gentle compressor so chords and drones never clip. */
-const MASTER_BUS = {
-  gain: 0.8,
-  threshold: -18,
-  knee: 24,
-  ratio: 6,
-  attack: 0.005,
-  release: 0.25,
-} as const;
-
 /**
  * Options for a single voice.
  */
@@ -74,26 +64,6 @@ export interface VoiceHandle {
 }
 
 let activeVoices = 0;
-let bus: { ctx: AudioContext; input: GainNode } | null = null;
-
-const getBus = (ctx: AudioContext): GainNode => {
-  if (bus && bus.ctx === ctx) return bus.input;
-
-  const compressor = ctx.createDynamicsCompressor();
-  compressor.threshold.value = MASTER_BUS.threshold;
-  compressor.knee.value = MASTER_BUS.knee;
-  compressor.ratio.value = MASTER_BUS.ratio;
-  compressor.attack.value = MASTER_BUS.attack;
-  compressor.release.value = MASTER_BUS.release;
-
-  const input = ctx.createGain();
-  input.gain.value = MASTER_BUS.gain;
-  input.connect(compressor);
-  compressor.connect(ctx.destination);
-
-  bus = { ctx, input };
-  return input;
-};
 
 /**
  * Plays an instrument at a frequency.
@@ -159,7 +129,7 @@ export const playVoice = (
   } else {
     mix.connect(amp);
   }
-  amp.connect(getBus(ctx));
+  amp.connect(getMasterBus(ctx));
 
   const oscillators = audible.map((layer) => {
     const osc = ctx.createOscillator();

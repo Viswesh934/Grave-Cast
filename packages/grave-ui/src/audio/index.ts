@@ -6,6 +6,9 @@
 // Low-level audio engine
 export * from './SpookyAudio';
 
+// Sound effects: the catalog and the engine that plays it
+export * from './effects';
+
 // Music system: scales, ragas, instruments, synth
 export * from './music';
 

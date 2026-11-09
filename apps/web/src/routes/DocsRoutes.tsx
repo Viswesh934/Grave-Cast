@@ -3,7 +3,6 @@ import { Route, Navigate } from 'react-router-dom';
 import { IntroductionPage } from '../pages/docs/IntroductionPage';
 import { InstallationPage } from '../pages/docs/InstallationPage';
 import { TokensShowcase } from '../pages/docs/TokensShowcase';
-import { HooksShowcase } from '../pages/docs/HooksShowcase';
 
 // Component Docs
 import { TombstoneDoc } from '../pages/docs/TombstoneDoc';
@@ -19,6 +18,7 @@ import { ChickenLegDoc } from '../pages/docs/ChickenLegDoc';
 import { CobwebDoc } from '../pages/docs/CobwebDoc';
 import { HorrorCursorDoc } from '../pages/docs/HorrorCursorDoc';
 import { HauntedKeyboardDoc } from '../pages/docs/HauntedKeyboardDoc';
+import { SoundLibraryDoc } from '../pages/docs/SoundLibraryDoc';
 import { BestiaryDoc } from '../pages/docs/BestiaryDoc';
 import { BestiaryCharacterDoc } from '../pages/docs/BestiaryCharacterDoc';
 import { ButtonDoc } from '../pages/docs/ButtonDoc';
@@ -44,7 +44,6 @@ export function docsRoutes() {
       <Route path="docs/introduction" element={<IntroductionPage />} />
       <Route path="docs/installation" element={<InstallationPage />} />
       <Route path="docs/tokens" element={<TokensShowcase />} />
-      <Route path="docs/audio" element={<HooksShowcase />} />
 
       {/* Primitives */}
       <Route path="docs/components/button" element={<ButtonDoc />} />
@@ -77,6 +76,7 @@ export function docsRoutes() {
       {/* The Effects */}
       <Route path="docs/components/horror-cursor" element={<HorrorCursorDoc />} />
       <Route path="docs/components/haunted-keyboard" element={<HauntedKeyboardDoc />} />
+      <Route path="docs/components/sound-library" element={<SoundLibraryDoc />} />
 
       {/* The Bestiary */}
       <Route path="docs/components/bestiary" element={<BestiaryDoc />} />
