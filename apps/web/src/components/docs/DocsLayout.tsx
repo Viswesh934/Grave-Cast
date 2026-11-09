@@ -68,6 +68,12 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'CobwebCorner', path: '/docs/components/cobweb', badge: '3D' },
     ],
   },
+  {
+    title: 'THE BESTIARY',
+    items: [
+      { title: 'Characters', path: '/docs/components/bestiary', badge: '3D' },
+    ],
+  },
 ];
 
 export function DocsLayout() {

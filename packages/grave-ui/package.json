@@ -39,6 +39,10 @@
       "import": "./dist/components/slavic/index.js",
       "types": "./dist/components/slavic/index.d.ts"
     },
+    "./bestiary": {
+      "import": "./dist/components/bestiary/index.js",
+      "types": "./dist/components/bestiary/index.d.ts"
+    },
     "./horror3d": {
       "import": "./dist/components/horror3d/index.js",
       "types": "./dist/components/horror3d/index.d.ts"

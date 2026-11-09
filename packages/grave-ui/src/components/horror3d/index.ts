@@ -17,6 +17,7 @@ export * from './CoffinAccordion3D';
 export * from './CobwebCorner3D';
 export * from './WitchOnBroom3D';
 export * from './ChickenLegStepper3D';
+export * from './Character3D';
 export * from './horror3d.config';
 
 // Re-export core 3D helpers so apps/web has a single unified Three.js instance
