@@ -76,6 +76,10 @@ export interface InstrumentDefinition {
 
 /** Names of the built-in instruments. */
 export type InstrumentName =
+  | 'cpu'
+  | 'terminal'
+  | 'mechanical'
+  | 'floppy'
   | 'bell'
   | 'glass'
   | 'tick'
@@ -94,6 +98,43 @@ export type InstrumentName =
  * - `pad`, `ghost`, `drone`: slow, atmospheric, and long.
  */
 export const INSTRUMENTS: Record<InstrumentName, InstrumentDefinition> = {
+  cpu: {
+    name: 'cpu',
+    layers: [
+      { type: 'square', ratio: 1, gain: 0.9 },
+      { type: 'square', ratio: 2, gain: 0.4 },
+      { type: 'triangle', ratio: 0.5, gain: 0.3 },
+    ],
+    envelope: { attack: 0.001, decay: 0.12, sustain: 0, release: 0.04 },
+    filter: { type: 'lowpass', cutoff: 6, sweepTo: 2, sweepTime: 0.08 },
+  },
+  terminal: {
+    name: 'terminal',
+    layers: [
+      { type: 'sine', ratio: 1, gain: 1 },
+      { type: 'square', ratio: 1, gain: 0.35 },
+    ],
+    envelope: { attack: 0.002, decay: 0.18, sustain: 0, release: 0.06 },
+    filter: { type: 'bandpass', cutoff: 2.2, q: 4 },
+  },
+  mechanical: {
+    name: 'mechanical',
+    layers: [
+      { type: 'triangle', ratio: 1, gain: 0.8 },
+      { type: 'sine', ratio: 3.5, gain: 0.4 },
+    ],
+    envelope: { attack: 0.001, decay: 0.08, sustain: 0, release: 0.03 },
+    filter: { type: 'highpass', cutoff: 1.5 },
+  },
+  floppy: {
+    name: 'floppy',
+    layers: [
+      { type: 'sawtooth', ratio: 1, gain: 0.7 },
+      { type: 'square', ratio: 0.5, gain: 0.5 },
+    ],
+    envelope: { attack: 0.004, decay: 0.14, sustain: 0, release: 0.05 },
+    filter: { type: 'bandpass', cutoff: 1.8, q: 3 },
+  },
   bell: {
     name: 'bell',
     layers: [

@@ -9,3 +9,4 @@
 
 export * from './HorrorCursor';
 export * from './HauntedKeyboard';
+export * from './SoundLibrary';

@@ -14,7 +14,6 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: 'intro', title: 'Introduction', category: 'Getting Started', path: '/docs/introduction' },
   { id: 'install', title: 'Installation & Setup', category: 'Getting Started', path: '/docs/installation' },
   { id: 'tokens', title: 'Design Tokens', category: 'Getting Started', path: '/docs/tokens' },
-  { id: 'audio', title: 'Web Audio Synth', category: 'Getting Started', path: '/docs/audio' },
 
   // Primitives
   { id: 'btn', title: 'Button', category: 'Primitives', path: '/docs/components/button' },

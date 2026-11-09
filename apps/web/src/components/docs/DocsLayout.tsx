@@ -22,7 +22,6 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'Introduction', path: '/docs/introduction' },
       { title: 'Installation', path: '/docs/installation' },
       { title: 'Design Tokens', path: '/docs/tokens' },
-      { title: 'Web Audio Synth', path: '/docs/audio' },
     ],
   },
   {
@@ -54,6 +53,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { title: 'HorrorCursor', path: '/docs/components/horror-cursor', badge: 'New' },
       { title: 'HauntedKeyboard', path: '/docs/components/haunted-keyboard', badge: 'New' },
+      { title: 'SoundLibrary', path: '/docs/components/sound-library', badge: 'New' },
     ],
   },
 ];
