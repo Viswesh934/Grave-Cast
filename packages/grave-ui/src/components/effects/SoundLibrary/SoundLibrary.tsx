@@ -1,9 +1,9 @@
 /**
- * SoundLibrary - A browsable list of sound effects, like a ringtone store.
+ * SoundLibrary - A browsable list of sound effects, with pagination and category filters.
  * @module components/effects/SoundLibrary/SoundLibrary
  */
 
-import { useState, type CSSProperties } from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
 import { EFFECT_CATEGORIES } from '../../../audio';
 import type { EffectCategory, EffectName } from '../../../audio';
 import { useSoundLibrary } from '../../../hooks/useSoundLibrary';
@@ -27,6 +27,8 @@ export interface SoundLibraryProps {
   volume?: number;
   /** Called when a preview starts. */
   onPlay?: (name: EffectName) => void;
+  /** Number of sounds per page. Set to 0 to disable pagination. @default 8 */
+  pageSize?: number;
   /** Maximum height of the list before it scrolls. Number is px. */
   maxHeight?: number | string;
   /** Additional CSS classes for the wrapper. */
@@ -47,20 +49,20 @@ const CATEGORY_ICONS: Record<EffectCategory, string> = {
 };
 
 const PlayGlyph = () => (
-  <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+  <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
     <path d="M4.5 2.8v10.4a.5.5 0 0 0 .76.43l8.5-5.2a.5.5 0 0 0 0-.86l-8.5-5.2A.5.5 0 0 0 4.5 2.8Z" />
   </svg>
 );
 
 const StopGlyph = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
     <rect x="3" y="3" width="10" height="10" rx="1.5" />
   </svg>
 );
 
 /**
- * A searchable list of every sound effect, with a play button, category
- * badge, length, a copy-code button, and a WAV download for each.
+ * A searchable, paginated list of every sound effect, with a play button,
+ * category badge, length, copy-code button, and WAV download.
  */
 export const SoundLibrary = ({
   category = 'all',
@@ -69,16 +71,30 @@ export const SoundLibrary = ({
   showDownload = true,
   volume,
   onPlay,
+  pageSize = 8,
   maxHeight,
   className = '',
   style,
 }: SoundLibraryProps) => {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState<EffectCategory | 'all'>(category);
+  const [page, setPage] = useState(1);
   const [copied, setCopied] = useState<string | null>(null);
 
   const { effects, playing, toggle, download } = useSoundLibrary({ category: active, query, volume });
-  const { row, playSize, progressHeight, colors, shadow, font, transition } = libraryTokens;
+  const { row, progressHeight, colors, shadow, font, transition } = libraryTokens;
+
+  // Reset to page 1 whenever category or search filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [active, query]);
+
+  const totalPages = pageSize > 0 ? Math.max(1, Math.ceil(effects.length / pageSize)) : 1;
+  const currentPage = Math.min(Math.max(1, page), totalPages);
+
+  const displayedEffects = pageSize > 0
+    ? effects.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    : effects;
 
   const handleToggle = (name: EffectName) => {
     if (playing !== name) onPlay?.(name);
@@ -98,19 +114,19 @@ export const SoundLibrary = ({
       className={`grave-sound-library ${className}`.trim()}
       style={{ display: 'flex', flexDirection: 'column', gap: 12, fontFamily: font.bodyFamily, ...style }}
     >
-      {/* Search Input */}
+      {/* Search Input Bar */}
       {showSearch && (
         <div style={{ position: 'relative', width: '100%' }}>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search 40+ sounds (e.g. cpu, click, bell, modem, egg)..."
+            placeholder="Search sounds (e.g. cpu, click, bell, modem, egg)..."
             aria-label="Search sounds"
             style={{
               width: '100%',
               boxSizing: 'border-box',
-              padding: '11px 16px',
+              padding: '10px 16px',
               fontFamily: font.bodyFamily,
               fontSize: 13,
               color: colors.title,
@@ -118,22 +134,24 @@ export const SoundLibrary = ({
               border: `1px solid ${colors.border}`,
               borderRadius: 12,
               outline: 'none',
-              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.4)',
+              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.5)',
             }}
           />
         </div>
       )}
 
-      {/* Category Pills Bar */}
+      {/* Category Pills Bar (Horizontal Scrollable Ribbon) */}
       {showCategories && (
         <div
           role="group"
           aria-label="Sound categories"
           style={{
             display: 'flex',
-            flexWrap: 'wrap',
+            alignItems: 'center',
             gap: 6,
-            paddingBottom: 2,
+            overflowX: 'auto',
+            paddingBottom: 4,
+            scrollbarWidth: 'none',
           }}
         >
           <button
@@ -149,14 +167,15 @@ export const SoundLibrary = ({
               fontSize: 12,
               fontFamily: 'monospace',
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
               border: active === 'all' ? '1px solid #10b981' : `1px solid ${colors.border}`,
-              backgroundColor: active === 'all' ? 'rgba(6, 78, 59, 0.7)' : colors.surface,
+              backgroundColor: active === 'all' ? 'rgba(6, 78, 59, 0.75)' : colors.surface,
               color: active === 'all' ? '#a7f3d0' : colors.muted,
-              boxShadow: active === 'all' ? '0 0 10px rgba(16, 185, 129, 0.2)' : 'none',
+              boxShadow: active === 'all' ? '0 0 10px rgba(16, 185, 129, 0.25)' : 'none',
               transition,
             }}
           >
-            <span>All</span>
+            <span>All Sounds</span>
             <span style={{ fontSize: 10, opacity: 0.8 }}>({effects.length})</span>
           </button>
 
@@ -178,10 +197,11 @@ export const SoundLibrary = ({
                   fontSize: 12,
                   fontFamily: 'monospace',
                   cursor: 'pointer',
+                  whiteSpace: 'nowrap',
                   border: isCategoryActive ? '1px solid #10b981' : `1px solid ${colors.border}`,
-                  backgroundColor: isCategoryActive ? 'rgba(6, 78, 59, 0.7)' : colors.surface,
+                  backgroundColor: isCategoryActive ? 'rgba(6, 78, 59, 0.75)' : colors.surface,
                   color: isCategoryActive ? '#a7f3d0' : colors.body,
-                  boxShadow: isCategoryActive ? '0 0 10px rgba(16, 185, 129, 0.2)' : 'none',
+                  boxShadow: isCategoryActive ? '0 0 10px rgba(16, 185, 129, 0.25)' : 'none',
                   transition,
                 }}
               >
@@ -193,18 +213,29 @@ export const SoundLibrary = ({
         </div>
       )}
 
-      {/* Sounds Count */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
+      {/* Results Telemetry Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2px' }}>
         <p aria-live="polite" style={{ margin: 0, fontSize: 11, color: colors.muted, fontFamily: 'monospace' }}>
-          {effects.length} {effects.length === 1 ? 'sound available' : 'sounds available'}
+          {effects.length === 0
+            ? '0 sounds found'
+            : pageSize > 0
+            ? `Showing ${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, effects.length)} of ${effects.length} sounds`
+            : `${effects.length} sounds`}
         </p>
+        {totalPages > 1 && (
+          <p style={{ margin: 0, fontSize: 11, color: colors.muted, fontFamily: 'monospace' }}>
+            Page {currentPage} of {totalPages}
+          </p>
+        )}
       </div>
 
       {/* Sound Cards List */}
       {effects.length === 0 ? (
-        <p style={{ margin: 0, padding: 32, textAlign: 'center', color: colors.muted, fontSize: 13, fontFamily: 'monospace' }}>
-          No audio signals found matching that query. Try another term.
-        </p>
+        <div style={{ padding: '36px 16px', textAlign: 'center', backgroundColor: colors.surface, borderRadius: 12, border: `1px solid ${colors.border}` }}>
+          <p style={{ margin: 0, color: colors.muted, fontSize: 13, fontFamily: 'monospace' }}>
+            No audio signals found matching &ldquo;{query}&rdquo;.
+          </p>
+        </div>
       ) : (
         <ul
           style={{
@@ -218,7 +249,7 @@ export const SoundLibrary = ({
             overflowY: maxHeight === undefined ? undefined : 'auto',
           }}
         >
-          {effects.map((effect) => {
+          {displayedEffects.map((effect) => {
             const name = effect.name as EffectName;
             const isPlaying = playing === name;
             const isEgg = effect.tags?.includes('egg') || effect.tags?.includes('easter egg');
@@ -229,11 +260,11 @@ export const SoundLibrary = ({
                 style={{
                   position: 'relative',
                   overflow: 'hidden',
-                  padding: '12px 16px',
+                  padding: '10px 14px',
                   borderRadius: 12,
                   border: `1px solid ${isPlaying ? '#10b981' : colors.border}`,
                   backgroundColor: isPlaying ? colors.surfaceActive : colors.surface,
-                  boxShadow: isPlaying ? shadow.active : '0 2px 8px rgba(0, 0, 0, 0.4)',
+                  boxShadow: isPlaying ? shadow.active : '0 2px 6px rgba(0, 0, 0, 0.35)',
                   transition,
                 }}
               >
@@ -245,8 +276,8 @@ export const SoundLibrary = ({
                     aria-pressed={isPlaying}
                     onClick={() => handleToggle(name)}
                     style={{
-                      width: playSize,
-                      height: playSize,
+                      width: 36,
+                      height: 36,
                       padding: 0,
                       borderRadius: 10,
                       border: isPlaying ? '1px solid #10b981' : '1px solid #1f422e',
@@ -278,7 +309,7 @@ export const SoundLibrary = ({
                           style={{
                             fontSize: 9,
                             fontFamily: 'monospace',
-                            padding: '2px 6px',
+                            padding: '1px 6px',
                             borderRadius: 6,
                             backgroundColor: 'rgba(120, 53, 15, 0.5)',
                             color: '#fde68a',
@@ -291,7 +322,7 @@ export const SoundLibrary = ({
                         </span>
                       )}
                     </div>
-                    <p style={{ margin: '3px 0 0 0', fontSize: 12, color: colors.body, lineHeight: 1.4 }}>
+                    <p style={{ margin: '2px 0 0 0', fontSize: 12, color: colors.body, lineHeight: 1.4 }}>
                       {effect.description}
                     </p>
                   </div>
@@ -350,6 +381,89 @@ export const SoundLibrary = ({
             );
           })}
         </ul>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div
+          role="navigation"
+          aria-label="Sound pages"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            paddingTop: 8,
+          }}
+        >
+          <button
+            type="button"
+            disabled={currentPage <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 8,
+              fontSize: 12,
+              fontFamily: 'monospace',
+              cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
+              opacity: currentPage <= 1 ? 0.4 : 1,
+              border: `1px solid ${colors.border}`,
+              backgroundColor: colors.surface,
+              color: colors.title,
+            }}
+          >
+            ← Prev
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+            const isCurrent = p === currentPage;
+            return (
+              <button
+                key={p}
+                type="button"
+                aria-current={isCurrent ? 'page' : undefined}
+                onClick={() => setPage(p)}
+                style={{
+                  width: 32,
+                  height: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  fontFamily: 'monospace',
+                  cursor: 'pointer',
+                  border: isCurrent ? '1px solid #10b981' : `1px solid ${colors.border}`,
+                  backgroundColor: isCurrent ? 'rgba(6, 78, 59, 0.8)' : colors.surface,
+                  color: isCurrent ? '#a7f3d0' : colors.muted,
+                  fontWeight: isCurrent ? 700 : 400,
+                  boxShadow: isCurrent ? '0 0 10px rgba(16, 185, 129, 0.25)' : 'none',
+                }}
+              >
+                {p}
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            disabled={currentPage >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 8,
+              fontSize: 12,
+              fontFamily: 'monospace',
+              cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
+              opacity: currentPage >= totalPages ? 0.4 : 1,
+              border: `1px solid ${colors.border}`,
+              backgroundColor: colors.surface,
+              color: colors.title,
+            }}
+          >
+            Next →
+          </button>
+        </div>
       )}
     </div>
   );
