@@ -100,8 +100,6 @@ export function CoffinBloodLogo({ size = 28, className = '', ...props }: { size?
   );
 }
 
-export const PumpkinIcon = CoffinBloodLogo;
-
 export function CopyIcon({ size = 16, className = '' }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -151,6 +149,27 @@ export function GitHubIcon({ size = 18, className = '' }: { size?: number; class
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+    </svg>
+  );
+}
+
+export function PumpkinIcon({ size = 28, className = '', ...props }: { size?: number } & SVGProps<SVGSVGElement>) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" className={`overflow-visible ${className}`} {...props}>
+      <path d="M30 5 C30 5, 32 15, 27 18 C33 16, 38 12, 36 5 C33 7, 31 6, 30 5 Z" fill="#33691E" stroke="#1B5E20" strokeWidth="1.5" />
+      <ellipse cx="18" cy="38" rx="14" ry="19" fill="#E65100" />
+      <ellipse cx="46" cy="38" rx="14" ry="19" fill="#E65100" />
+      <ellipse cx="24" cy="38" rx="16" ry="21" fill="#F57C00" />
+      <ellipse cx="40" cy="38" rx="16" ry="21" fill="#F57C00" />
+      <ellipse cx="32" cy="38" rx="14" ry="22" fill="#FB8C00" />
+      <polygon points="21,27 27,33 17,35" fill="#210500" />
+      <polygon points="22,28.5 26,32.5 18.5,34" fill="#FFD54F" />
+      <polygon points="43,27 37,33 47,35" fill="#210500" />
+      <polygon points="42,28.5 38,32.5 45.5,34" fill="#FFD54F" />
+      <polygon points="32,34 28,40 36,40" fill="#210500" />
+      <polygon points="32,35.5 29.5,39.5 34.5,39.5" fill="#FFE082" />
+      <path d="M16 43 Q32 58 48 43 C44 48 42 45 40 47 C38 45 35 49 32 46 C29 49 26 45 24 47 C22 45 20 48 16 43 Z" fill="#210500" />
+      <path d="M17.5 44 Q32 56.5 46.5 44 C43.5 47.5 41.5 45 39.5 46.5 C37.5 44.5 34.5 48 32 45.5 C29.5 48 26.5 44.5 24.5 46.5 C22.5 45 20.5 47.5 17.5 44 Z" fill="#FFCA28" />
     </svg>
   );
 }

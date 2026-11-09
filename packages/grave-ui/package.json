@@ -47,6 +47,10 @@
       "import": "./dist/components/horror3d/index.js",
       "types": "./dist/components/horror3d/index.d.ts"
     },
+    "./effects": {
+      "import": "./dist/components/effects/index.js",
+      "types": "./dist/components/effects/index.d.ts"
+    },
     "./hooks": {
       "import": "./dist/hooks/index.js",
       "types": "./dist/hooks/index.d.ts"
