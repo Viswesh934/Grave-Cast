@@ -250,10 +250,67 @@ export const graveUIPlugin = plugin(
     });
   },
   
-  // Extend theme with Grave-UI tokens (to be fully implemented with proper token mapping in future iterations)
+  // Extend theme with Grave-UI design tokens.
+  // These map the canonical palette (mirrored in src/styles/grave-ui.css
+  // and the `palette` token export) onto Tailwind color utilities, so that
+  // classes like `bg-grave-dark-850`, `text-grave-mist-300`, and
+  // `border-grave-crypt-granite` resolve instead of falling back to
+  // arbitrary `[#hex]` values in components.
   {
     theme: {
-      extend: {},
+      extend: {
+        colors: {
+          grave: {
+            crypt: {
+              stone: '#16161a',
+              slate: '#22232a',
+              granite: '#343642',
+              moss: '#3d5a45',
+              lichen: '#5b8a68',
+            },
+            sanguine: {
+              blood: '#8a0303',
+              crimson: '#bd081c',
+              coagulated: '#4a0008',
+              plasma: '#e63946',
+            },
+            witch: {
+              void: '#0d0914',
+              fire: '#8b5cf6',
+              emerald: '#10b981',
+              gold: '#d4af37',
+            },
+            bone: {
+              100: '#f5f2eb',
+              200: '#e8e0d5',
+              300: '#d6ccbe',
+              decayed: '#b8a99a',
+              ash: '#6b625b',
+            },
+            dark: {
+              950: '#060608',
+              900: '#0a0a0f',
+              850: '#0f1017',
+              800: '#14151f',
+              750: '#1b1c29',
+              700: '#222434',
+              600: '#2e3146',
+            },
+            mist: {
+              100: '#e2e4ed',
+              200: '#c2c5d4',
+              300: '#9da1b6',
+              400: '#6d7186',
+              500: '#4a4d60',
+            },
+          },
+        },
+        boxShadow: {
+          'grave-crypt': '0 10px 30px -5px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.08)',
+          'grave-glow-crimson': '0 0 20px rgba(189, 8, 28, 0.35)',
+          'grave-glow-witchfire': '0 0 20px rgba(139, 92, 246, 0.35)',
+        },
+      },
     },
   }
 );

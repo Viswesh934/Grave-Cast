@@ -1,1 +1,1 @@
-export * from './ChickenLegStepper/ChickenLegStepper';
+export * from './ChickenLegStepper';

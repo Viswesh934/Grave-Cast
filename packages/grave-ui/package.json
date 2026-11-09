@@ -15,6 +15,34 @@
       "import": "./dist/components/primitives/index.js",
       "types": "./dist/components/primitives/index.d.ts"
     },
+    "./crypt": {
+      "import": "./dist/components/crypt/index.js",
+      "types": "./dist/components/crypt/index.d.ts"
+    },
+    "./coven": {
+      "import": "./dist/components/coven/index.js",
+      "types": "./dist/components/coven/index.d.ts"
+    },
+    "./arachnid": {
+      "import": "./dist/components/arachnid/index.js",
+      "types": "./dist/components/arachnid/index.d.ts"
+    },
+    "./sanguine": {
+      "import": "./dist/components/sanguine/index.js",
+      "types": "./dist/components/sanguine/index.d.ts"
+    },
+    "./lycan": {
+      "import": "./dist/components/lycan/index.js",
+      "types": "./dist/components/lycan/index.d.ts"
+    },
+    "./slavic": {
+      "import": "./dist/components/slavic/index.js",
+      "types": "./dist/components/slavic/index.d.ts"
+    },
+    "./horror3d": {
+      "import": "./dist/components/horror3d/index.js",
+      "types": "./dist/components/horror3d/index.d.ts"
+    },
     "./hooks": {
       "import": "./dist/hooks/index.js",
       "types": "./dist/hooks/index.d.ts"

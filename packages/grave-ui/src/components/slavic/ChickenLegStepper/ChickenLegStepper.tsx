@@ -31,7 +31,7 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
     return (
       <div
         ref={ref}
-        className={`w-full bg-[#12131b] border border-[#2b2d3d] rounded-2xl p-6 shadow-xl select-none ${className}`}
+        className={`w-full bg-grave-dark-850 border border-grave-dark-600 rounded-2xl p-6 shadow-xl select-none ${className}`}
         {...props}
       >
         <div className="flex items-center justify-between mb-8">
@@ -43,7 +43,7 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
               Step {currentStep + 1} of {steps.length} · Articulated Perch
             </p>
           </div>
-          <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#1c1e2b] text-amber-400 border border-amber-900/40">
+          <span className="text-xs font-mono px-2 py-0.5 rounded bg-grave-dark-750 text-amber-400 border border-amber-900/40">
             Phase 0{currentStep + 1}
           </span>
         </div>
@@ -51,7 +51,7 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
         {/* Stepper Track */}
         <div className="relative flex items-center justify-between">
           {/* Background Rail */}
-          <div className="absolute top-1/2 left-0 right-0 h-1 bg-[#232536] -translate-y-1/2 z-0" />
+          <div className="absolute top-1/2 left-0 right-0 h-1 bg-grave-dark-700 -translate-y-1/2 z-0" />
 
           {steps.map((step, idx) => {
             const isCompleted = idx < currentStep;
@@ -70,7 +70,7 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
                       ? 'bg-amber-600 border-amber-400 text-white shadow-[0_0_20px_rgba(245,158,11,0.6)] scale-110'
                       : isCompleted
                       ? 'bg-emerald-950 border-emerald-500 text-emerald-300'
-                      : 'bg-[#181a26] border-[#313548] text-grave-mist-400 hover:border-grave-mist-300'
+                      : 'bg-grave-dark-800 border-grave-dark-600 text-grave-mist-400 hover:border-grave-mist-300'
                   }`}
                 >
                   {isCompleted ? '✓' : idx + 1}
@@ -105,4 +105,3 @@ export const ChickenLegStepper = forwardRef<HTMLDivElement, ChickenLegStepperPro
 );
 
 ChickenLegStepper.displayName = 'ChickenLegStepper';
-

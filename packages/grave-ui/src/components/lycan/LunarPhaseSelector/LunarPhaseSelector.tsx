@@ -132,7 +132,7 @@ export const LunarPhaseSelector = forwardRef<HTMLDivElement, LunarPhaseSelectorP
     return (
       <div
         ref={ref}
-        className={`bg-[#12131b] border border-[#2b2d3d] rounded-2xl p-6 select-none shadow-xl ${className}`}
+        className={`bg-grave-dark-850 border border-grave-dark-600 rounded-2xl p-6 select-none shadow-xl ${className}`}
         {...props}
       >
         <div className="flex justify-between items-center mb-6">
@@ -166,7 +166,7 @@ export const LunarPhaseSelector = forwardRef<HTMLDivElement, LunarPhaseSelectorP
                 className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all cursor-pointer ${
                   isSelected
                     ? 'bg-purple-950/50 border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)] text-white scale-105'
-                    : 'bg-[#161824] border-[#252838] text-grave-mist-400 hover:border-grave-mist-400 hover:text-grave-bone-100'
+                    : 'bg-grave-dark-800 border-grave-dark-600 text-grave-mist-400 hover:border-grave-mist-400 hover:text-grave-bone-100'
                 }`}
                 title={phase.name}
               >

@@ -55,7 +55,7 @@ export function ComponentDocPage({
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedInstall, setCopiedInstall] = useState(false);
 
-  const installCommand = `npx grave-ui add ${packageName}`;
+  const installCommand = `npx groove-ui add ${packageName}`;
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(codeSnippet);
