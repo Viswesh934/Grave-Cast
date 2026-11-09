@@ -16,6 +16,7 @@ export * from './MausoleumVault3D';
 export * from './CoffinAccordion3D';
 export * from './CobwebCorner3D';
 export * from './WitchOnBroom3D';
+export * from './BestiaryCharacter3D';
 export * from './ChickenLegStepper3D';
 export * from './horror3d.config';
 

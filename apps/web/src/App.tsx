@@ -17,6 +17,8 @@ import { BloodVialDoc } from './pages/docs/BloodVialDoc';
 import { LunarPhaseDoc } from './pages/docs/LunarPhaseDoc';
 import { ChickenLegDoc } from './pages/docs/ChickenLegDoc';
 import { CobwebDoc } from './pages/docs/CobwebDoc';
+import { BestiaryDoc } from './pages/docs/BestiaryDoc';
+import { BestiaryCharacterDoc } from './pages/docs/BestiaryCharacterDoc';
 import { ButtonDoc } from './pages/docs/ButtonDoc';
 import { CardDoc } from './pages/docs/CardDoc';
 import { BadgeDoc } from './pages/docs/BadgeDoc';
@@ -60,6 +62,10 @@ export default function App() {
 
           {/* The Arachnid */}
           <Route path="docs/components/cobweb" element={<CobwebDoc />} />
+
+          {/* The Bestiary */}
+          <Route path="docs/components/bestiary" element={<BestiaryDoc />} />
+          <Route path="docs/components/bestiary/:characterId" element={<BestiaryCharacterDoc />} />
 
           {/* Legacy redirects */}
           <Route path="primitives" element={<Navigate to="/docs/components/button" replace />} />

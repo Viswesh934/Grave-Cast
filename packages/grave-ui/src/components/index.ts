@@ -24,5 +24,8 @@ export * from './lycan';
 // Slavic & Baba Yaga components
 export * from './slavic';
 
+// Bestiary - horror character cast + character foundation
+export * from './bestiary';
+
 // 3D Horror Infrastructure
 export * from './horror3d';

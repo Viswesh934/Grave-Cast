@@ -10,6 +10,7 @@ export default defineConfig({
     'components/sanguine/index': 'src/components/sanguine/index.ts',
     'components/lycan/index': 'src/components/lycan/index.ts',
     'components/slavic/index': 'src/components/slavic/index.ts',
+    'components/bestiary/index': 'src/components/bestiary/index.ts',
     'components/horror3d/index': 'src/components/horror3d/index.ts',
     'hooks/index': 'src/hooks/index.ts',
     'tokens/index': 'src/tokens/index.ts',

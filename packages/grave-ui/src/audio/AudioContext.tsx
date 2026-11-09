@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useCallback, type ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useRef, useCallback, type ReactNode } from 'react';
 import { playSound, resumeAudioContext } from './SpookyAudio';
 import type { SoundEffectType } from './SpookyAudio';
 
@@ -56,10 +56,42 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({
   );
 };
 
+let warnedNoProvider = false;
+
+/**
+ * Access the spooky audio controls.
+ *
+ * Works with or without an {@link AudioProvider}. Inside a provider you get the
+ * shared, globally-mutable audio state. Outside one, this returns a safe
+ * fallback: `enabled` is `false` (audio stays opt-in), but calling `playSound`
+ * still works so standalone components never crash just because audio wasn't
+ * wired up. Wrap your app in `AudioProvider` to control audio globally.
+ */
 export const useSpookyAudio = (): AudioContextValue => {
   const context = useContext(AudioContext);
+
+  // Provider-less fallback: never throw, just behave as muted-by-default.
+  const fallback = useMemo<AudioContextValue>(
+    () => ({
+      playSound: (sound: SpookySound, volume: number = 0.5) => {
+        void resumeAudioContext().then(() => playSound(sound, volume));
+      },
+      enabled: false,
+      setEnabled: () => {},
+    }),
+    []
+  );
+
   if (!context) {
-    throw new Error('useSpookyAudio must be used within an AudioProvider');
+    if (!warnedNoProvider) {
+      warnedNoProvider = true;
+      console.warn(
+        '[grave-ui] useSpookyAudio is being used outside an AudioProvider. ' +
+          'Audio is disabled by default; wrap your app in <AudioProvider> to enable global control.'
+      );
+    }
+    return fallback;
   }
+
   return context;
 };

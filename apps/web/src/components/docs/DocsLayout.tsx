@@ -68,6 +68,22 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'CobwebCorner', path: '/docs/components/cobweb', badge: '3D' },
     ],
   },
+  {
+    title: 'THE BESTIARY',
+    items: [
+      { title: 'Overview', path: '/docs/components/bestiary' },
+      { title: 'Wisp (Ghost)', path: '/docs/components/bestiary/ghost', badge: '3D' },
+      { title: 'Jack (Pumpkin)', path: '/docs/components/bestiary/pumpkin', badge: '3D' },
+      { title: 'Lord Alucard', path: '/docs/components/bestiary/vampire', badge: '3D' },
+      { title: 'Vesper (Bat)', path: '/docs/components/bestiary/bat', badge: '3D' },
+      { title: 'Patchwork Man', path: '/docs/components/bestiary/frankenstein', badge: '3D' },
+      { title: 'Snagtooth (Goblin)', path: '/docs/components/bestiary/goblin', badge: '3D' },
+      { title: 'Ankhef (Mummy)', path: '/docs/components/bestiary/mummy', badge: '3D' },
+      { title: 'Mr. Frost', path: '/docs/components/bestiary/snowman', badge: '3D' },
+      { title: 'Himal (Yeti)', path: '/docs/components/bestiary/yeti', badge: '3D' },
+      { title: 'The Candyman', path: '/docs/components/bestiary/candyman', badge: '3D' },
+    ],
+  },
 ];
 
 export function DocsLayout() {
@@ -191,7 +207,10 @@ export function DocsLayout() {
               </h3>
               <div className="space-y-0.5">
                 {group.items.map((item, iIdx) => {
-                  const isActive = location.pathname === item.path;
+                  const isActive =
+                    location.pathname === item.path ||
+                    (item.path === '/docs/components/bestiary/ghost' &&
+                      location.pathname === '/docs/components/bestiary/wisp');
                   return (
                     <NavLink
                       key={iIdx}

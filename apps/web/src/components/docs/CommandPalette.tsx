@@ -43,6 +43,19 @@ const SEARCH_ITEMS: SearchItem[] = [
 
   // The Arachnid
   { id: 'cobweb', title: 'CobwebCorner', category: 'The Arachnid', path: '/docs/components/cobweb' },
+
+  // The Bestiary
+  { id: 'bestiary', title: 'Bestiary (Overview)', category: 'The Bestiary', path: '/docs/components/bestiary' },
+  { id: 'wisp', title: 'Wisp (Ghost)', category: 'The Bestiary', path: '/docs/components/bestiary/ghost' },
+  { id: 'pumpkin', title: 'Jack (Pumpkin)', category: 'The Bestiary', path: '/docs/components/bestiary/pumpkin' },
+  { id: 'vampire', title: 'Lord Alucard (Vampire)', category: 'The Bestiary', path: '/docs/components/bestiary/vampire' },
+  { id: 'bat', title: 'Vesper (Bat)', category: 'The Bestiary', path: '/docs/components/bestiary/bat' },
+  { id: 'frankenstein', title: 'The Patchwork Man', category: 'The Bestiary', path: '/docs/components/bestiary/frankenstein' },
+  { id: 'goblin', title: 'Snagtooth (Goblin)', category: 'The Bestiary', path: '/docs/components/bestiary/goblin' },
+  { id: 'mummy', title: 'Ankhef (Mummy)', category: 'The Bestiary', path: '/docs/components/bestiary/mummy' },
+  { id: 'snowman', title: 'Mr. Frost (Snowman)', category: 'The Bestiary', path: '/docs/components/bestiary/snowman' },
+  { id: 'yeti', title: 'Himal (Yeti)', category: 'The Bestiary', path: '/docs/components/bestiary/yeti' },
+  { id: 'candyman', title: 'The Candyman', category: 'The Bestiary', path: '/docs/components/bestiary/candyman' },
 ];
 
 export interface CommandPaletteProps {
