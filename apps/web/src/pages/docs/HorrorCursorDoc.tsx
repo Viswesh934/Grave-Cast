@@ -37,7 +37,7 @@ export function HorrorCursorDoc() {
   return (
     <ComponentDocPage
       title="HorrorCursor"
-      category="The Arachnid"
+      category="The Effects"
       description="A smooth, physics-eased custom cursor that replaces the OS pointer with horror-themed artwork. Four built-in variants, a render-prop escape hatch for custom glyphs, optional click sounds, and automatic fallbacks for touch and reduced-motion users."
       packageName="horror-cursor"
       gothicPhilosophy={{
@@ -91,7 +91,7 @@ export function HorrorCursorDoc() {
         { name: 'className', type: 'string', default: "''", description: 'Extra class applied to the cursor layer' },
       ]}
       prevPage={{ title: 'CobwebCorner', path: '/docs/components/cobweb' }}
-      nextPage={{ title: 'Button', path: '/docs/components/button' }}
+      nextPage={{ title: 'HauntedKeyboard', path: '/docs/components/haunted-keyboard' }}
     />
   );
 }

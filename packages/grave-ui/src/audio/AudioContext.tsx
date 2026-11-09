@@ -8,6 +8,12 @@ interface AudioContextValue {
   playSound: (sound: SpookySound, volume?: number) => void;
   enabled: boolean;
   setEnabled: (enabled: boolean) => void;
+  /**
+   * Live read of the global audio switch. Unlike `enabled`, which is a
+   * snapshot from the last render, this always reflects the current state.
+   * Without a provider it returns `true`, matching how `playSound` behaves.
+   */
+  isEnabled: () => boolean;
 }
 
 const AudioContext = createContext<AudioContextValue | null>(null);
@@ -43,10 +49,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({
     enabledRef.current = enabled;
   }, []);
 
+  const isEnabled = useCallback(() => enabledRef.current, []);
+
   const value: AudioContextValue = {
     playSound: play,
     enabled: enabledRef.current,
     setEnabled,
+    isEnabled,
   };
 
   return (
@@ -78,6 +87,7 @@ export const useSpookyAudio = (): AudioContextValue => {
       },
       enabled: false,
       setEnabled: () => {},
+      isEnabled: () => true,
     }),
     []
   );

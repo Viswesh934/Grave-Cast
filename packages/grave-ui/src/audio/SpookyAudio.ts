@@ -20,9 +20,12 @@ let audioContext: AudioContext | null = null;
 let globalVolume = 0.5;
 
 /**
- * Initialize audio context (lazy initialization)
+ * Get the shared audio context, creating it on first use.
+ * Shared with the music system so every sound uses one context.
+ *
+ * @returns The context, or `null` where Web Audio is unavailable (SSR, old browsers).
  */
-const getAudioContext = (): AudioContext | null => {
+export const getAudioContext = (): AudioContext | null => {
   if (typeof window === 'undefined' || !window.AudioContext) {
     return null;
   }
