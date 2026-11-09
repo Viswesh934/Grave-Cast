@@ -50,9 +50,23 @@ export const creatureMaterials = {
   },
   /** Gourd / plant tones. */
   gourd: {
-    pumpkin: '#e8791f',
-    pumpkinShade: '#b4560f',
+    pumpkin: '#f2831c',
+    pumpkinLit: '#ff9a2e',
+    pumpkinShade: '#c25e10',
     stem: '#4d6636',
+    stemChar: '#3c2a14',
+  },
+  /** Dripping goo / ooze / slime tones. */
+  ooze: {
+    slime: '#8bd43a',
+    slimeDark: '#5a9622',
+    bile: '#c7e04a',
+  },
+  /** Molten inner-fire glows (carved jack-o'-lantern light, embers, forges). */
+  molten: {
+    core: '#ffd24a',
+    mid: '#ff8a1e',
+    deep: '#e5431a',
   },
   /** Leather / membrane tones for winged things (bats). */
   membrane: {
@@ -86,7 +100,8 @@ export const creatureAccents = {
   gold: palette.witch.gold,
   frost: '#7fd4ff',
   ember: creatureMaterials.gourd.pumpkin,
-  void: palette.mist[200],
+  /** Piercing ethereal cyan / ignis fatuus soul-fire for Wisp and spectral entities. */
+  void: '#00f0ff',
 } as const;
 
 export type CreatureAccent = keyof typeof creatureAccents;

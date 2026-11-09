@@ -20,10 +20,6 @@ export type {
   CharacterSize,
   CharacterEye,
   CharacterLayer,
-  CharacterPart,
-  Character3DSpec,
-  PartShape,
-  PartMotion,
 } from './types';
 
 export {

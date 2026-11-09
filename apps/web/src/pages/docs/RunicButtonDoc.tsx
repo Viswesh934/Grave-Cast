@@ -44,7 +44,7 @@ export function RunicButtonDoc() {
       preview={
         <div className="w-full max-w-2xl flex flex-col items-center gap-5">
           {is3DMode ? (
-            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1b3d2b] bg-[#08120e] relative shadow-2xl">
+            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1e293b]/70 bg-gradient-to-b from-[#080d14] via-[#05080d] to-[#020406] shadow-[inset_0_0_80px_rgba(0,0,0,0.85)] relative">
               <Canvas camera={{ position: [0, 0, 5.2], fov: 40 }}>
                 <RunicButton3D
                   element={element}
@@ -54,7 +54,7 @@ export function RunicButtonDoc() {
                 </RunicButton3D>
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.2} minPolarAngle={Math.PI / 2 - 0.2} />
               </Canvas>
-              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#08120e]/80 py-1 border-t border-[#1b3d2b]">
+              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#05080d]/85 backdrop-blur-xs py-1.5 border-t border-[#1e293b]/60">
                 Hover to levitate stone · Click tablet to depress into cradle
               </div>
             </div>

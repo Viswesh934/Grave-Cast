@@ -1,20 +1,80 @@
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ComponentDocPage } from '../../components/docs/ComponentDocPage';
-import { BestiaryCharacter, bestiary, type CharacterSize } from 'groove-ui';
+import {
+  BestiaryCharacter,
+  bestiary,
+  creatureAccents,
+  type CharacterSpec,
+} from 'groove-ui';
+
+/**
+ * One creature's dedicated section: a large figure beside a plate with its
+ * number, name, and tagline. Layout alternates side to side so the page reads
+ * like a gallery of individual portraits.
+ */
+function CharacterSection({
+  spec,
+  index,
+}: {
+  spec: CharacterSpec;
+  index: number;
+}) {
+  const accent = creatureAccents[spec.accent];
+  const flip = index % 2 === 1;
+
+  return (
+    <section
+      className={`group relative flex flex-col items-center gap-6 rounded-3xl border border-[#1b3d2b] bg-[#0a1510] p-6 shadow-xl transition-colors duration-300 hover:border-[#2c6145] sm:p-8 ${
+        flip ? 'sm:flex-row-reverse' : 'sm:flex-row'
+      }`}
+    >
+      {/* Figure stage. */}
+      <div className="flex shrink-0 items-center justify-center">
+        <BestiaryCharacter spec={spec} size="lg" />
+      </div>
+
+      {/* Info plate. */}
+      <div className={`flex-1 text-center ${flip ? 'sm:text-right' : 'sm:text-left'}`}>
+        <span
+          className="font-mono text-xs font-bold tracking-widest"
+          style={{ color: accent }}
+        >
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <h3 className="mt-1 font-serif text-2xl font-bold tracking-wide text-white">
+          {spec.name}
+        </h3>
+        <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-stone-400">
+          {spec.tagline}
+        </p>
+        <p className="mt-3 text-xs text-stone-500 font-mono">
+          Hover to tilt it · double-click to grow
+        </p>
+        <div className={`mt-4 flex ${flip ? 'justify-center sm:justify-end' : 'justify-center sm:justify-start'}`}>
+          <Link
+            to={`/docs/components/bestiary/${spec.id}`}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#13271d] hover:bg-[#1a3829] border border-[#235038] hover:border-emerald-500 text-emerald-200 transition-all shadow-sm"
+          >
+            <span>Launch 3D Showcase</span>
+            <span className="text-[10px] text-emerald-400">→</span>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export function BestiaryDoc() {
-  const [size, setSize] = useState<CharacterSize>('lg');
-  const [is3DMode, setIs3DMode] = useState(true);
-
   const codeSnippet = `import { BestiaryCharacter, pumpkinSpec } from 'groove-ui';
 
-// 3D by default, with an automatic 2D fallback when WebGL is unavailable
+// Hand-drawn art that tilts toward the pointer, lifts on hover, and grows on
+// double-click — dimensional without any WebGL.
 <BestiaryCharacter spec={pumpkinSpec} size="lg" showLabel />`;
 
   const buildYourOwn = `import { BestiaryCharacter, defineCharacter, creatureMaterials as m } from 'groove-ui';
 
-// A creature is just data: a flat 2D drawing plus a 3D parts list.
-// One renderer builds both. No new component, no new animation.
+// A creature is just data: stacked SVG shapes + where the eyes go.
+// The renderer gives the flat art its dimensional feel automatically.
 const slime = defineCharacter({
   id: 'slime',
   name: 'Gloop',
@@ -23,16 +83,9 @@ const slime = defineCharacter({
   hoverSound: 'cauldronBubble',
   layers: [
     { d: 'M20 84 C16 56 30 44 50 44 C70 44 84 56 80 84 Z', fill: m.flesh.goblin },
+    { d: 'M30 74 Q50 86 70 74 Q50 80 30 74 Z', fill: m.flesh.goblinShade },
   ],
   eyes: [{ cx: 42, cy: 64 }, { cx: 58, cy: 64 }],
-  build3d: {
-    idle: 'bob',
-    parts: [
-      { shape: 'sphere', size: [1, 0.8, 1], color: m.flesh.goblin },
-      { shape: 'sphere', position: [0, -0.4, 0], size: 0.7, color: m.flesh.goblinShade },
-    ],
-    eyes: [[-0.2, 0.1, 0.45], [0.2, 0.1, 0.45]],
-  },
 });
 
 <BestiaryCharacter spec={slime} size="lg" showLabel />`;
@@ -41,63 +94,34 @@ const slime = defineCharacter({
     <ComponentDocPage
       title="Bestiary"
       category="The Bestiary"
-      description="A cast of horror characters that come alive in 3D — spin them, watch them bob and sway, catch the glow in their eyes. Where 3D isn't available, each one quietly falls back to a flat drawing. Every creature is built from one short description, so adding your own takes minutes."
+      description="A cast of hand-drawn horror characters. Each one tilts toward your pointer, lifts and casts a shadow on hover, and swells when you double-click it — flat art that feels carved and dimensional. Every creature is built from one short description, so adding your own takes minutes."
       packageName="bestiary"
-      has3DMode={true}
-      is3DMode={is3DMode}
-      onToggle3D={setIs3DMode}
       gothicPhilosophy={{
         influence: 'Monster Lineups & Folk Horror Casts',
-        movement: 'Stacked Shapes, Glowing Eyes, Idle Drift',
-        lore: 'One figure, many faces — a shelf of parts assembled into 3D, with a flat drawing waiting in the wings.',
+        movement: 'Flat Art, Carved Volume, Pointer Tilt',
+        lore: 'One figure, many faces — layered shapes lit to feel like they lean out of the page at you.',
       }}
       preview={
-        <div className="w-full max-w-3xl space-y-5">
-          <div className="rounded-2xl border border-[#183425] bg-[#08120e] p-8 shadow-xl">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 place-items-center">
-              {bestiary.map((spec) => (
-                <BestiaryCharacter
-                  key={spec.id}
-                  spec={spec}
-                  size={size}
-                  force2D={!is3DMode}
-                  orbit={false}
-                  showLabel
-                />
-              ))}
-            </div>
+        <div className="w-full max-w-4xl space-y-10">
+          {/* Main "Characters" section header. */}
+          <div className="text-center">
+            <h2 className="font-serif text-3xl font-extrabold tracking-tight text-white">Characters</h2>
+            <p className="mt-1 font-mono text-xs uppercase tracking-[0.2em] text-stone-400">
+              {bestiary.length} creatures · hover to tilt · double-click to grow
+            </p>
           </div>
 
-          {/* Size control */}
-          <div className="flex items-center justify-center gap-2">
-            {(['sm', 'md', 'lg'] as CharacterSize[]).map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setSize(s)}
-                className={`px-4 py-1.5 text-xs rounded-xl font-mono uppercase tracking-wider transition-all cursor-pointer ${
-                  size === s
-                    ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
-                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:text-white'
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-
-          <p className="text-center text-xs text-stone-400 font-mono">
-            {is3DMode
-              ? `Living in 3D · drag a single creature to orbit it · ${bestiary.length} characters`
-              : `2D fallback · hover a creature to wake it up · ${bestiary.length} characters`}
-          </p>
+          {/* One dedicated section per creature. */}
+          {bestiary.map((spec, i) => (
+            <CharacterSection key={spec.id} spec={spec} index={i} />
+          ))}
         </div>
       }
       codeSnippet={codeSnippet}
       variants={[
         {
           title: 'Build your own',
-          description: 'Describe a creature once — a flat silhouette plus a short list of 3D parts — and the shared renderer handles 3D, the 2D fallback, idle motion, glowing eyes, and accessibility.',
+          description: 'Describe a creature once — stacked SVG shapes plus where the eyes go — and the renderer handles the dimensional tilt, shading, shadow, glowing eyes, and accessibility.',
           element: (
             <pre className="w-full overflow-x-auto rounded-xl bg-[#0c1813] border border-[#183425] p-5 text-xs font-mono text-stone-300 leading-relaxed">
               {buildYourOwn}
@@ -108,8 +132,8 @@ const slime = defineCharacter({
       propsList={[
         { name: 'spec', type: 'CharacterSpec', description: 'The creature to show. Use a built-in (pumpkinSpec, batSpec, ...) or make one with defineCharacter.' },
         { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Figure size preset.' },
-        { name: 'force2D', type: 'boolean', default: 'false', description: 'Always use the flat 2D fallback, even when 3D is available.' },
-        { name: 'orbit', type: 'boolean', default: 'true', description: 'Let viewers drag to orbit the 3D creature.' },
+        { name: 'tilt', type: 'boolean', default: 'true', description: 'Tilt toward the pointer for a dimensional feel.' },
+        { name: 'growable', type: 'boolean', default: 'true', description: 'Double-click to swell the figure.' },
         { name: 'showLabel', type: 'boolean', default: 'false', description: 'Show the name and tagline beneath the figure.' },
       ]}
       prevPage={{ title: 'CobwebCorner', path: '/docs/components/cobweb' }}

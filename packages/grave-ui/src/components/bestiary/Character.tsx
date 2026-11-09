@@ -1,15 +1,22 @@
 /**
  * Character - the one renderer behind every creature in the bestiary.
  *
- * Give it a `CharacterSpec` (silhouette layers + eyes + accent) and it draws a
- * consistent, size-preset, hover-animated, accessible figure. Every creature in
- * the cast is this component with different data, so new monsters are cheap to
- * add and automatically share the same polish.
+ * Draws a creature from its `CharacterSpec` as layered SVG art, then gives that
+ * flat art a sense of volume: it tilts toward the pointer in perspective, casts
+ * a soft contact shadow, and lifts on hover. Double-click swells it. The result
+ * reads as a dimensional figure without any WebGL.
  *
  * @module components/bestiary/Character
  */
 
-import { forwardRef, useId, type HTMLAttributes } from 'react';
+import {
+  forwardRef,
+  useId,
+  useRef,
+  useState,
+  type HTMLAttributes,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 import { useHorrorHover } from '../../hooks';
 import {
   characterSizes,
@@ -27,10 +34,19 @@ export interface CharacterProps extends HTMLAttributes<HTMLDivElement> {
   sound?: boolean;
   /** Show the name/tagline caption beneath the figure (default false). */
   showLabel?: boolean;
+  /** Tilt toward the pointer for a dimensional feel (default true). */
+  tilt?: boolean;
+  /** Double-click to swell the figure (default true). */
+  growable?: boolean;
 }
 
+/** The two scale steps a double-click toggles between. */
+const GROW_STEPS = [1, 1.5] as const;
+/** Max tilt in degrees as the pointer sweeps across the figure. */
+const MAX_TILT = 16;
+
 /**
- * Draws a single creature from its spec.
+ * Draws a single creature from its spec with a faux-3D, dimensional feel.
  *
  * @example
  * ```tsx
@@ -38,26 +54,20 @@ export interface CharacterProps extends HTMLAttributes<HTMLDivElement> {
  *
  * <Character spec={pumpkinSpec} size="lg" showLabel />
  * ```
- *
- * @example Build your own monster from a spec
- * ```tsx
- * import { Character, defineCharacter, creatureMaterials } from 'groove-ui';
- *
- * const mimic = defineCharacter({
- *   id: 'mimic',
- *   name: 'Chester',
- *   tagline: 'Looks just like an ordinary chest',
- *   accent: 'gold',
- *   layers: [{ d: 'M15 40 H85 V85 H15 Z', fill: creatureMaterials.cloth.coat }],
- *   eyes: [{ cx: 40, cy: 60 }, { cx: 60, cy: 60 }],
- * });
- *
- * <Character spec={mimic} />
- * ```
  */
 export const Character = forwardRef<HTMLDivElement, CharacterProps>(
   (
-    { spec, size = 'md', sound = true, showLabel = false, className = '', style, ...props },
+    {
+      spec,
+      size = 'md',
+      sound = true,
+      showLabel = false,
+      tilt = true,
+      growable = true,
+      className = '',
+      style,
+      ...props
+    },
     ref
   ) => {
     const { isHovered, hoverProps } = useHorrorHover({
@@ -70,76 +80,115 @@ export const Character = forwardRef<HTMLDivElement, CharacterProps>(
     const glowId = useId();
     const eyeR = 4;
 
+    // Pointer-driven tilt (rotateX/rotateY) for perspective volume.
+    const [rot, setRot] = useState({ x: 0, y: 0 });
+    const [grow, setGrow] = useState(0);
+    const frameRef = useRef<HTMLDivElement>(null);
+
+    const handlePointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+      if (!tilt || !frameRef.current) return;
+      const r = frameRef.current.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5; // -0.5..0.5
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      setRot({ x: -py * MAX_TILT * 2, y: px * MAX_TILT * 2 });
+    };
+
+    const handlePointerLeave = () => {
+      setRot({ x: 0, y: 0 });
+      hoverProps.onMouseLeave();
+    };
+
+    const lift = isHovered ? characterMotion.bob : 0;
+    const growScale = GROW_STEPS[grow];
+
     return (
       <div
         ref={ref}
         className={`inline-flex flex-col items-center gap-2 select-none ${className}`}
-        style={{ width: dimension, ...style }}
-        {...hoverProps}
+        style={{ width: dimension, perspective: `${dimension * 4}px`, ...style }}
         {...props}
       >
-        <svg
-          viewBox="0 0 100 100"
-          width={dimension}
-          height={dimension}
-          className="overflow-visible"
-          role="img"
-          aria-label={`${spec.name}, ${spec.tagline}`}
+        <div
+          ref={frameRef}
+          onMouseEnter={hoverProps.onMouseEnter}
+          onMouseLeave={handlePointerLeave}
+          onPointerMove={handlePointerMove}
+          onDoubleClick={() => growable && setGrow((g) => (g + 1) % GROW_STEPS.length)}
           style={{
-            transform: isHovered ? `translateY(-${characterMotion.bob}px)` : 'translateY(0)',
+            width: dimension,
+            height: dimension,
+            transformStyle: 'preserve-3d',
+            transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg) translateY(${-lift}px) scale(${growScale})`,
             transition: `transform ${characterMotion.transition} cubic-bezier(0.16, 1, 0.3, 1)`,
+            cursor: 'pointer',
           }}
         >
-          <defs>
-            <radialGradient id={`aura-${glowId}`}>
-              <stop offset="0%" stopColor={accentColor} stopOpacity="0.55" />
-              <stop offset="100%" stopColor={accentColor} stopOpacity="0" />
-            </radialGradient>
-            <filter id={`eyeglow-${glowId}`} x="-150%" y="-150%" width="400%" height="400%">
-              <feGaussianBlur stdDeviation="1.6" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* Accent aura, brighter on hover */}
-          <circle
-            cx="50"
-            cy="52"
-            r="46"
-            fill={`url(#aura-${glowId})`}
+          <svg
+            viewBox="0 0 100 100"
+            width={dimension}
+            height={dimension}
+            className="overflow-visible"
+            role="img"
+            aria-label={`${spec.name}, ${spec.tagline}`}
             style={{
-              opacity: isHovered ? 1 : 0.5,
-              transition: `opacity ${characterMotion.transition} ease`,
+              filter: `drop-shadow(0 ${dimension * 0.06}px ${dimension * 0.06}px rgba(0,0,0,0.55))`,
             }}
-          />
+          >
+            <defs>
+              {/* Soft volume shading: a dark vignette multiplied over the art
+                  to fake a rounded, lit-from-upper-left form. */}
+              <radialGradient id={`vol-${glowId}`} cx="38%" cy="32%" r="75%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.35" />
+                <stop offset="55%" stopColor="#000000" stopOpacity="0" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.5" />
+              </radialGradient>
+              <filter id={`eyeglow-${glowId}`} x="-150%" y="-150%" width="400%" height="400%">
+                <feGaussianBlur stdDeviation="1.2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
 
-          {/* Silhouette + feature layers, back to front */}
-          {spec.layers.map((layer, i) => (
-            <path
-              key={i}
-              d={layer.d}
-              fill={layer.fill ?? 'none'}
-              stroke={layer.stroke}
-              strokeWidth={layer.strokeWidth}
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              opacity={layer.opacity}
-            />
-          ))}
-
-          {/* Glowing accent eyes */}
-          <g filter={`url(#eyeglow-${glowId})`}>
-            {spec.eyes.map((eye, i) => (
-              <circle key={i} cx={eye.cx} cy={eye.cy} r={eye.r ?? eyeR} fill={accentColor} />
+            {/* Silhouette + feature layers, back to front */}
+            {spec.layers.map((layer, i) => (
+              <path
+                key={i}
+                d={layer.d}
+                fill={layer.fill ?? 'none'}
+                stroke={layer.stroke}
+                strokeWidth={layer.strokeWidth}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                opacity={layer.opacity}
+              />
             ))}
-          </g>
 
-          {/* Optional foreground flourish */}
-          {spec.flourish}
-        </svg>
+            {/* Volume shading overlay clipped to the figure's rough bounds. */}
+            <circle cx="50" cy="52" r="46" fill={`url(#vol-${glowId})`} style={{ mixBlendMode: 'multiply' }} />
+
+            {/* Glowing accent eyes with sunken socket depth and high contrast */}
+            <g filter={`url(#eyeglow-${glowId})`}>
+              {spec.eyes.map((eye, i) => {
+                const r = eye.r ?? eyeR;
+                return (
+                  <g key={i}>
+                    {/* Deep sunken abyssal socket - ensures 16:1 contrast against pale sheets & snow */}
+                    <circle cx={eye.cx} cy={eye.cy} r={r * 1.3} fill="#050811" />
+                    {/* Glowing soul-fire iris */}
+                    <circle cx={eye.cx} cy={eye.cy} r={r} fill={accentColor} />
+                    {/* Piercing white specular glint */}
+                    <circle cx={eye.cx - r * 0.28} cy={eye.cy - r * 0.28} r={r * 0.32} fill="#ffffff" opacity={0.88} />
+                  </g>
+                );
+              })}
+            </g>
+
+            {/* Optional foreground flourish */}
+            {spec.flourish}
+          </svg>
+        </div>
 
         {showLabel && (
           <div className="text-center">

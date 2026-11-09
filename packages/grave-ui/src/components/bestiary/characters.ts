@@ -1,12 +1,13 @@
 /**
  * The bestiary cast.
  *
- * Every creature is just data fed to the renderers. The 2D `layers` draw the
- * flat fallback; the optional `build3d` parts list drives the 3D scene (the
- * fun part). Colors come from `creatureMaterials`; eye glow from the accent.
- * To add a monster, copy a spec, reshape the silhouette + parts, and export it.
+ * Every creature is just data fed to the renderer. Layers are stacked SVG
+ * shapes (back to front); the `Character` component gives that flat art a
+ * dimensional feel with pointer tilt, shading, and a shadow. Colors come from
+ * `creatureMaterials`; eye glow from the accent. To add a monster, copy a spec
+ * and reshape the silhouette.
  *
- * 2D paths use the `0 0 100 100` viewBox. 3D parts live in a ~2-unit-tall box.
+ * Paths use the `0 0 100 100` viewBox.
  *
  * @module components/bestiary/characters
  */
@@ -29,17 +30,6 @@ export const batSpec = defineCharacter({
     { d: 'M50 34 C60 34 66 42 66 52 C66 64 58 70 50 70 C42 70 34 64 34 52 C34 42 40 34 50 34 Z', fill: m.membrane.bat },
   ],
   eyes: [{ cx: 44, cy: 48, r: 3.4 }, { cx: 56, cy: 48, r: 3.4 }],
-  build3d: {
-    idle: 'bob',
-    parts: [
-      { shape: 'sphere', position: [0, 0, 0], size: 0.9, color: m.membrane.bat },
-      { shape: 'cone', position: [-0.28, 0.5, 0], size: [0.3, 0.4, 0.3], color: m.membrane.bat },
-      { shape: 'cone', position: [0.28, 0.5, 0], size: [0.3, 0.4, 0.3], color: m.membrane.bat },
-      { shape: 'box', position: [-0.85, 0, -0.1], size: [0.9, 0.55, 0.05], rotation: [0, 0, 0.3], color: m.membrane.wing, motion: 'flap' },
-      { shape: 'box', position: [0.85, 0, -0.1], size: [0.9, 0.55, 0.05], rotation: [0, 0, -0.3], color: m.membrane.wing, motion: 'flap' },
-    ],
-    eyes: [[-0.2, 0.05, 0.42], [0.2, 0.05, 0.42]],
-  },
 });
 
 /** Vampire - slick hairline, high collar, bloodlust. */
@@ -56,16 +46,6 @@ export const vampireSpec = defineCharacter({
     { d: 'M34 34 C34 24 42 18 50 18 C58 18 66 24 66 34 C62 30 58 30 50 36 C42 30 38 30 34 34 Z', fill: m.cloth.vampire },
   ],
   eyes: [{ cx: 44, cy: 40, r: 3 }, { cx: 56, cy: 40, r: 3 }],
-  build3d: {
-    idle: 'sway',
-    parts: [
-      { shape: 'cone', position: [0, -0.55, 0], size: [1.2, 1.1, 1.2], color: m.cloth.vampire },
-      { shape: 'cone', position: [0, -0.5, 0.2], size: [0.7, 0.8, 0.5], color: m.cloth.vampireLining, roughness: 0.5 },
-      { shape: 'sphere', position: [0, 0.45, 0], size: 0.72, color: m.flesh.corpse },
-      { shape: 'box', position: [0, 0.78, -0.05], size: [0.78, 0.3, 0.72], color: m.cloth.vampire },
-    ],
-    eyes: [[-0.17, 0.48, 0.33], [0.17, 0.48, 0.33]],
-  },
 });
 
 /** Snowman - stacked spheres, carrot nose, top hat. */
@@ -83,18 +63,6 @@ export const snowmanSpec = defineCharacter({
     { d: 'M50 46 L64 48 L50 50 Z', fill: m.gourd.pumpkin },
   ],
   eyes: [{ cx: 44, cy: 44, r: 2.6 }, { cx: 56, cy: 44, r: 2.6 }],
-  build3d: {
-    idle: 'bob',
-    parts: [
-      { shape: 'sphere', position: [0, -0.7, 0], size: 1.0, color: m.fur.snow, roughness: 0.95 },
-      { shape: 'sphere', position: [0, 0.1, 0], size: 0.75, color: m.fur.snow, roughness: 0.95 },
-      { shape: 'sphere', position: [0, 0.7, 0], size: 0.55, color: m.fur.snow, roughness: 0.95 },
-      { shape: 'cylinder', position: [0, 1.05, 0], size: [0.42, 0.08, 0.42], color: m.membrane.batShade },
-      { shape: 'cylinder', position: [0, 1.25, 0], size: [0.3, 0.42, 0.3], color: m.membrane.batShade },
-      { shape: 'cone', position: [0, 0.72, 0.45], size: [0.1, 0.35, 0.1], rotation: [1.4, 0, 0], color: m.gourd.pumpkin },
-    ],
-    eyes: [[-0.17, 0.82, 0.42], [0.17, 0.82, 0.42]],
-  },
 });
 
 /** Yeti - shaggy fur mound, dark face patch. */
@@ -110,17 +78,6 @@ export const yetiSpec = defineCharacter({
     { d: 'M38 44 C38 38 44 34 50 34 C56 34 62 38 62 46 C62 56 56 60 50 60 C44 60 38 56 38 44 Z', fill: m.fur.frost },
   ],
   eyes: [{ cx: 44, cy: 46, r: 3 }, { cx: 56, cy: 46, r: 3 }],
-  build3d: {
-    idle: 'sway',
-    parts: [
-      { shape: 'capsule', position: [0, -0.15, 0], size: [1.15, 1.15, 1.15], color: m.fur.snow, roughness: 0.98 },
-      { shape: 'sphere', position: [0, 0.55, 0], size: 0.85, color: m.fur.snow, roughness: 0.98 },
-      { shape: 'sphere', position: [0, 0.5, 0.35], size: [0.5, 0.45, 0.3], color: m.fur.frost, roughness: 0.9 },
-      { shape: 'capsule', position: [-0.75, -0.1, 0], size: [0.3, 0.6, 0.3], rotation: [0, 0, 0.3], color: m.fur.snow, roughness: 0.98, motion: 'sway' },
-      { shape: 'capsule', position: [0.75, -0.1, 0], size: [0.3, 0.6, 0.3], rotation: [0, 0, -0.3], color: m.fur.snow, roughness: 0.98, motion: 'sway' },
-    ],
-    eyes: [[-0.17, 0.55, 0.5], [0.17, 0.55, 0.5]],
-  },
 });
 
 /** Pumpkin - carved jack-o'-lantern with ember grin. */
@@ -131,23 +88,18 @@ export const pumpkinSpec = defineCharacter({
   accent: 'ember',
   hoverSound: 'boneClick',
   layers: [
+    // Shell + ribs
     { d: 'M50 84 C30 84 20 70 20 54 C20 40 32 32 50 32 C68 32 80 40 80 54 C80 70 70 84 50 84 Z', fill: m.gourd.pumpkin },
     { d: 'M34 36 C30 48 30 66 36 80 C32 70 32 48 34 36 Z', fill: m.gourd.pumpkinShade, opacity: 0.7 },
     { d: 'M66 36 C70 48 70 66 64 80 C68 70 68 48 66 36 Z', fill: m.gourd.pumpkinShade, opacity: 0.7 },
+    // Stem
     { d: 'M46 30 C46 22 50 18 54 18 C50 22 54 28 54 32 Z', fill: m.gourd.stem },
+    // Carved grin: a wide curved mouth with two fang notches.
+    { d: 'M30 60 Q50 80 70 60 Q58 66 50 66 Q42 66 30 60 Z', fill: m.gourd.stemChar },
+    { d: 'M42 62 L45 68 L48 62 Z', fill: m.gourd.pumpkin },
+    { d: 'M52 62 L55 68 L58 62 Z', fill: m.gourd.pumpkin },
   ],
-  eyes: [{ cx: 40, cy: 52, r: 4.4 }, { cx: 60, cy: 52, r: 4.4 }],
-  build3d: {
-    idle: 'bob',
-    parts: [
-      { shape: 'sphere', position: [0, 0, 0], size: [1.15, 1.0, 1.1], color: m.gourd.pumpkin, roughness: 0.6 },
-      { shape: 'sphere', position: [-0.55, 0, 0], size: [0.4, 0.95, 1.0], color: m.gourd.pumpkinShade, roughness: 0.6 },
-      { shape: 'sphere', position: [0.55, 0, 0], size: [0.4, 0.95, 1.0], color: m.gourd.pumpkinShade, roughness: 0.6 },
-      { shape: 'cylinder', position: [0, 0.6, 0], size: [0.1, 0.35, 0.1], color: m.gourd.stem, motion: 'sway' },
-    ],
-    eyes: [[-0.3, 0.1, 0.52], [0.3, 0.1, 0.52]],
-    eyeSize: 0.13,
-  },
+  eyes: [{ cx: 40, cy: 50, r: 4.4 }, { cx: 60, cy: 50, r: 4.4 }],
 });
 
 /** Frankenstein's monster - flat skull, neck bolts, stitches. */
@@ -166,17 +118,6 @@ export const frankensteinSpec = defineCharacter({
     { d: 'M40 50 H58 M43 47 V53 M48 47 V53 M53 47 V53', stroke: m.hard.stitch, strokeWidth: 1.4, fill: 'none' },
   ],
   eyes: [{ cx: 44, cy: 46, r: 3 }, { cx: 56, cy: 46, r: 3 }],
-  build3d: {
-    idle: 'none',
-    parts: [
-      { shape: 'box', position: [0, -0.6, 0], size: [1.0, 0.7, 0.7], color: m.flesh.frankensteinShade },
-      { shape: 'box', position: [0, 0.25, 0], size: [0.95, 1.0, 0.9], color: m.flesh.frankenstein },
-      { shape: 'box', position: [0, 0.7, 0], size: [1.0, 0.28, 0.95], color: m.cloth.vampire },
-      { shape: 'cylinder', position: [-0.6, 0.1, 0], size: [0.1, 0.3, 0.1], rotation: [0, 0, 1.57], color: m.hard.bolt },
-      { shape: 'cylinder', position: [0.6, 0.1, 0], size: [0.1, 0.3, 0.1], rotation: [0, 0, 1.57], color: m.hard.bolt },
-    ],
-    eyes: [[-0.2, 0.3, 0.47], [0.2, 0.3, 0.47]],
-  },
 });
 
 /** Goblin - big ears, hooked nose, toothy sneer. */
@@ -195,16 +136,6 @@ export const goblinSpec = defineCharacter({
     { d: 'M50 44 C54 48 56 54 52 58 C50 56 48 54 48 50 Z', fill: m.flesh.goblinShade },
   ],
   eyes: [{ cx: 44, cy: 42, r: 3 }, { cx: 56, cy: 42, r: 3 }],
-  build3d: {
-    idle: 'bob',
-    parts: [
-      { shape: 'sphere', position: [0, 0, 0], size: [0.85, 0.95, 0.85], color: m.flesh.goblin },
-      { shape: 'cone', position: [-0.7, 0.25, 0], size: [0.22, 0.6, 0.22], rotation: [0, 0, 1.0], color: m.flesh.goblin, motion: 'sway' },
-      { shape: 'cone', position: [0.7, 0.25, 0], size: [0.22, 0.6, 0.22], rotation: [0, 0, -1.0], color: m.flesh.goblin, motion: 'sway' },
-      { shape: 'cone', position: [0, -0.1, 0.42], size: [0.15, 0.35, 0.15], rotation: [1.2, 0, 0], color: m.flesh.goblinShade },
-    ],
-    eyes: [[-0.2, 0.15, 0.42], [0.2, 0.15, 0.42]],
-  },
 });
 
 /** Candyman - top hat, hook, swarm of sweetness. */
@@ -222,17 +153,6 @@ export const candymanSpec = defineCharacter({
     { d: 'M38 10 H62 V24 H38 Z', fill: m.cloth.vampire },
   ],
   eyes: [{ cx: 44, cy: 40, r: 3 }, { cx: 56, cy: 40, r: 3 }],
-  build3d: {
-    idle: 'sway',
-    parts: [
-      { shape: 'cone', position: [0, -0.6, 0], size: [1.1, 1.0, 1.1], color: m.cloth.coat },
-      { shape: 'sphere', position: [0, 0.35, 0], size: 0.7, color: m.flesh.candyman },
-      { shape: 'sphere', position: [0, 0.12, 0.25], size: [0.55, 0.4, 0.4], color: m.hard.bolt, roughness: 0.9 },
-      { shape: 'cylinder', position: [0, 0.72, 0], size: [0.55, 0.08, 0.55], color: m.cloth.vampire },
-      { shape: 'cylinder', position: [0, 0.95, 0], size: [0.4, 0.45, 0.4], color: m.cloth.vampire },
-    ],
-    eyes: [[-0.17, 0.4, 0.33], [0.17, 0.4, 0.33]],
-  },
 });
 
 /** Ghost - drifting sheet with a wavy hem. */
@@ -247,16 +167,6 @@ export const ghostSpec = defineCharacter({
     { d: 'M26 48 C26 30 38 20 50 20 C62 20 74 30 74 48 L74 60 C62 56 38 56 26 60 Z', fill: m.fur.frost, opacity: 0.5 },
   ],
   eyes: [{ cx: 42, cy: 44, r: 3.4 }, { cx: 58, cy: 44, r: 3.4 }],
-  build3d: {
-    idle: 'bob',
-    parts: [
-      { shape: 'capsule', position: [0, 0.1, 0], size: [0.95, 1.2, 0.95], color: m.fur.snow, roughness: 1 },
-      { shape: 'sphere', position: [-0.3, -0.7, 0], size: 0.32, color: m.fur.snow, roughness: 1, motion: 'bob' },
-      { shape: 'sphere', position: [0.1, -0.75, 0], size: 0.3, color: m.fur.snow, roughness: 1, motion: 'bob' },
-      { shape: 'sphere', position: [0.4, -0.7, 0], size: 0.28, color: m.fur.snow, roughness: 1, motion: 'bob' },
-    ],
-    eyes: [[-0.2, 0.3, 0.42], [0.2, 0.3, 0.42]],
-  },
 });
 
 /** Mummy - wrapped linen with trailing bandage. */
@@ -273,18 +183,6 @@ export const mummySpec = defineCharacter({
     { d: 'M42 38 C42 34 46 32 50 32 C54 32 58 34 58 40 C58 46 54 48 50 48 C46 48 42 46 42 38 Z', fill: m.membrane.batShade },
   ],
   eyes: [{ cx: 46, cy: 40, r: 2.6 }, { cx: 54, cy: 40, r: 2.6 }],
-  build3d: {
-    idle: 'sway',
-    parts: [
-      { shape: 'capsule', position: [0, -0.3, 0], size: [0.85, 1.0, 0.85], color: m.hard.bone, roughness: 0.95 },
-      { shape: 'sphere', position: [0, 0.6, 0], size: 0.62, color: m.hard.bone, roughness: 0.95 },
-      { shape: 'box', position: [0, 0.6, 0.32], size: [0.5, 0.22, 0.2], color: m.membrane.batShade },
-      { shape: 'capsule', position: [-0.5, -0.1, 0], size: [0.2, 0.5, 0.2], rotation: [0, 0, 0.4], color: m.hard.bone, roughness: 0.95, motion: 'sway' },
-      { shape: 'capsule', position: [0.5, -0.1, 0], size: [0.2, 0.5, 0.2], rotation: [0, 0, -0.4], color: m.hard.bone, roughness: 0.95, motion: 'sway' },
-    ],
-    eyes: [[-0.14, 0.6, 0.42], [0.14, 0.6, 0.42]],
-    eyeSize: 0.07,
-  },
 });
 
 /** The full cast, in showcase order. */
