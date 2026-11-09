@@ -213,19 +213,106 @@ export const SoundLibrary = ({
         </div>
       )}
 
-      {/* Results Telemetry Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2px' }}>
-        <p aria-live="polite" style={{ margin: 0, fontSize: 11, color: colors.muted, fontFamily: 'monospace' }}>
+      {/* Results Telemetry & Top Pagination Bar */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 8,
+          padding: '4px 2px',
+        }}
+      >
+        <p aria-live="polite" style={{ margin: 0, fontSize: 12, color: colors.muted, fontFamily: 'monospace' }}>
           {effects.length === 0
             ? '0 sounds found'
             : pageSize > 0
             ? `Showing ${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, effects.length)} of ${effects.length} sounds`
             : `${effects.length} sounds`}
         </p>
+
         {totalPages > 1 && (
-          <p style={{ margin: 0, fontSize: 11, color: colors.muted, fontFamily: 'monospace' }}>
-            Page {currentPage} of {totalPages}
-          </p>
+          <div
+            role="navigation"
+            aria-label="Sound pages (top)"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <button
+              type="button"
+              disabled={currentPage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              style={{
+                padding: '5px 12px',
+                borderRadius: 8,
+                fontSize: 11,
+                fontFamily: 'monospace',
+                cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
+                opacity: currentPage <= 1 ? 0.4 : 1,
+                border: `1px solid ${colors.border}`,
+                backgroundColor: colors.surface,
+                color: colors.title,
+                transition,
+              }}
+            >
+              ← Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+              const isCurrent = p === currentPage;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  aria-current={isCurrent ? 'page' : undefined}
+                  onClick={() => setPage(p)}
+                  style={{
+                    width: 28,
+                    height: 28,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 8,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                    cursor: 'pointer',
+                    border: isCurrent ? '1px solid #10b981' : `1px solid ${colors.border}`,
+                    backgroundColor: isCurrent ? 'rgba(6, 78, 59, 0.85)' : colors.surface,
+                    color: isCurrent ? '#a7f3d0' : colors.muted,
+                    fontWeight: isCurrent ? 700 : 400,
+                    boxShadow: isCurrent ? '0 0 10px rgba(16, 185, 129, 0.3)' : 'none',
+                    transition,
+                  }}
+                >
+                  {p}
+                </button>
+              );
+            })}
+
+            <button
+              type="button"
+              disabled={currentPage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              style={{
+                padding: '5px 12px',
+                borderRadius: 8,
+                fontSize: 11,
+                fontFamily: 'monospace',
+                cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
+                opacity: currentPage >= totalPages ? 0.4 : 1,
+                border: `1px solid ${colors.border}`,
+                backgroundColor: colors.surface,
+                color: colors.title,
+                transition,
+              }}
+            >
+              Next →
+            </button>
+          </div>
         )}
       </div>
 
@@ -381,89 +468,6 @@ export const SoundLibrary = ({
             );
           })}
         </ul>
-      )}
-
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div
-          role="navigation"
-          aria-label="Sound pages"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            paddingTop: 8,
-          }}
-        >
-          <button
-            type="button"
-            disabled={currentPage <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            style={{
-              padding: '6px 12px',
-              borderRadius: 8,
-              fontSize: 12,
-              fontFamily: 'monospace',
-              cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
-              opacity: currentPage <= 1 ? 0.4 : 1,
-              border: `1px solid ${colors.border}`,
-              backgroundColor: colors.surface,
-              color: colors.title,
-            }}
-          >
-            ← Prev
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
-            const isCurrent = p === currentPage;
-            return (
-              <button
-                key={p}
-                type="button"
-                aria-current={isCurrent ? 'page' : undefined}
-                onClick={() => setPage(p)}
-                style={{
-                  width: 32,
-                  height: 32,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 8,
-                  fontSize: 12,
-                  fontFamily: 'monospace',
-                  cursor: 'pointer',
-                  border: isCurrent ? '1px solid #10b981' : `1px solid ${colors.border}`,
-                  backgroundColor: isCurrent ? 'rgba(6, 78, 59, 0.8)' : colors.surface,
-                  color: isCurrent ? '#a7f3d0' : colors.muted,
-                  fontWeight: isCurrent ? 700 : 400,
-                  boxShadow: isCurrent ? '0 0 10px rgba(16, 185, 129, 0.25)' : 'none',
-                }}
-              >
-                {p}
-              </button>
-            );
-          })}
-
-          <button
-            type="button"
-            disabled={currentPage >= totalPages}
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            style={{
-              padding: '6px 12px',
-              borderRadius: 8,
-              fontSize: 12,
-              fontFamily: 'monospace',
-              cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
-              opacity: currentPage >= totalPages ? 0.4 : 1,
-              border: `1px solid ${colors.border}`,
-              backgroundColor: colors.surface,
-              color: colors.title,
-            }}
-          >
-            Next →
-          </button>
-        </div>
       )}
     </div>
   );
