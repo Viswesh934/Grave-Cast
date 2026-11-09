@@ -54,7 +54,7 @@ export function SoundLibraryDoc() {
         { name: 'className', type: 'string', default: "''", description: 'Extra class for the wrapper' },
       ]}
       prevPage={{ title: 'HauntedKeyboard', path: '/docs/components/haunted-keyboard' }}
-      nextPage={{ title: 'Button', path: '/docs/components/button' }}
+      nextPage={{ title: 'HorrorBackground', path: '/docs/components/horror-background' }}
     />
   );
 }

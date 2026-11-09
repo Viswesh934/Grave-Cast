@@ -12,3 +12,4 @@ export * from './useCursorTracker';
 export * from './useSpookyMusic';
 export * from './useHauntedKeystrokes';
 export * from './useSoundLibrary';
+export * from './useSnowfall';
