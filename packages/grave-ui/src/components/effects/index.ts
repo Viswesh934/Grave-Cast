@@ -10,3 +10,5 @@
 export * from './HorrorCursor';
 export * from './HauntedKeyboard';
 export * from './SoundLibrary';
+export * from './HorrorBackground';
+export * from './ClickToBegin';

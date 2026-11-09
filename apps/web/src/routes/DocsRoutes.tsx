@@ -19,6 +19,7 @@ import { CobwebDoc } from '../pages/docs/CobwebDoc';
 import { HorrorCursorDoc } from '../pages/docs/HorrorCursorDoc';
 import { HauntedKeyboardDoc } from '../pages/docs/HauntedKeyboardDoc';
 import { SoundLibraryDoc } from '../pages/docs/SoundLibraryDoc';
+import { HorrorBackgroundDoc } from '../pages/docs/HorrorBackgroundDoc';
 import { BestiaryDoc } from '../pages/docs/BestiaryDoc';
 import { BestiaryCharacterDoc } from '../pages/docs/BestiaryCharacterDoc';
 import { ButtonDoc } from '../pages/docs/ButtonDoc';
@@ -77,6 +78,7 @@ export function docsRoutes() {
       <Route path="docs/components/horror-cursor" element={<HorrorCursorDoc />} />
       <Route path="docs/components/haunted-keyboard" element={<HauntedKeyboardDoc />} />
       <Route path="docs/components/sound-library" element={<SoundLibraryDoc />} />
+      <Route path="docs/components/horror-background" element={<HorrorBackgroundDoc />} />
 
       {/* The Bestiary */}
       <Route path="docs/components/bestiary" element={<BestiaryDoc />} />
