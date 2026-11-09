@@ -4,9 +4,20 @@
  */
 
 import { forwardRef, type HTMLAttributes } from 'react';
+import { palette } from '../../../tokens';
 
 export type CobwebPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 export type CobwebSize = 'sm' | 'md' | 'lg';
+
+/** Default silk color: a translucent bone-ivory tint. */
+const DEFAULT_WEB_COLOR = 'rgba(232, 224, 213, 0.45)';
+
+/** Spider illustration colors drawn from the core palette. */
+const spiderColors = {
+  abdomen: palette.crypt.stone,
+  cephalothorax: palette.dark[700],
+  eyes: palette.sanguine.crimson,
+} as const;
 
 export interface CobwebCornerProps extends HTMLAttributes<HTMLDivElement> {
   /** Corner position */
@@ -27,7 +38,7 @@ export const CobwebCorner = forwardRef<HTMLDivElement, CobwebCornerProps>(
       position = 'top-right',
       size = 'md',
       hasSpider = true,
-      color = 'rgba(232, 224, 213, 0.45)',
+      color = DEFAULT_WEB_COLOR,
       interactive = true,
       className = '',
       style,
@@ -121,12 +132,12 @@ export const CobwebCorner = forwardRef<HTMLDivElement, CobwebCornerProps>(
                   strokeWidth="1.2"
                 />
                 {/* Spider Abdomen */}
-                <ellipse cx="0" cy="3" rx="4.5" ry="5.5" fill="#12131a" stroke={color} strokeWidth="1" />
+                <ellipse cx="0" cy="3" rx="4.5" ry="5.5" fill={spiderColors.abdomen} stroke={color} strokeWidth="1" />
                 {/* Spider Cephalothorax */}
-                <circle cx="0" cy="-2.5" r="2.8" fill="#1f212d" stroke={color} strokeWidth="1" />
+                <circle cx="0" cy="-2.5" r="2.8" fill={spiderColors.cephalothorax} stroke={color} strokeWidth="1" />
                 {/* Spider Eyes */}
-                <circle cx="-1" cy="-3.5" r="0.6" fill="#bd081c" />
-                <circle cx="1" cy="-3.5" r="0.6" fill="#bd081c" />
+                <circle cx="-1" cy="-3.5" r="0.6" fill={spiderColors.eyes} />
+                <circle cx="1" cy="-3.5" r="0.6" fill={spiderColors.eyes} />
               </g>
             </g>
           )}

@@ -4,11 +4,14 @@
  */
 
 import { forwardRef, type HTMLAttributes } from 'react';
+import { excavationTokens } from './tokens';
 
 /**
- * ShovelIcon - An authentic forged graveyard digging spade
+ * GraveSpadeIcon - An authentic forged graveyard digging spade.
+ * Material colors are sourced from the component token extension.
  */
 function GraveSpadeIcon({ size = 36, className = '' }: { size?: number; className?: string }) {
+  const { spade } = excavationTokens;
   return (
     <svg
       width={size}
@@ -18,19 +21,19 @@ function GraveSpadeIcon({ size = 36, className = '' }: { size?: number; classNam
       className={className}
     >
       {/* T-grip Handle */}
-      <rect x="22" y="4" width="20" height="4" rx="2" fill="#5c4033" stroke="#2b1d0c" strokeWidth="1" />
-      <rect x="30" y="8" width="4" height="28" rx="1" fill="#8c6239" stroke="#3d2b1b" strokeWidth="1" />
+      <rect x="22" y="4" width="20" height="4" rx="2" fill={spade.handleGrip} stroke={spade.handleGripEdge} strokeWidth="1" />
+      <rect x="30" y="8" width="4" height="28" rx="1" fill={spade.handleShaft} stroke={spade.handleShaftEdge} strokeWidth="1" />
       {/* Steel Collar */}
-      <rect x="28" y="34" width="8" height="6" rx="1" fill="#475569" stroke="#1e293b" strokeWidth="1" />
+      <rect x="28" y="34" width="8" height="6" rx="1" fill={spade.collar} stroke={spade.collarEdge} strokeWidth="1" />
       {/* Curved Spade Blade */}
       <path
         d="M23 40 L41 40 L43 50 C43 58, 32 62, 32 62 C32 62, 21 58, 21 50 Z"
-        fill="#334155"
-        stroke="#1e293b"
+        fill={spade.blade}
+        stroke={spade.bladeEdge}
         strokeWidth="1.5"
       />
       {/* Blade spine highlight */}
-      <line x1="32" y1="41" x2="32" y2="58" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="32" y1="41" x2="32" y2="58" stroke={spade.bladeHighlight} strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -123,13 +126,6 @@ export const ExcavationLoader = forwardRef<HTMLDivElement, ExcavationLoaderProps
       className,
     ].filter(Boolean).join(' ');
 
-    // Size to icon size mapping
-    const iconSizes = {
-      sm: 24,
-      md: 32,
-      lg: 48,
-    };
-
     return (
       <div
         ref={ref}
@@ -144,13 +140,19 @@ export const ExcavationLoader = forwardRef<HTMLDivElement, ExcavationLoaderProps
           {/* Digging spade tool */}
           <div className="grave-excavation__tool">
             <GraveSpadeIcon
-              size={iconSizes[size]}
+              size={excavationTokens.iconSizes[size]}
               className="grave-excavation__spade drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
             />
           </div>
 
           {/* Dirt mound base */}
-          <div className="absolute -bottom-1 inset-x-2 h-2.5 rounded-full bg-[#2b1e13] border-t border-[#3d2b1b] opacity-80" />
+          <div
+            className="absolute -bottom-1 inset-x-2 h-2.5 rounded-full border-t opacity-80"
+            style={{
+              backgroundColor: excavationTokens.dirt.mound,
+              borderTopColor: excavationTokens.dirt.moundEdge,
+            }}
+          />
 
           {/* Dirt particles flying effect */}
           <div className="grave-excavation__particles">

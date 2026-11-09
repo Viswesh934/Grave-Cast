@@ -50,7 +50,7 @@ export function IntroductionPage() {
       <div className="p-5 rounded-2xl bg-[#0c1813] border border-[#183425] flex items-center justify-between shadow-xl">
         <div className="flex items-center gap-3 font-mono text-xs sm:text-sm text-stone-300">
           <span className="text-emerald-400 font-bold">$</span>
-          <span>npm install grave-ui three @react-three/fiber</span>
+          <span>npm install groove-ui three @react-three/fiber</span>
         </div>
         <span className="text-xs font-mono text-emerald-400/80 uppercase tracking-widest hidden sm:inline">
           Ready to install

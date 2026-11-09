@@ -1,1 +1,1 @@
-export * from './LunarPhaseSelector/LunarPhaseSelector';
+export * from './LunarPhaseSelector';

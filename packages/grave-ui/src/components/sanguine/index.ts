@@ -1,1 +1,1 @@
-export * from './BloodVialProgress/BloodVialProgress';
+export * from './BloodVialProgress';

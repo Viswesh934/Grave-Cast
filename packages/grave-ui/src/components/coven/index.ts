@@ -1,2 +1,2 @@
-export * from './CauldronBrew/CauldronBrew';
-export * from './RunicButton/RunicButton';
+export * from './CauldronBrew';
+export * from './RunicButton';
