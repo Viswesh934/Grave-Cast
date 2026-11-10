@@ -1,15 +1,47 @@
+"""Gravecast API entrypoint."""
+
+from __future__ import annotations
+
+import logging
+from contextlib import asynccontextmanager
+from datetime import datetime, timezone
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from datetime import datetime, timezone
+
+from app.config import get_settings
+from app.modules.github import router as github_router
+from app.modules.github.service import GitHubIngestionService
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    settings = get_settings()
+    service = GitHubIngestionService(settings=settings)
+    app.state.ingestion_service = service
+    # Fallback cleanup for abandoned snapshot workspaces.
+    try:
+        deleted = service.cleanup_abandoned()
+        if deleted:
+            logger.info("Removed %s abandoned workspace(s) on startup", deleted)
+    except Exception:
+        logger.exception("Abandoned workspace cleanup failed")
+    yield
+
 
 app = FastAPI(
     title="Gravecast API",
-    description="Repository graveyard scanner — turns real code problems into a place you can explore.",
+    description=(
+        "Repository graveyard scanner — turns real code problems "
+        "into a place you can explore."
+    ),
     version="0.1.0",
+    lifespan=lifespan,
 )
 
-# Allow the Vite dev server (port 5173) and any localhost origin during development.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -20,6 +52,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(github_router)
 
 
 class HealthResponse(BaseModel):
