@@ -220,3 +220,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 node_modules/
+# Gravecast ingestion workspaces
+apps/api/storage/
+storage/
+
