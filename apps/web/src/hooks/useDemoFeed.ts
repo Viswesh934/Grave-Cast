@@ -31,13 +31,14 @@ export function useDemoFeed(active: boolean): MediaStream | null {
     if (!ctx || typeof canvas.captureStream !== 'function') return undefined;
 
     const media = canvas.captureStream(CAPTURE_FPS);
-    setStream(media);
+    // Publish the stream after the effect body, not synchronously inside it.
+    queueMicrotask(() => setStream(media));
 
     const started = performance.now();
-    let frame = 0;
+    const loop = { id: 0 };
 
     const draw = (now: number) => {
-      frame = requestAnimationFrame(draw);
+      loop.id = requestAnimationFrame(draw);
       const t = (now - started) / 1000;
 
       // Walls, floor, and ceiling in perspective.
@@ -96,10 +97,10 @@ export function useDemoFeed(active: boolean): MediaStream | null {
       }
     };
 
-    frame = requestAnimationFrame(draw);
+    loop.id = requestAnimationFrame(draw);
 
     return () => {
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(loop.id);
       media.getTracks().forEach((track) => track.stop());
       setStream(null);
     };

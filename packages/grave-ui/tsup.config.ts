@@ -16,6 +16,8 @@ export default defineConfig({
     'audio/index': 'src/audio/index.ts',
     'ascii/index': 'src/ascii/index.ts',
     'video/index': 'src/video/index.ts',
+    'voice/index': 'src/voice/index.ts',
+    'studio/index': 'src/studio/index.ts',
     'hooks/index': 'src/hooks/index.ts',
     'tokens/index': 'src/tokens/index.ts',
     'tailwind/index': 'src/tailwind/index.ts',
