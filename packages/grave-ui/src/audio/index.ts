@@ -12,6 +12,9 @@ export * from './effects';
 // Music system: scales, ragas, instruments, synth
 export * from './music';
 
+// Microphone analysis: levels and sound detection
+export * from './mic';
+
 // React context and hooks
 export * from './AudioContext';
 export type { SpookySound } from './AudioContext';

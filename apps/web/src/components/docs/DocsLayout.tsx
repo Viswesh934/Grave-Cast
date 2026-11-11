@@ -55,6 +55,9 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'HauntedKeyboard', path: '/docs/components/haunted-keyboard', badge: 'New' },
       { title: 'SoundLibrary', path: '/docs/components/sound-library', badge: 'New' },
       { title: 'HorrorBackground', path: '/docs/components/horror-background', badge: 'New' },
+      { title: 'SoundTrigger', path: '/docs/components/sound-trigger', badge: 'New' },
+      { title: 'ASCII', path: '/docs/components/ascii', badge: 'New' },
+      { title: 'SurveillanceCam', path: '/docs/components/surveillance-cam', badge: 'New' },
     ],
   },
 ];

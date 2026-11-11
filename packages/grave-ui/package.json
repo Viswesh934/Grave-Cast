@@ -55,6 +55,14 @@
       "import": "./dist/audio/index.js",
       "types": "./dist/audio/index.d.ts"
     },
+    "./ascii": {
+      "import": "./dist/ascii/index.js",
+      "types": "./dist/ascii/index.d.ts"
+    },
+    "./video": {
+      "import": "./dist/video/index.js",
+      "types": "./dist/video/index.d.ts"
+    },
     "./hooks": {
       "import": "./dist/hooks/index.js",
       "types": "./dist/hooks/index.d.ts"

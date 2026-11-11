@@ -28,5 +28,11 @@ export * from './assets';
 // Audio system
 export * from './audio';
 
+// ASCII toolkit
+export * from './ascii';
+
+// Video toolkit: motion, color grades, timecodes
+export * from './video';
+
 // Components
 export * from './components';
