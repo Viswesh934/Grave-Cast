@@ -177,7 +177,7 @@ import { FogLayers, CandlelitLayers } from 'groove-ui';`;
         { name: '<ClickToBegin> fixed', type: 'boolean', default: 'false', description: 'Cover the whole viewport instead of the parent' },
       ]}
       prevPage={{ title: 'SoundLibrary', path: '/docs/components/sound-library' }}
-      nextPage={{ title: 'Button', path: '/docs/components/button' }}
+      nextPage={{ title: 'SoundTrigger', path: '/docs/components/sound-trigger' }}
     />
   );
 }

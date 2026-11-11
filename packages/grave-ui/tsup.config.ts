@@ -14,6 +14,8 @@ export default defineConfig({
     'components/horror3d/index': 'src/components/horror3d/index.ts',
     'components/effects/index': 'src/components/effects/index.ts',
     'audio/index': 'src/audio/index.ts',
+    'ascii/index': 'src/ascii/index.ts',
+    'video/index': 'src/video/index.ts',
     'hooks/index': 'src/hooks/index.ts',
     'tokens/index': 'src/tokens/index.ts',
     'tailwind/index': 'src/tailwind/index.ts',

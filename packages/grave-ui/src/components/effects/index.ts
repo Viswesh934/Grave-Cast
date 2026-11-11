@@ -12,3 +12,6 @@ export * from './HauntedKeyboard';
 export * from './SoundLibrary';
 export * from './HorrorBackground';
 export * from './ClickToBegin';
+export * from './SoundTrigger';
+export * from './Ascii';
+export * from './SurveillanceCam';
