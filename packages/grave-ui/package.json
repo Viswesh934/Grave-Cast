@@ -71,6 +71,10 @@
       "import": "./dist/studio/index.js",
       "types": "./dist/studio/index.d.ts"
     },
+    "./grimoire": {
+      "import": "./dist/grimoire/index.js",
+      "types": "./dist/grimoire/index.d.ts"
+    },
     "./hooks": {
       "import": "./dist/hooks/index.js",
       "types": "./dist/hooks/index.d.ts"

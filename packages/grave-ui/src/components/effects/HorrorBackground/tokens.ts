@@ -63,9 +63,8 @@ export const backgroundColors = {
   },
 } as const;
 
-/** Mixes a color with transparency, so tokens can be used as soft overlays. */
-export const withAlpha = (color: string, percent: number): string =>
-  `color-mix(in srgb, ${color} ${percent}%, transparent)`;
+// Lives in the shared color tokens now; re-exported so existing imports keep working.
+export { withAlpha } from '../../../tokens/colors';
 
 export const fogTokens = {
   /** How opaque the fog color is inside each blob, in percent. */

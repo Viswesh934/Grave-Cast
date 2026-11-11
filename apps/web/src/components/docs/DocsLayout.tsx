@@ -61,6 +61,10 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'Voice', path: '/docs/components/voice', badge: 'New' },
     ],
   },
+  {
+    title: 'THE GRIMOIRE',
+    items: [{ title: 'Grimoire', path: '/docs/components/grimoire', badge: 'New' }],
+  },
 ];
 
 const BESTIARY_CREATURES: { id: string; name: string; path: string }[] = [

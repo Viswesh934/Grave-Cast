@@ -18,7 +18,7 @@ export interface GothicPhilosophyMeta {
 
 export interface ComponentDocPageProps {
   title: string;
-  category: 'Primitives' | 'The Crypt' | 'The Coven' | 'The Sanguine' | 'The Lycan' | 'The Slavic' | 'The Arachnid' | 'The Effects' | 'The Bestiary';
+  category: 'Primitives' | 'The Crypt' | 'The Coven' | 'The Sanguine' | 'The Lycan' | 'The Slavic' | 'The Arachnid' | 'The Effects' | 'The Bestiary' | 'The Grimoire';
   description: string;
   packageName?: string;
   preview: ReactNode;

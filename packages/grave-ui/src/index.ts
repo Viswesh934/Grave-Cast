@@ -40,5 +40,8 @@ export * from './voice';
 // Voice studio: projects, timeline, lyric singer
 export * from './studio';
 
+// Grimoire: capabilities, statuses, and messages for browser-power rites
+export * from './grimoire';
+
 // Components
 export * from './components';

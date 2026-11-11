@@ -24,6 +24,7 @@ import { SoundTriggerDoc } from '../pages/docs/SoundTriggerDoc';
 import { AsciiDoc } from '../pages/docs/AsciiDoc';
 import { SurveillanceCamDoc } from '../pages/docs/SurveillanceCamDoc';
 import { VoiceDoc } from '../pages/docs/VoiceDoc';
+import { GrimoireDoc } from '../pages/docs/GrimoireDoc';
 import { BestiaryDoc } from '../pages/docs/BestiaryDoc';
 import { BestiaryCharacterDoc } from '../pages/docs/BestiaryCharacterDoc';
 import { ButtonDoc } from '../pages/docs/ButtonDoc';
@@ -87,6 +88,9 @@ export function docsRoutes() {
       <Route path="docs/components/ascii" element={<AsciiDoc />} />
       <Route path="docs/components/surveillance-cam" element={<SurveillanceCamDoc />} />
       <Route path="docs/components/voice" element={<VoiceDoc />} />
+
+      {/* The Grimoire */}
+      <Route path="docs/components/grimoire" element={<GrimoireDoc />} />
 
       {/* The Bestiary */}
       <Route path="docs/components/bestiary" element={<BestiaryDoc />} />
