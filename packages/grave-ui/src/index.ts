@@ -34,5 +34,11 @@ export * from './ascii';
 // Video toolkit: motion, color grades, timecodes
 export * from './video';
 
+// Voice toolkit: personas, speech voices, recording gate, effects
+export * from './voice';
+
+// Voice studio: projects, timeline, lyric singer
+export * from './studio';
+
 // Components
 export * from './components';

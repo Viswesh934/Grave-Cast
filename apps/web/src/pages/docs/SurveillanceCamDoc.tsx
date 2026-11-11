@@ -187,7 +187,7 @@ const { stream, start } = useMediaStream({ video: true });
         { name: 'animated', type: 'boolean', default: 'true', description: 'Allow grain, glitches, and the blinking dot. Reduced-motion users never get them' },
       ]}
       prevPage={{ title: 'ASCII', path: '/docs/components/ascii' }}
-      nextPage={{ title: 'Button', path: '/docs/components/button' }}
+      nextPage={{ title: 'Voice', path: '/docs/components/voice' }}
     />
   );
 }

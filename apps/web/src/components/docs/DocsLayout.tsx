@@ -58,6 +58,7 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'SoundTrigger', path: '/docs/components/sound-trigger', badge: 'New' },
       { title: 'ASCII', path: '/docs/components/ascii', badge: 'New' },
       { title: 'SurveillanceCam', path: '/docs/components/surveillance-cam', badge: 'New' },
+      { title: 'Voice', path: '/docs/components/voice', badge: 'New' },
     ],
   },
 ];
