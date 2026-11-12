@@ -33,6 +33,17 @@
   --grave-bone-decayed: #b8a99a;
   --grave-bone-ash: #6b625b;
 
+  /* Earth & Mud Palette (grave soil, wet clay, dried mud) */
+  --grave-earth-200: #b39a78;
+  --grave-earth-300: #8c7656;
+  --grave-earth-400: #6e5a41;
+  --grave-earth-500: #574634;
+  --grave-earth-600: #45372a;
+  --grave-earth-700: #34291f;
+  --grave-earth-800: #241c15;
+  --grave-earth-mud: rgba(66, 46, 27, 0.78);
+  --grave-earth-stain: rgba(92, 68, 40, 0.45);
+
   /* Abyss & Neutral Darks */
   --grave-dark-950: #060608;
   --grave-dark-900: #0a0a0f;
@@ -497,14 +508,52 @@
   border-color: #3d4f44;
 }
 
+/* Aged: stone that has sat in wet ground for years. Mud splashed up from the
+   base, dried stains, and a browner, softer stone. */
 .grave-tombstone--aged {
-  border-color: #4a5e52;
-  background: radial-gradient(ellipse at 50% 12%, #324038 0%, #1c2721 60%, #101914 100%);
+  border-color: var(--grave-earth-300);
+  background:
+    radial-gradient(ellipse 55% 30% at 22% 80%, var(--grave-earth-stain), transparent 70%),
+    radial-gradient(ellipse 40% 26% at 78% 32%, var(--grave-earth-stain), transparent 70%),
+    linear-gradient(to top, var(--grave-earth-mud) 0%, transparent 38%),
+    radial-gradient(ellipse at 50% 12%, var(--grave-earth-400) 0%, var(--grave-earth-600) 58%, var(--grave-earth-800) 100%);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75), inset 0 2px 4px rgba(255, 240, 210, 0.12), inset 0 -18px 30px rgba(36, 24, 12, 0.55);
 }
 
+/* Cracked: the same muddy stone, split by fissures that catch the light. */
 .grave-tombstone--cracked {
-  border-color: #5a7364;
-  border-style: dashed;
+  border-color: var(--grave-earth-300);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300' preserveAspectRatio='none'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M58 0 L64 34 L52 62 L70 96 L61 128 L78 160' stroke='%23140d08' stroke-width='2.4'/%3E%3Cpath d='M64 34 L88 48 L96 70' stroke='%23140d08' stroke-width='1.6'/%3E%3Cpath d='M200 150 L176 162 L168 190 L150 204 L156 236 L140 262' stroke='%23140d08' stroke-width='2.2'/%3E%3Cpath d='M168 190 L188 214' stroke='%23140d08' stroke-width='1.4'/%3E%3Cpath d='M0 228 L24 236 L38 258 L60 266' stroke='%23140d08' stroke-width='1.8'/%3E%3Cpath d='M59 1 L65 35 L53 63 L71 97 L62 129 L79 161' stroke='%23b39a78' stroke-opacity='0.35' stroke-width='0.8' transform='translate(1.6 0.8)'/%3E%3Cpath d='M199 151 L177 163 L169 191 L151 205 L157 237 L141 263' stroke='%23b39a78' stroke-opacity='0.35' stroke-width='0.8' transform='translate(-1.4 0.8)'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat,
+    radial-gradient(ellipse 50% 28% at 70% 78%, var(--grave-earth-stain), transparent 70%),
+    linear-gradient(to top, var(--grave-earth-mud) 0%, transparent 32%),
+    radial-gradient(ellipse at 50% 12%, var(--grave-earth-400) 0%, var(--grave-earth-500) 55%, var(--grave-earth-700) 100%);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75), inset 0 2px 4px rgba(255, 240, 210, 0.12), inset 0 -14px 26px rgba(36, 24, 12, 0.5);
+}
+
+.grave-tombstone--aged:hover,
+.grave-tombstone--cracked:hover {
+  border-color: var(--grave-earth-200);
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(179, 154, 120, 0.3);
+}
+
+/* Lighter text on the browner stone, so engravings stay easy to read. */
+.grave-tombstone--aged .grave-tombstone__icon,
+.grave-tombstone--cracked .grave-tombstone__icon {
+  color: var(--grave-bone-decayed);
+}
+
+/* bone-200 stays above 5:1 across the whole muddy gradient. */
+.grave-tombstone--aged .grave-tombstone__subtitle,
+.grave-tombstone--cracked .grave-tombstone__subtitle,
+.grave-tombstone--aged .grave-tombstone__epitaph,
+.grave-tombstone--cracked .grave-tombstone__epitaph {
+  color: var(--grave-bone-200);
+}
+
+.grave-tombstone--aged .grave-tombstone__epitaph,
+.grave-tombstone--cracked .grave-tombstone__epitaph {
+  border-top-color: var(--grave-earth-300);
 }
 
 .grave-tombstone--crumbling {

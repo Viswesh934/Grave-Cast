@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { Float } from '@react-three/drei';
 import { type Group, type Mesh } from 'three';
 import type { BrewColor } from '../coven/CauldronBrew/CauldronBrew';
+import { cauldronMetal3D } from '../coven/CauldronBrew/tokens';
 
 export interface CauldronBrew3DProps {
   brewColor?: BrewColor;
@@ -17,11 +18,14 @@ const COLOR_MAP: Record<BrewColor, { liquid: string; emissive: string; steam: st
   gold: { liquid: '#d97706', emissive: '#fde047', steam: '#fef3c7', glow: '#fbbf24' },
 };
 
+const metal = cauldronMetal3D;
+
 /**
  * CauldronBrew3D
  * 
- * 3D Cast-iron witch's cauldron with radiant, luminous bubbling potion,
+ * 3D bronze-patinated witch's cauldron with radiant, luminous bubbling potion,
  * glowing froth, concentric swirl physics, and voluminous rising steam clouds.
+ * The metal picks up the brew's color, so it reads clearly on dark scenes.
  */
 export function CauldronBrew3D({
   brewColor = 'emerald',
@@ -82,9 +86,10 @@ export function CauldronBrew3D({
 
   return (
     <group ref={groupRef} scale={[scale, scale, scale]}>
-      {/* Scene Illumination */}
-      <ambientLight intensity={0.5} color="#15241b" />
-      <directionalLight position={[3, 4, 3]} intensity={0.9} color="#f0fdf4" />
+      {/* Scene Illumination: warm key light, and a fill tinted by the brew */}
+      <ambientLight intensity={metal.ambient} color={colors.glow} />
+      <hemisphereLight args={[colors.glow, metal.ground, metal.fill]} />
+      <directionalLight position={[3, 4, 3]} intensity={metal.keyLight.intensity} color={metal.keyLight.color} />
 
       {/* Radiant Glowing Liquid Spotlight illuminating the cauldron rim & surroundings */}
       <pointLight
@@ -97,38 +102,42 @@ export function CauldronBrew3D({
       />
 
       <Float speed={1.2} rotationIntensity={0.06} floatIntensity={0.1}>
-        {/* Cast Iron Cauldron Belly */}
+        {/* Bronze-patinated Cast Iron Cauldron Belly */}
         <mesh position={[0, 0, 0]} castShadow receiveShadow>
           <sphereGeometry args={[1.1, 28, 20, 0, Math.PI * 2, 0, Math.PI * 0.75]} />
           <meshStandardMaterial
-            color="#141a17"
-            roughness={0.78}
-            metalness={0.35}
+            color={metal.belly.color}
+            roughness={metal.belly.roughness}
+            metalness={metal.belly.metalness}
+            emissive={colors.glow}
+            emissiveIntensity={metal.belly.glow}
           />
         </mesh>
 
-        {/* Flared Heavy Cast Iron Rim */}
+        {/* Flared Heavy Bronze Rim, lit from the brew below */}
         <mesh position={[0, 0.52, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.96, 0.12, 14, 32]} />
           <meshStandardMaterial
-            color="#1d2621"
-            roughness={0.7}
-            metalness={0.4}
+            color={metal.rim.color}
+            roughness={metal.rim.roughness}
+            metalness={metal.rim.metalness}
+            emissive={colors.glow}
+            emissiveIntensity={metal.rim.glow}
           />
         </mesh>
 
-        {/* Forged Iron Side Ring Handles */}
+        {/* Forged Side Ring Handles */}
         {[-1.02, 1.02].map((x, idx) => (
           <group key={idx} position={[x, 0.2, 0]}>
             {/* Handle Mount Bracket */}
             <mesh>
               <boxGeometry args={[0.08, 0.14, 0.14]} />
-              <meshStandardMaterial color="#2d3732" metalness={0.7} />
+              <meshStandardMaterial color={metal.bracket.color} metalness={metal.bracket.metalness} roughness={metal.bracket.roughness} />
             </mesh>
-            {/* Hanging Iron Ring */}
+            {/* Hanging Ring */}
             <mesh position={[idx === 0 ? -0.1 : 0.1, -0.08, 0]} rotation={[0, Math.PI / 2, 0]}>
               <torusGeometry args={[0.16, 0.03, 8, 16]} />
-              <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.3} />
+              <meshStandardMaterial color={metal.ring.color} metalness={metal.ring.metalness} roughness={metal.ring.roughness} />
             </mesh>
           </group>
         ))}
@@ -141,7 +150,7 @@ export function CauldronBrew3D({
             rotation={[0.35 * Math.sin(angle), 0, -0.35 * Math.cos(angle)]}
           >
             <cylinderGeometry args={[0.09, 0.14, 0.7, 12]} />
-            <meshStandardMaterial color="#111613" roughness={0.85} />
+            <meshStandardMaterial color={metal.feet.color} roughness={metal.feet.roughness} metalness={metal.feet.metalness} />
           </mesh>
         ))}
 

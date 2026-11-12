@@ -110,10 +110,21 @@ export const stoneFragmentShader = `
     
     vec3 stoneColor = mix(stoneBase, stoneHighlight, grain);
     
-    // Weathering cracks
+    // Years in wet ground: weathered stone turns warmer and browner...
+    stoneColor = mix(stoneColor, stoneColor * vec3(1.10, 0.97, 0.82), uWeathering);
+
+    // ...and gathers patches of grave mud, already clear from "aged" on.
+    float mudNoise = snoise(vPosition * 2.6) * 0.5 + 0.5;
+    float mudGrain = snoise(vPosition * 18.0) * 0.5 + 0.5;
+    float mud = smoothstep(0.42, 0.78, mudNoise) * smoothstep(0.0, 0.3, uWeathering) * (0.55 + 0.25 * mudGrain);
+    vec3 mudColor = mix(vec3(0.24, 0.17, 0.10), vec3(0.36, 0.27, 0.17), mudGrain);
+    stoneColor = mix(stoneColor, mudColor, mud);
+
+    // Weathering cracks: visible from "aged", deep and dark when cracked
     float crackNoise = snoise(vPosition * 12.0 + vec3(uTime * 0.04));
-    float cracks = smoothstep(0.70, 0.85, crackNoise) * uWeathering;
-    stoneColor = mix(stoneColor, vec3(0.12, 0.10, 0.12), cracks * 0.8);
+    float crackAmount = clamp(uWeathering * 1.6, 0.0, 1.0);
+    float cracks = smoothstep(0.62, 0.80, crackNoise) * crackAmount;
+    stoneColor = mix(stoneColor, vec3(0.07, 0.05, 0.04), cracks * 0.9);
     
     // Ancient Lichen & Moss Decay
     float mossNoise = snoise(vPosition * 8.0);

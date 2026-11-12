@@ -3,7 +3,7 @@
  * @module components/coven/CauldronBrew
  */
 
-import { forwardRef, useState, type HTMLAttributes } from 'react';
+import { forwardRef, useId, useState, type HTMLAttributes } from 'react';
 import { playSound } from '../../../audio';
 import { brewVariants, cauldronBody, bubbleTiming, type BrewColor } from './tokens';
 
@@ -36,6 +36,10 @@ export const CauldronBrew = forwardRef<HTMLDivElement, CauldronBrewProps>(
     const [bubbleTrigger, setBubbleTrigger] = useState(0);
 
     const currentConfig = brewVariants[brewColor];
+    // Unique gradient ids, so several cauldrons on one page never share colors.
+    const gradientId = useId();
+    const brewGradientId = `brew-${gradientId}`;
+    const bellyGradientId = `belly-${gradientId}`;
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       setBubbleTrigger((prev) => prev + 1);
@@ -92,7 +96,7 @@ export const CauldronBrew = forwardRef<HTMLDivElement, CauldronBrewProps>(
             {/* Main Cast-Iron Cauldron Belly */}
             <path
               d="M 20 40 Q 12 75 35 96 Q 70 112 105 96 Q 128 75 120 40 Z"
-              fill={cauldronBody.bellyFill}
+              fill={`url(#${bellyGradientId})`}
               stroke={cauldronBody.bellyStroke}
               strokeWidth="3"
             />
@@ -113,7 +117,7 @@ export const CauldronBrew = forwardRef<HTMLDivElement, CauldronBrewProps>(
             />
 
             {/* Inner brew gradient */}
-            <ellipse cx="70" cy="42" rx="42" ry="8" fill="url(#brewGradient)" />
+            <ellipse cx="70" cy="42" rx="42" ry="8" fill={`url(#${brewGradientId})`} />
 
             {/* Animated Bubbles on liquid surface */}
             {boiling && (
@@ -125,7 +129,12 @@ export const CauldronBrew = forwardRef<HTMLDivElement, CauldronBrewProps>(
             )}
 
             <defs>
-              <linearGradient id="brewGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id={bellyGradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor={currentConfig.glow} stopOpacity={cauldronBody.glowOnBelly} />
+                <stop offset="35%" stopColor={cauldronBody.bellyFill} />
+                <stop offset="100%" stopColor={cauldronBody.bellyShade} />
+              </linearGradient>
+              <linearGradient id={brewGradientId} x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor={currentConfig.glow} />
                 <stop offset="100%" stopColor={cauldronBody.gradientBase} />
               </linearGradient>
