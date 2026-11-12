@@ -47,3 +47,7 @@ export * from './useVigil';
 export * from './useNecromancer';
 export * from './useSeance';
 export * from './useMutationLog';
+export * from './useSeal';
+export * from './useWatchingEyes';
+export * from './useApparition';
+export * from './useAutopsy';

@@ -4,7 +4,7 @@ import { grimoireRites } from 'groove-ui';
 export const GRIMOIRE_PATH = '/docs/components/grimoire';
 
 /** Rites that have a docs page. Add an id here and a page in `registry.tsx`. */
-export const RITE_DOC_IDS = ['medium', 'soul-reader', 'haunted-ink', 'vigil', 'necromancer', 'seance', 'poltergeist', 'crypt'] as const;
+export const RITE_DOC_IDS = ['medium', 'soul-reader', 'haunted-ink', 'vigil', 'necromancer', 'seance', 'poltergeist', 'crypt', 'seal', 'watching-eyes', 'apparition', 'autopsy'] as const;
 
 export type RiteDocId = (typeof RITE_DOC_IDS)[number];
 

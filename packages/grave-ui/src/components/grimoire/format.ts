@@ -83,3 +83,12 @@ export const formatTimeOfDay = (ms: number): string => {
   const date = new Date(ms);
   return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 };
+
+/** Decimal places shown for times of a second or more. */
+const SECOND_DECIMALS = 2;
+
+/** A short timing for reading: `320 ms`, or `1.25 s` from a second up. */
+export const formatMs = (ms: number): string => {
+  const value = Math.max(0, ms);
+  return value < MS_PER_SECOND ? `${Math.round(value)} ms` : `${(value / MS_PER_SECOND).toFixed(SECOND_DECIMALS)} s`;
+};

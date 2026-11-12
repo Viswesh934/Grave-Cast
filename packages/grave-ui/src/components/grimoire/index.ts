@@ -22,6 +22,7 @@ export {
   formatDuration,
   formatBytes,
   formatTimeOfDay,
+  formatMs,
   describeDoubts,
   readabilityAdvice,
 } from './format';
