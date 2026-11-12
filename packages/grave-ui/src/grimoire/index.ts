@@ -16,6 +16,7 @@ export * from './core';
 export * from './tokens';
 export * from './color';
 export * from './dom';
+export * from './rites';
 
 // The frames and overlays, so one import covers a rite's logic and its look.
 export * from '../components/grimoire';

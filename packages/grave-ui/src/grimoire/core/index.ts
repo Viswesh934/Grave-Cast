@@ -7,3 +7,4 @@
 export * from './status';
 export * from './capability';
 export * from './dev';
+export * from './rite';

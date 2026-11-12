@@ -8,6 +8,7 @@ import type { RiteStatus } from '../../grimoire/core/status';
 import { grimoireAccents, grimoireShades, type GrimoireAccent } from '../../grimoire/tokens';
 import { withAlpha } from '../../tokens/colors';
 import { Button } from '../primitives/Button';
+import { RiteHeadingContext } from './RiteParts';
 import { RiteSigil, type SigilGlyph } from './RiteSigil';
 import { ACCENT_STRENGTH, RITE_CLASS, RITE_VARS, accentGlow, riteAnimation, riteStatusMeta, riteStyles, riteTokens } from './tokens';
 
@@ -234,7 +235,11 @@ export const RiteShell = ({
         <p style={{ margin: 0, padding: `${space.sm} ${space.lg}`, fontSize: font.small, color: surface.muted }}>{rite.error}</p>
       )}
 
-      {children !== undefined && <div style={{ padding: space.lg }}>{children}</div>}
+      {children !== undefined && (
+        <RiteHeadingContext.Provider value={headingLevel}>
+          <div style={{ padding: space.lg }}>{children}</div>
+        </RiteHeadingContext.Provider>
+      )}
 
       {footer && (
         <footer

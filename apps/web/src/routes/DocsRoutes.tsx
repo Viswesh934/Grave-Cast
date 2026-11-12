@@ -25,6 +25,7 @@ import { AsciiDoc } from '../pages/docs/AsciiDoc';
 import { SurveillanceCamDoc } from '../pages/docs/SurveillanceCamDoc';
 import { VoiceDoc } from '../pages/docs/VoiceDoc';
 import { GrimoireDoc } from '../pages/docs/GrimoireDoc';
+import { RiteDocRoute } from '../pages/docs/grimoire/RiteDocRoute';
 import { BestiaryDoc } from '../pages/docs/BestiaryDoc';
 import { BestiaryCharacterDoc } from '../pages/docs/BestiaryCharacterDoc';
 import { ButtonDoc } from '../pages/docs/ButtonDoc';
@@ -91,6 +92,7 @@ export function docsRoutes() {
 
       {/* The Grimoire */}
       <Route path="docs/components/grimoire" element={<GrimoireDoc />} />
+      <Route path="docs/components/grimoire/:riteId" element={<RiteDocRoute />} />
 
       {/* The Bestiary */}
       <Route path="docs/components/bestiary" element={<BestiaryDoc />} />

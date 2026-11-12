@@ -22,6 +22,8 @@ export const RITE_CLASS = {
   highlight: 'grimoire-highlight',
   /** Marks elements that animate, so reduced motion can switch them off. */
   motion: 'grimoire-motion',
+  /** Text inputs, text areas, and selects in rite panels. */
+  field: 'grimoire-field',
 } as const;
 
 /** CSS custom properties that carry a rite's accent into the stylesheet. */
@@ -95,6 +97,10 @@ export const riteTokens = {
     labelMaxWidth: 320,
     /** Smallest highlight drawn, so tiny elements stay visible. */
     minHighlight: 2,
+    /** Tallest a log grows before it scrolls. */
+    logMaxHeight: '14rem',
+    /** Narrowest a stat tile gets in a grid of stats. */
+    statMinWidth: '7.5rem',
   },
   layer: zLayers.inspector,
   surface: grimoireSurface,
@@ -116,6 +122,20 @@ export const riteStatusMeta: Record<RiteStatus, { label: string; color: string; 
   denied: { label: 'Blocked', color: grimoireShades.freshBlood, pulsing: false },
   unavailable: { label: 'Not available here', color: grimoireSurface.muted, pulsing: false },
   error: { label: 'Something went wrong', color: grimoireShades.freshBlood, pulsing: false },
+};
+
+/**
+ * How a value is judged, for stats, log entries, and verdicts. Always pair
+ * the color with words, so the meaning never rests on color alone.
+ */
+export type RiteTone = 'neutral' | 'good' | 'warn' | 'bad';
+
+/** The text color of each tone; every one is readable on Grimoire panels. */
+export const riteTones: Record<RiteTone, string> = {
+  neutral: grimoireSurface.text,
+  good: grimoireShades.ectoplasm,
+  warn: inspectorColors.border,
+  bad: grimoireShades.freshBlood,
 };
 
 /** Names of the injected animations. */
@@ -150,6 +170,20 @@ export const riteStyles = `
 .${RITE_CLASS.swatch}:hover {
   transform: translateY(-${LIFT.hover}px);
   box-shadow: 0 0 0 ${riteTokens.line.hairline} var(${RITE_VARS.accent}, ${grimoireSurface.border});
+}
+.${RITE_CLASS.field} {
+  transition: border-color ${riteTokens.motion.fast} ${riteTokens.motion.ease};
+}
+.${RITE_CLASS.field}::placeholder {
+  color: ${grimoireSurface.muted};
+  opacity: 1;
+}
+.${RITE_CLASS.field}:hover:not(:disabled) {
+  border-color: var(${RITE_VARS.accent}, ${grimoireSurface.focus});
+}
+.${RITE_CLASS.field}:focus-visible {
+  outline: ${riteTokens.line.focus} solid var(${RITE_VARS.focus}, ${grimoireSurface.focus});
+  outline-offset: ${riteTokens.line.focusOffset};
 }
 .${RITE_CLASS.label} {
   animation: ${riteAnimation.rise} ${riteTokens.motion.fast} ${riteTokens.motion.ease} both;
