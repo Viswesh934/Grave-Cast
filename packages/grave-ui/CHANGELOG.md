@@ -5,6 +5,47 @@ All notable changes to Groovy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Grimoire**: twelve rites, each with a capability check, a hook, and a ready-made panel. Each panel is built from shared parts (`RiteShell`, `RiteLayer`, `RiteHighlight`, `RiteLabel`, `RiteSigil`, `RiteElementOutline`, `BoxModelDiagram`, `ColorSwatch`, `ContrastBadge`).
+  - Seeing: Medium, Soul Reader, Haunted Ink, Autopsy
+  - Watching: Necromancer, Poltergeist, Watching Eyes
+  - Keeping: Crypt, Seal
+  - Binding: Vigil, Séance, Apparition
+- `defineCapability`, `defineRite`, `grimoireRites`, `findRite`, and the `useRite` hook for building your own rites.
+- Grimoire helpers: color parsing and contrast, DOM journal and geometry, `sealText`/`openSeal`, `openCrypt`, `inspectStorage`, `requestPersistence`, `observeAutopsy`, `summon`, `auditContrast`.
+- Formatting helpers: `formatMs`, `formatBytes`, `formatTimeOfDay`, `formatDuration`, `formatPx`, `formatSize`.
+- **Scribble**: an on-screen drawing layer, like Excalidraw.
+  - Tools: pen, highlighter, line, arrow, rectangle, ellipse, text.
+  - Laser pointer (K): a fading trail that is never saved, undone, or exported.
+  - Eraser (E): touched shapes dim while you drag and are removed on release as one undo step. Escape cancels the erase.
+  - Sketchy mode, undo and redo, `localStorage` persistence, PNG and SVG export, keyboard shortcuts.
+  - Inline or fullscreen layouts.
+- `useScribble` and `useFadingTrail` hooks; `scribbleToSvg` and `exportScribble`.
+- `WitchOnBroom`, a line-art witch in `groove-ui/coven`.
+- `zLayers.annotation`, a stacking layer for drawing over the page.
+- New hooks: `useElementBox`, `useElementPicker`, `useCopyText`, `usePageVisible`, `useEyeDropper`, `useFullscreen`, `useHauntedInk`, `useVigil`, `useNecromancer`, `useSeance`, `useMutationLog`, `useSeal`, `useWatchingEyes`, `useApparition`, `useAutopsy`, `useCapability`, `usePermissionState`, `useAriaAnnounce`, `useReducedMotion`, `useLatest`, `useEventListener`, `useRafLoop`, `useInterval`.
+
+### Changed
+
+- `CauldronBrew` is now bronze and sits over a fire backdrop.
+- `TombstoneCard` is now carved granite, and the `weathering` levels (`pristine`, `aged`, `cracked`, `crumbling`) look more realistic.
+- `TombstoneCard3D` has a new weathering shader.
+- The README was rewritten from the real exports.
+
+### Removed
+
+- **Breaking:** `ExcavationLoader3D`. Use the 2D `ExcavationLoader`.
+- **Breaking:** `WitchOnBroom3D`. Use `WitchOnBroom`.
+
+### Fixed
+
+- `TombstoneCard3D`'s stone shader was never attached to the mesh, so the weathering didn't show.
+- `groove-ui/styles.css` points to `src/styles/grave-ui.css`, but that folder wasn't in the published `files`. It is now.
+- The 0.1.0 notes below describe a `useAudio` hook. The real API is `playSound(effect, volume?)`, `AudioProvider`, and `useSpookyAudio`.
+
 ## [0.1.0] - 2026-11-08
 
 ### Added
