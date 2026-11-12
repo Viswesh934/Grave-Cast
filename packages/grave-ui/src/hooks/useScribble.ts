@@ -59,11 +59,16 @@ export interface ScribbleReturn {
   cancel: () => void;
   /** Adds a text note with its top left at `point`. Empty text adds nothing. */
   addText: (point: ScribblePoint, text: string, style: ScribbleStyle) => void;
-  /** Starts an eraser drag; everything erased until {@link stopErasing} is one undo step. */
+  /** Ids of shapes the eraser has touched in the current drag. They are removed on {@link stopErasing}. */
+  pendingErase: ReadonlySet<string>;
+  /** Starts an eraser drag. */
   startErasing: () => void;
-  /** Removes every shape the eraser touches at `point`. */
+  /** Marks every shape the eraser touches at `point`; they fade until the drag ends. */
   eraseAt: (point: ScribblePoint) => void;
+  /** Removes the marked shapes, as one undo step. */
   stopErasing: () => void;
+  /** Ends the eraser drag and keeps every shape. */
+  cancelErasing: () => void;
   undo: () => void;
   redo: () => void;
   /** Removes everything. Can be undone. */
@@ -77,8 +82,10 @@ interface State {
   past: ScribbleShape[][];
   future: ScribbleShape[][];
   draft: ScribbleShape | null;
-  /** The drawing as it was when the eraser went down, or `null` when not erasing. */
-  erasingFrom: ScribbleShape[] | null;
+  /** Whether an eraser drag is under way. */
+  erasing: boolean;
+  /** Shapes the eraser has touched in this drag. */
+  pending: ReadonlySet<string>;
 }
 
 type Action =
@@ -90,6 +97,7 @@ type Action =
   | { type: 'eraseStart' }
   | { type: 'erase'; point: ScribblePoint }
   | { type: 'eraseStop' }
+  | { type: 'eraseCancel' }
   | { type: 'undo' }
   | { type: 'redo' }
   | { type: 'replace'; shapes: ScribbleShape[] };
@@ -101,6 +109,11 @@ const remember = (state: State): Pick<State, 'past' | 'future'> => ({
 });
 
 const capped = (shapes: ScribbleShape[]) => shapes.slice(-scribbleStroke.maxShapes);
+
+const NONE: ReadonlySet<string> = new Set();
+
+/** Leaves any eraser drag, keeping every shape. */
+const notErasing = { erasing: false, pending: NONE } as const;
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -124,30 +137,32 @@ const reducer = (state: State, action: Action): State => {
     case 'add':
       return isWorthKeeping(action.shape) ? { ...state, ...remember(state), shapes: capped([...state.shapes, action.shape]) } : state;
     case 'eraseStart':
-      return state.erasingFrom ? state : { ...state, erasingFrom: state.shapes };
+      return state.erasing ? state : { ...state, erasing: true, pending: NONE };
     case 'erase': {
-      const kept = state.shapes.filter((shape) => !eraserHits(shape, action.point));
-      return kept.length === state.shapes.length ? state : { ...state, shapes: kept };
+      if (!state.erasing) return state;
+      const hits = state.shapes.filter((shape) => !state.pending.has(shape.id) && eraserHits(shape, action.point));
+      return hits.length === 0 ? state : { ...state, pending: new Set([...state.pending, ...hits.map((shape) => shape.id)]) };
     }
     case 'eraseStop': {
-      const before = state.erasingFrom;
-      if (!before) return state;
-      // Only an eraser drag that removed something becomes an undo step.
-      if (before === state.shapes) return { ...state, erasingFrom: null };
-      return { ...state, erasingFrom: null, past: [...state.past, before].slice(-scribbleStroke.maxHistory), future: [] };
+      if (!state.erasing) return state;
+      // Only an eraser drag that touched something becomes an undo step.
+      if (state.pending.size === 0) return { ...state, ...notErasing };
+      return { ...state, ...remember(state), ...notErasing, shapes: state.shapes.filter((shape) => !state.pending.has(shape.id)) };
     }
+    case 'eraseCancel':
+      return state.erasing ? { ...state, ...notErasing } : state;
     case 'undo': {
       const previous = state.past[state.past.length - 1];
       if (!previous) return state;
-      return { ...state, shapes: previous, past: state.past.slice(0, -1), future: [state.shapes, ...state.future], draft: null };
+      return { ...state, shapes: previous, past: state.past.slice(0, -1), future: [state.shapes, ...state.future], draft: null, ...notErasing };
     }
     case 'redo': {
       const next = state.future[0];
       if (!next) return state;
-      return { ...state, shapes: next, past: [...state.past, state.shapes], future: state.future.slice(1), draft: null };
+      return { ...state, shapes: next, past: [...state.past, state.shapes], future: state.future.slice(1), draft: null, ...notErasing };
     }
     case 'replace':
-      return { ...state, ...remember(state), shapes: capped(action.shapes), draft: null };
+      return { ...state, ...remember(state), shapes: capped(action.shapes), draft: null, ...notErasing };
   }
 };
 
@@ -165,6 +180,8 @@ const loadStored = (storageKey: string | undefined): ScribbleShape[] | null => {
 /**
  * Keeps a drawing: its shapes, the one being drawn, and undo and redo.
  * Every finished shape, text note, eraser drag, and clear is one undo step.
+ * The eraser marks what it touches first, so shapes fade during the drag
+ * and are only removed when it ends.
  * With `storageKey`, the drawing is saved to localStorage as it changes and
  * read back (and checked) on the next visit.
  *
@@ -184,7 +201,7 @@ export const useScribble = (options: ScribbleOptions = {}): ScribbleReturn => {
     past: [],
     future: [],
     draft: null,
-    erasingFrom: null,
+    ...notErasing,
   }));
 
   useEffect(() => {
@@ -210,6 +227,7 @@ export const useScribble = (options: ScribbleOptions = {}): ScribbleReturn => {
     draft: state.draft,
     canUndo: state.past.length > 0,
     canRedo: state.future.length > 0,
+    pendingErase: state.pending,
     begin,
     extend: useCallback((point: ScribblePoint) => dispatch({ type: 'extend', point }), []),
     finish: useCallback(() => dispatch({ type: 'finish' }), []),
@@ -218,6 +236,7 @@ export const useScribble = (options: ScribbleOptions = {}): ScribbleReturn => {
     startErasing: useCallback(() => dispatch({ type: 'eraseStart' }), []),
     eraseAt: useCallback((point: ScribblePoint) => dispatch({ type: 'erase', point }), []),
     stopErasing: useCallback(() => dispatch({ type: 'eraseStop' }), []),
+    cancelErasing: useCallback(() => dispatch({ type: 'eraseCancel' }), []),
     undo: useCallback(() => dispatch({ type: 'undo' }), []),
     redo: useCallback(() => dispatch({ type: 'redo' }), []),
     clear: useCallback(() => dispatch({ type: 'replace', shapes: [] }), []),

@@ -50,6 +50,32 @@ export const scribbleStroke = {
   maxHistory: 100,
 } as const;
 
+/** The laser pointer's fading trail, and the eraser's cursor, trail, and preview. */
+export const scribbleTrail = {
+  laser: {
+    color: palette.sanguine.plasma,
+    /** The bright core of the beam. */
+    core: palette.bone[100],
+    /** Widest the trail gets, at the pointer, in px. */
+    width: 6,
+    /** How long a point of the trail lasts, in ms. */
+    fadeMs: 900,
+    /** Soft glow around the trail, in px. */
+    glow: 6,
+  },
+  eraser: {
+    color: palette.mist[300],
+    width: 4,
+    fadeMs: 350,
+    /** How faded shapes about to be erased look, from 0 to 1. */
+    previewOpacity: 0.25,
+    /** Line width of the round eraser cursor, in px. */
+    cursorStroke: 1.5,
+  },
+  /** Most points kept in a trail at once. */
+  maxPoints: 240,
+} as const;
+
 /** The toolbar and launcher. */
 export const scribbleChrome = {
   panel: palette.dark[900],

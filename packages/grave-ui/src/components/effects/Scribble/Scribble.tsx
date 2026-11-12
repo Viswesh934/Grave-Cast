@@ -5,11 +5,12 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
 import { useAriaAnnounce } from '../../../hooks/useAriaAnnounce';
+import { useFadingTrail, type TrailPoint } from '../../../hooks/useFadingTrail';
 import { useLatest } from '../../../hooks/useLatest';
 import { useScribble, type ScribbleStyle } from '../../../hooks/useScribble';
 import { withAlpha } from '../../../tokens/colors';
 import { zLayers } from '../../../tokens/layers';
-import { exportScribble, type ScribbleFormat } from './exportDrawing';
+import { SCRIBBLE_TRANSIENT_ATTRIBUTE, exportScribble, type ScribbleFormat } from './exportDrawing';
 import {
   SCRIBBLE_TEXT_LIMIT,
   SCRIBBLE_TOOLS,
@@ -21,7 +22,7 @@ import {
   type ScribbleShape,
   type ScribbleTool,
 } from './geometry';
-import { SCRIBBLE_INKS, SCRIBBLE_WIDTHS, scribbleChrome as chrome, scribbleStroke } from './tokens';
+import { SCRIBBLE_INKS, SCRIBBLE_WIDTHS, scribbleChrome as chrome, scribbleStroke, scribbleTrail } from './tokens';
 
 /** Each tool's name, keyboard shortcut, and icon (drawn on a 24-unit grid). */
 export const SCRIBBLE_TOOL_INFO: Record<ScribbleTool, { name: string; key: string; icon: string }> = {
@@ -32,6 +33,7 @@ export const SCRIBBLE_TOOL_INFO: Record<ScribbleTool, { name: string; key: strin
   rectangle: { name: 'Rectangle', key: 'r', icon: 'M4 6h16v12H4z' },
   ellipse: { name: 'Ellipse', key: 'o', icon: 'M12 5c4.4 0 8 3.1 8 7s-3.6 7-8 7-8-3.1-8-7 3.6-7 8-7z' },
   text: { name: 'Text', key: 't', icon: 'M5 7V5h14v2 M12 5v14 M9 19h6' },
+  laser: { name: 'Laser pointer', key: 'k', icon: 'M4 20l7-7 M15 3l1.4 3.6L20 8l-3.6 1.4L15 13l-1.4-3.6L10 8l3.6-1.4z' },
   eraser: { name: 'Eraser', key: 'e', icon: 'M16 4l4 4-10 10H6l-2-2z M9 20h11 M10 8l6 6' },
 };
 
@@ -129,6 +131,30 @@ const Icon = ({ path, strokeWidth = ICON_STROKE }: { path: string; strokeWidth?:
   </svg>
 );
 
+/** Draws a fading trail: each segment thins and fades with the age of its newer end. */
+const TrailView = ({ points, color, width, glow }: { points: readonly TrailPoint[]; color: string; width: number; glow?: number }) => (
+  <g style={glow ? { filter: `drop-shadow(0 0 ${glow}px ${color})` } : undefined}>
+    {points.map((point, index) => {
+      const previous = points[index - 1];
+      if (!previous || point.start) return null;
+      const life = 1 - point.age;
+      return (
+        <line
+          key={index}
+          x1={previous.x}
+          y1={previous.y}
+          x2={point.x}
+          y2={point.y}
+          stroke={color}
+          strokeWidth={Math.max(scribbleStroke.minPointGap, width * life)}
+          strokeOpacity={life}
+          strokeLinecap="round"
+        />
+      );
+    })}
+  </g>
+);
+
 /** Draws one shape. */
 const ShapeView = ({ shape }: { shape: ScribbleShape }) => {
   if (shape.kind === 'text') {
@@ -210,7 +236,7 @@ export interface ScribbleProps {
  * - Pen, highlighter, line, arrow, rectangle, ellipse, text notes, and an eraser
  * - Inks, line widths, and a hand-drawn look that stays the same every time
  * - Undo and redo, clear, and saving as PNG or SVG
- * - Keyboard shortcuts: P, H, L, A, R, O, T, E for tools; Ctrl+Z and
+ * - Keyboard shortcuts: P, H, L, A, R, O, T, K, E for tools; Ctrl+Z and
  *   Ctrl+Shift+Z (or Ctrl+Y) to undo and redo; Escape to stop drawing
  *
  * While drawing is off the page works as usual and the drawing stays on
@@ -258,6 +284,9 @@ export const Scribble = ({
   // The note being typed, read synchronously so it is never placed twice.
   const textRef = useRef<TextDraft | null>(null);
   const scribble = useScribble({ storageKey });
+  const trail = useFadingTrail({ maxPoints: scribbleTrail.maxPoints });
+  // Where the eraser is, for its round cursor.
+  const [hover, setHover] = useState<ScribblePoint | null>(null);
   const { announce } = useAriaAnnounce();
   const onChangeRef = useLatest(onChange);
 
@@ -281,7 +310,11 @@ export const Scribble = ({
 
   // Read the latest versions inside effects that only run when drawing turns on or off.
   const commitTextRef = useLatest(commitText);
-  const cancelRef = useLatest(scribble.cancel);
+  const cancelRef = useLatest(() => {
+    scribble.cancel();
+    scribble.cancelErasing();
+    trail.clear();
+  });
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -327,23 +360,33 @@ export const Scribble = ({
       // The pointer is already gone; the stroke still works while it stays inside.
     }
     pointerRef.current = event.pointerId;
-    if (tool === 'eraser') {
+    if (tool === 'laser') {
+      trail.add(point, scribbleTrail.laser.fadeMs, true);
+    } else if (tool === 'eraser') {
       scribble.startErasing();
       scribble.eraseAt(point);
+      trail.add(point, scribbleTrail.eraser.fadeMs, true);
     } else {
       scribble.begin(tool, point, styleNow);
     }
   };
 
   const handlePointerMove = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (isOpen && tool === 'eraser') setHover(toPoint(event));
     if (pointerRef.current !== event.pointerId) return;
     // Every point the pointer passed through, not just one per frame, for smooth lines.
     const native = event.nativeEvent as PointerEvent;
     const samples = typeof native.getCoalescedEvents === 'function' ? native.getCoalescedEvents() : [];
     for (const sample of samples.length > 0 ? samples : [native]) {
       const point = toPoint(sample);
-      if (tool === 'eraser') scribble.eraseAt(point);
-      else scribble.extend(point);
+      if (tool === 'laser') {
+        trail.add(point, scribbleTrail.laser.fadeMs);
+      } else if (tool === 'eraser') {
+        scribble.eraseAt(point);
+        trail.add(point, scribbleTrail.eraser.fadeMs);
+      } else {
+        scribble.extend(point);
+      }
     }
   };
 
@@ -355,9 +398,16 @@ export const Scribble = ({
     } catch {
       // Already released.
     }
-    if (tool === 'eraser') scribble.stopErasing();
-    else if (event.type === 'pointercancel') scribble.cancel();
-    else scribble.finish();
+    const cancelled = event.type === 'pointercancel';
+    if (tool === 'laser') return; // The trail fades on its own.
+    if (tool === 'eraser') {
+      if (cancelled) scribble.cancelErasing();
+      else scribble.stopErasing();
+    } else if (cancelled) {
+      scribble.cancel();
+    } else {
+      scribble.finish();
+    }
   };
 
   const save = async (format: ScribbleFormat) => {
@@ -383,7 +433,9 @@ export const Scribble = ({
       if (event.key === 'Escape') {
         if (textRef.current) return; // The note field handles its own Escape.
         if (pointerRef.current !== null) {
+          // Escape mid-stroke drops the shape, or keeps everything the eraser touched.
           scribble.cancel();
+          scribble.cancelErasing();
           pointerRef.current = null;
           return;
         }
@@ -414,7 +466,9 @@ export const Scribble = ({
 
   const position = inline ? 'absolute' : 'fixed';
   const showDrawing = isOpen || (keepVisible && scribble.shapes.length > 0);
-  const cursor = tool === 'text' ? 'text' : tool === 'eraser' ? 'cell' : 'crosshair';
+  // The eraser draws its own round cursor.
+  const cursor = tool === 'text' ? 'text' : tool === 'eraser' ? 'none' : 'crosshair';
+  const trailStyle = tool === 'eraser' ? scribbleTrail.eraser : scribbleTrail.laser;
   const shapeCount = scribble.shapes.length;
 
   return (
@@ -440,11 +494,37 @@ export const Scribble = ({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerEnd}
           onPointerCancel={handlePointerEnd}
+          onPointerLeave={() => setHover(null)}
         >
-          {scribble.shapes.map((shape) => (
-            <ShapeView key={shape.id} shape={shape} />
-          ))}
+          {scribble.shapes.map((shape) =>
+            scribble.pendingErase.has(shape.id) ? (
+              <g key={shape.id} opacity={scribbleTrail.eraser.previewOpacity}>
+                <ShapeView shape={shape} />
+              </g>
+            ) : (
+              <ShapeView key={shape.id} shape={shape} />
+            )
+          )}
           {scribble.draft && <ShapeView shape={scribble.draft} />}
+          <g {...{ [SCRIBBLE_TRANSIENT_ATTRIBUTE]: '' }} pointerEvents="none">
+            {trail.points.length > 1 && tool === 'laser' && (
+              <>
+                <TrailView points={trail.points} color={scribbleTrail.laser.color} width={scribbleTrail.laser.width} glow={scribbleTrail.laser.glow} />
+                <TrailView points={trail.points} color={scribbleTrail.laser.core} width={scribbleTrail.laser.width / 3} />
+              </>
+            )}
+            {trail.points.length > 1 && tool !== 'laser' && <TrailView points={trail.points} color={trailStyle.color} width={trailStyle.width} />}
+            {isOpen && tool === 'eraser' && hover && (
+              <circle
+                cx={hover.x}
+                cy={hover.y}
+                r={scribbleStroke.eraserReach}
+                fill="none"
+                stroke={scribbleTrail.eraser.color}
+                strokeWidth={scribbleTrail.eraser.cursorStroke}
+              />
+            )}
+          </g>
         </svg>
       )}
 
@@ -593,7 +673,6 @@ export const Scribble = ({
 
             <button type="button" className={CLASS.button} aria-label="Stop drawing" aria-keyshortcuts="Escape" title="Done (Esc)" onClick={() => setOpen(false)}>
               <Icon path={ICONS.close} />
-              Done
             </button>
           </div>
           {saveError && (

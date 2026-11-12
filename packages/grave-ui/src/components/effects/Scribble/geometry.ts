@@ -13,15 +13,19 @@ import { scribbleStroke } from './tokens';
  * - `highlighter`: wide, see-through freehand lines
  * - `line`, `arrow`, `rectangle`, `ellipse`: drag from one corner to the other
  * - `text`: click to type a note
+ * - `laser`: point at things with a glowing trail that fades away; nothing is kept
  * - `eraser`: drag over shapes to remove them
  */
-export type ScribbleTool = 'pen' | 'highlighter' | 'line' | 'arrow' | 'rectangle' | 'ellipse' | 'text' | 'eraser';
+export type ScribbleTool = 'pen' | 'highlighter' | 'line' | 'arrow' | 'rectangle' | 'ellipse' | 'text' | 'laser' | 'eraser';
 
-/** The tools that leave a shape behind (everything but the eraser). */
-export type ScribbleShapeKind = Exclude<ScribbleTool, 'eraser'>;
+/** The tools that leave a shape behind (everything but the laser and the eraser). */
+export type ScribbleShapeKind = Exclude<ScribbleTool, 'laser' | 'eraser'>;
 
 /** Every tool, in toolbar order. */
-export const SCRIBBLE_TOOLS: readonly ScribbleTool[] = ['pen', 'highlighter', 'line', 'arrow', 'rectangle', 'ellipse', 'text', 'eraser'];
+export const SCRIBBLE_TOOLS: readonly ScribbleTool[] = ['pen', 'highlighter', 'line', 'arrow', 'rectangle', 'ellipse', 'text', 'laser', 'eraser'];
+
+/** The kinds of shape that can be drawn and saved. */
+export const SCRIBBLE_SHAPE_KINDS: readonly ScribbleShapeKind[] = ['pen', 'highlighter', 'line', 'arrow', 'rectangle', 'ellipse', 'text'];
 
 /** A point, in px from the top left of the drawing area. */
 export interface ScribblePoint {
@@ -267,7 +271,7 @@ const isNumber = (value: unknown): value is number => typeof value === 'number' 
  */
 export const readScribbleShapes = (data: unknown): ScribbleShape[] => {
   if (!Array.isArray(data)) return [];
-  const kinds = SCRIBBLE_TOOLS.filter((tool) => tool !== 'eraser') as string[];
+  const kinds: readonly string[] = SCRIBBLE_SHAPE_KINDS;
   const shapes: ScribbleShape[] = [];
   for (const item of data.slice(-scribbleStroke.maxShapes)) {
     if (typeof item !== 'object' || item === null) continue;

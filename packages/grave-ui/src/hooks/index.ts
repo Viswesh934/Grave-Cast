@@ -52,3 +52,4 @@ export * from './useWatchingEyes';
 export * from './useApparition';
 export * from './useAutopsy';
 export * from './useScribble';
+export * from './useFadingTrail';

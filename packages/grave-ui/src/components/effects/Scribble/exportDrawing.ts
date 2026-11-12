@@ -19,6 +19,9 @@ export interface ScribbleExportOptions {
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/** Marks parts of the drawing that are only feedback (trails, the eraser cursor), so they are never saved. */
+export const SCRIBBLE_TRANSIENT_ATTRIBUTE = 'data-scribble-transient';
 /** How long a download link stays alive after it is clicked, in ms. Some browsers start downloads late. */
 const REVOKE_DELAY_MS = 1000;
 
@@ -32,6 +35,7 @@ export const scribbleToSvg = (svg: SVGSVGElement, background: string | null = nu
   copy.setAttribute('viewBox', `0 0 ${Math.round(width)} ${Math.round(height)}`);
   copy.removeAttribute('style');
   copy.removeAttribute('class');
+  copy.querySelectorAll(`[${SCRIBBLE_TRANSIENT_ATTRIBUTE}]`).forEach((node) => node.remove());
   if (background) {
     const fill = document.createElementNS(SVG_NS, 'rect');
     fill.setAttribute('width', '100%');

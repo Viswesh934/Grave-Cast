@@ -21,6 +21,7 @@ const SHORTCUTS = [
   ['R', 'Rectangle'],
   ['O', 'Ellipse'],
   ['T', 'Text'],
+  ['K', 'Laser pointer'],
   ['E', 'Eraser'],
   ['Ctrl+Z', 'Undo'],
   ['Ctrl+Shift+Z', 'Redo'],
@@ -35,7 +36,7 @@ export function ScribbleDoc() {
     <ComponentDocPage
       title="Scribble"
       category="The Effects"
-      description="Draw right on the screen, like a quick whiteboard over your page: pen, highlighter, lines, arrows, boxes, circles, text notes, and an eraser, with a hand-drawn look, undo, and saving as PNG or SVG. Nothing leaves the device."
+      description="Draw right on the screen, like a quick whiteboard over your page: pen, highlighter, lines, arrows, boxes, circles, text notes, a laser pointer that fades as you go, and an eraser that shows what it will remove. Hand-drawn look, undo, and saving as PNG or SVG. Nothing leaves the device."
       packageName="scribble"
       preview={
         <div className="w-full max-w-4xl space-y-4">
