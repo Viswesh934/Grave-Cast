@@ -13,6 +13,7 @@
  * - `overlay`: the dimmed layer behind a dialog.
  * - `modal`: dialogs, drawers, and portals.
  * - `toast`: short messages that must show above dialogs.
+ * - `annotation`: drawing over the page with Scribble, above any app UI.
  * - `inspector`: Grimoire overlays (highlights, labels, panels). They sit
  *   above any app UI, including third-party widgets with very high values,
  *   so what they point at is never covered.
@@ -32,6 +33,7 @@ export const zLayers = {
   overlay: 999,
   modal: 1000,
   toast: 1100,
+  annotation: 2147483645,
   inspector: 2147483646,
   cursor: 2147483647,
 } as const;

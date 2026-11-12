@@ -16,3 +16,4 @@ export * from './SoundTrigger';
 export * from './Ascii';
 export * from './SurveillanceCam';
 export * from './VoiceStudio';
+export * from './Scribble';

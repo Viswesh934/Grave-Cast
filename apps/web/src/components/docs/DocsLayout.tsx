@@ -45,7 +45,7 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'RunicButton', path: '/docs/components/runic-button', badge: '3D' },
       { title: 'BloodVialProgress', path: '/docs/components/blood-vial', badge: '3D' },
       { title: 'LunarPhaseSelector', path: '/docs/components/lunar-phase', badge: '3D' },
-      { title: 'WitchOnBroom', path: '/docs/components/chicken-legs', badge: '3D' },
+      { title: 'WitchOnBroom', path: '/docs/components/chicken-legs', badge: 'New' },
       { title: 'CobwebCorner', path: '/docs/components/cobweb', badge: '3D' },
     ],
   },
@@ -60,6 +60,7 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'ASCII', path: '/docs/components/ascii', badge: 'New' },
       { title: 'SurveillanceCam', path: '/docs/components/surveillance-cam', badge: 'New' },
       { title: 'Voice', path: '/docs/components/voice', badge: 'New' },
+      { title: 'Scribble', path: '/docs/components/scribble', badge: 'New' },
     ],
   },
   {
