@@ -19,3 +19,7 @@ export {
   type CryptRiteProps,
   type CryptKeepsake,
 } from './CryptRite';
+export { SealRite, type SealMode, type SealRiteProps } from './SealRite';
+export { WatchingEyesRite, WATCHING_EYES_SHOWN, HEAT_STRENGTH, type WatchingEyesRiteProps } from './WatchingEyesRite';
+export { ApparitionRite, APPARITION_STEP_MS, APPARITION_VISITORS, type ApparitionRiteProps } from './ApparitionRite';
+export { AutopsyRite, AUTOPSY_ORDER, type AutopsyRiteProps } from './AutopsyRite';

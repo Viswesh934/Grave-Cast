@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, Float } from '@react-three/drei';
 import { ShaderMaterial, type Mesh, Vector3, type Group, Shape } from 'three';
@@ -227,12 +227,16 @@ export function TombstoneCard3D({
       uniforms: {
         uTime: { value: 0 },
         uWeathering: { value: weatheringValue },
+        uHalfHeight: { value: height / 2 },
         uLightPosition: { value: new Vector3(0, 0, 5) },
         uLightColor: { value: new Vector3(1.0, 0.65, 0.35) },
         uLightIntensity: { value: lightConfig.baseIntensity * 1.2 },
       },
     });
-  }, [weatheringValue, intensity]);
+  }, [weatheringValue, intensity, height]);
+
+  // Free the old shader when weathering or lighting changes.
+  useEffect(() => () => stoneMaterial.dispose(), [stoneMaterial]);
 
   // Subtle living stone physics
   useFrame((state) => {
@@ -268,10 +272,6 @@ export function TombstoneCard3D({
     groupRef.current.rotation.y = writhe;
   });
 
-  if (shouldFallback) {
-    return null;
-  }
-
   const tombstoneShape = useMemo(() => {
     const s = new Shape();
     const w = width / 2;
@@ -299,7 +299,11 @@ export function TombstoneCard3D({
     bevelThickness: 0.08,
   }), [depth]);
 
-  const crackGlowIntensity = weatheringValue * 0.65;
+  // After every hook, so the hook order never changes between renders.
+  if (shouldFallback) {
+    return null;
+  }
+
 
   return (
     <group 
@@ -339,11 +343,8 @@ export function TombstoneCard3D({
         position={[0, 0, -depth * 0.5]}
       >
         <extrudeGeometry args={[tombstoneShape, extrudeSettings]} />
-        <meshStandardMaterial
-          color="#6b7c76"
-          roughness={0.82}
-          metalness={0.15}
-        />
+        {/* The weathering stone shader: polish, rain streaks, lichen, cracks, moss. */}
+        <primitive object={stoneMaterial} attach="material" />
       </mesh>
 
       {/* Stepped Granite Base Pedestal Plinths */}
@@ -382,17 +383,6 @@ export function TombstoneCard3D({
       <group position={[0, -0.15, 0]}>
         <ReliefSculpt relief={relief} weatheringValue={weatheringValue} />
       </group>
-
-      {/* CRACK GLOW: Inner sacrificial embers */}
-      {weatheringValue > 0.35 && (
-        <pointLight
-          position={[0, -0.2, depth * 0.6]}
-          color="#10b981"
-          intensity={crackGlowIntensity * 1.2}
-          distance={2.5}
-          decay={2}
-        />
-      )}
 
       {/* TITLE: Crisp carved gothic typography with high visibility */}
       {title && (

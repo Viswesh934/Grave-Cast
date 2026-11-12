@@ -1,125 +1,106 @@
 import { useState } from 'react';
 import { ComponentDocPage } from '../../components/docs/ComponentDocPage';
-import { WitchOnBroom3D, ChickenLegStepper, Canvas, OrbitControls } from 'groove-ui';
+import { WitchOnBroom, ChickenLegStepper, type WitchFlightSpeed } from 'groove-ui';
+
+const STEPS = [
+  { id: 'scan', title: 'Deep Crypt Scan' },
+  { id: 'fossils', title: 'Find Dead Branches' },
+  { id: 'epitaph', title: 'Carve Gothic Relief' },
+  { id: 'radio', title: 'Broadcast Gravecast' },
+];
+
+function StepperDemo() {
+  const [step, setStep] = useState(0);
+  return (
+    <div className="w-full space-y-3">
+      <ChickenLegStepper steps={STEPS} currentStep={step} onChange={(s: number) => setStep(s)} />
+      <div className="flex flex-wrap justify-center gap-2">
+        {STEPS.map((st, idx) => (
+          <button
+            key={st.id}
+            type="button"
+            onClick={() => setStep(idx)}
+            aria-pressed={step === idx}
+            className={`px-3 py-1.5 text-xs rounded-xl font-mono transition-all cursor-pointer ${
+              step === idx
+                ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold'
+                : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-emerald-700/60 hover:text-white'
+            }`}
+          >
+            {idx + 1}. {st.title}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function ChickenLegDoc() {
-  const [is3DMode, setIs3DMode] = useState(true);
-  const [flightSpeed, setFlightSpeed] = useState<'glide' | 'hunt' | 'warp'>('hunt');
-  const [step, setStep] = useState(0);
+  const [flightSpeed, setFlightSpeed] = useState<WitchFlightSpeed>('hunt');
+  const [spells, setSpells] = useState(0);
 
-  const steps = [
-    { id: 'scan', title: 'Deep Crypt Scan' },
-    { id: 'fossils', title: 'Find Dead Branches' },
-    { id: 'epitaph', title: 'Carve Gothic Relief' },
-    { id: 'radio', title: 'Broadcast Gravecast' },
-  ];
+  const codeSnippet = `import { WitchOnBroom } from 'groove-ui';
 
-  const codeSnippet2D = `<ChickenLegStepper
-  steps={[
-    { id: 'scan', title: 'Deep Crypt Scan' },
-    { id: 'fossils', title: 'Find Dead Branches' },
-    { id: 'epitaph', title: 'Carve Gothic Relief' },
-    { id: 'radio', title: 'Broadcast Gravecast' }
-  ]}
-  currentStep={${step}}
-  onChange={(newStep) => setStep(newStep)}
+<WitchOnBroom
+  flightSpeed="${flightSpeed}"
+  size="lg"
+  onCastSpell={() => console.log('Hexed!')}
 />`;
-
-  const codeSnippet3D = `import { Canvas, OrbitControls, WitchOnBroom3D } from 'groove-ui';
-
-const [speed, setSpeed] = useState<'glide' | 'hunt' | 'warp'>('${flightSpeed}');
-
-<div style={{ width: '100%', height: '420px' }}>
-  <Canvas camera={{ position: [0, 0, 5.5], fov: 42 }}>
-    <WitchOnBroom3D
-      flightSpeed={speed}
-      onCastSpell={() => console.log('Spell cast!')}
-    />
-    <OrbitControls enableZoom={false} enablePan={false} />
-  </Canvas>
-</div>`;
 
   return (
     <ComponentDocPage
       title="WitchOnBroom"
       category="The Coven"
-      description="An interactive 3D flying witch on a birch broomstick soaring across the full Harvest Moon with real-time cursor banking, aerodynamic swooping, and streaming witchfire particle trails."
+      description="A line-art witch on her broomstick, flying across the moon. Her cloak and hair snap in the wind, sparks trail behind the broom, and she leans toward your pointer. Click her, or focus her and press Enter, to cast a spell."
       packageName="witch-on-broom"
-      has3DMode={true}
-      is3DMode={is3DMode}
-      onToggle3D={setIs3DMode}
       gothicPhilosophy={{
-        influence: 'Coven Night Flight & Ancient Witch Lore',
-        movement: 'Aerodynamic Cursor Banking & Streaming Witchfire Wake',
+        influence: 'Coven Night Flight & Woodcut Witch Lore',
+        movement: 'Bobbing Flight, Wind-Snapped Cloak & Spark Wake',
       }}
       preview={
         <div className="w-full max-w-3xl space-y-5">
-          {is3DMode ? (
-            <div className="w-full h-[450px] rounded-2xl overflow-hidden border border-[#1e293b]/70 bg-gradient-to-b from-[#080d14] via-[#05080d] to-[#020406] shadow-[inset_0_0_80px_rgba(0,0,0,0.85)] relative">
-              <Canvas camera={{ position: [0, 0, 5.5], fov: 42 }}>
-                <WitchOnBroom3D
-                  flightSpeed={flightSpeed}
-                />
-                <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2 + 0.15} minPolarAngle={Math.PI / 2 - 0.2} />
-              </Canvas>
-              <div className="absolute bottom-2.5 inset-x-0 text-center pointer-events-none text-[11px] font-mono text-emerald-300/80 bg-[#05080d]/85 backdrop-blur-xs py-1 border-t border-[#1e293b]/60">
-                Move mouse to bank witch flight · Click witch to cast spell shockwave
-              </div>
-            </div>
-          ) : (
-            <div className="w-full p-6 rounded-2xl bg-[#0c1813] border border-[#183425] shadow-2xl">
-              <ChickenLegStepper
-                steps={steps}
-                currentStep={step}
-                onChange={(s: number) => setStep(s)}
-              />
-            </div>
-          )}
+          <div className="w-full flex flex-col items-center gap-3 rounded-2xl border border-[#1e293b]/70 bg-[radial-gradient(ellipse_at_70%_25%,#1b1830_0%,#0b0a14_55%,#05050a_100%)] px-6 py-10">
+            <WitchOnBroom flightSpeed={flightSpeed} size="lg" onCastSpell={() => setSpells((n) => n + 1)} />
+            <p className="m-0 text-[11px] font-mono text-stone-400" aria-live="polite">
+              {spells === 0 ? 'Move over her to steer · Click to cast a spell' : `Spells cast: ${spells}`}
+            </p>
+          </div>
 
-          {/* Flight Controls */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
-            {is3DMode ? (
-              <>
-                {(['glide', 'hunt', 'warp'] as const).map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => setFlightSpeed(s)}
-                    className={`px-4 py-2 text-xs rounded-xl font-mono uppercase tracking-wider transition-all cursor-pointer font-bold ${
-                      flightSpeed === s
-                        ? 'bg-purple-950/80 text-purple-200 border border-purple-600/80 shadow-md shadow-purple-950/50'
-                        : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-purple-700/60 hover:text-white'
-                    }`}
-                  >
-                    Speed: {s}
-                  </button>
-                ))}
-              </>
-            ) : (
-              steps.map((st, idx) => (
-                <button
-                  key={st.id}
-                  type="button"
-                  onClick={() => setStep(idx)}
-                  className={`px-3 py-1.5 text-xs rounded-xl font-mono transition-all cursor-pointer ${
-                    step === idx
-                      ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-600/80 font-bold shadow-md shadow-emerald-950/40'
-                      : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-emerald-700/60 hover:text-white'
-                  }`}
-                >
-                  {idx + 1}. {st.title}
-                </button>
-              ))
-            )}
+          <div className="flex flex-wrap items-center justify-center gap-3 bg-[#0c1813] border border-[#183425] rounded-2xl p-3 shadow-xl">
+            {(['glide', 'hunt', 'warp'] as const).map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setFlightSpeed(s)}
+                aria-pressed={flightSpeed === s}
+                className={`px-4 py-2 text-xs rounded-xl font-mono uppercase tracking-wider transition-all cursor-pointer font-bold ${
+                  flightSpeed === s
+                    ? 'bg-purple-950/80 text-purple-200 border border-purple-600/80 shadow-md shadow-purple-950/50'
+                    : 'bg-[#102219] text-stone-300 border border-[#1b3a2a] hover:border-purple-700/60 hover:text-white'
+                }`}
+              >
+                Speed: {s}
+              </button>
+            ))}
           </div>
         </div>
       }
-      codeSnippet={is3DMode ? codeSnippet3D : codeSnippet2D}
+      codeSnippet={codeSnippet}
       propsList={[
-        { name: 'flightSpeed', type: "'glide' | 'hunt' | 'warp'", default: "'hunt'", description: 'Flight velocity & particle density' },
-        { name: 'spellColor', type: 'string', default: "'#c084fc'", description: 'Emissive magic burst color' },
-        { name: 'onCastSpell', type: '() => void', description: 'Callback fired on click spell burst' },
-        { name: 'scale', type: 'number', default: '1.2', description: 'Scale factor' },
+        { name: 'flightSpeed', type: "'glide' | 'hunt' | 'warp'", default: "'hunt'", description: 'How fast she bobs, flutters, and trails sparks' },
+        { name: 'size', type: "'sm' | 'md' | 'lg' | number", default: "'md'", description: 'Width preset, or a width in px' },
+        { name: 'spellColor', type: 'string', default: 'witchfire violet', description: 'Color of the sparks and the spell ring' },
+        { name: 'onCastSpell', type: '() => void', description: 'Called on click, Enter, or Space' },
+        { name: 'followPointer', type: 'boolean', default: 'true', description: 'Lean toward the pointer while it moves over her' },
+        { name: 'soundOnCast', type: 'boolean', default: 'true', description: 'Play a sound when she casts a spell' },
+        { name: 'label', type: 'string', description: 'What screen readers hear' },
+      ]}
+      variants={[
+        {
+          title: 'ChickenLegStepper',
+          description: "A step-by-step progress trail on Baba Yaga's chicken legs",
+          element: <StepperDemo />,
+        },
       ]}
       prevPage={{ title: 'LunarPhaseSelector', path: '/docs/components/lunar-phase' }}
       nextPage={{ title: 'CobwebCorner', path: '/docs/components/cobweb' }}

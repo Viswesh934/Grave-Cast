@@ -2,6 +2,14 @@ import { useState } from 'react';
 import { ComponentDocPage } from '../../components/docs/ComponentDocPage';
 import { CauldronBrew, CauldronBrew3D, Canvas, OrbitControls, type BrewColor } from 'groove-ui';
 
+/** A backdrop that glows in the brew's color, so the cauldron never sits in plain black. */
+const BREW_BACKDROPS: Record<BrewColor, string> = {
+  emerald: 'border-emerald-800/60 bg-[radial-gradient(ellipse_at_50%_40%,#0f5a3e_0%,#0a2a20_45%,#05110d_100%)]',
+  witchfire: 'border-violet-800/60 bg-[radial-gradient(ellipse_at_50%_40%,#4c2489_0%,#241240_45%,#0e0718_100%)]',
+  blood: 'border-red-900/60 bg-[radial-gradient(ellipse_at_50%_40%,#7a1a1a_0%,#3a0d0d_45%,#160505_100%)]',
+  gold: 'border-amber-800/60 bg-[radial-gradient(ellipse_at_50%_40%,#7a5212_0%,#3a2809_45%,#160f04_100%)]',
+};
+
 export function CauldronDoc() {
   const [is3DMode, setIs3DMode] = useState(true);
   const [brewColor, setBrewColor] = useState<BrewColor>('emerald');
@@ -42,7 +50,7 @@ export function CauldronDoc() {
       preview={
         <div className="w-full max-w-2xl flex flex-col items-center gap-5">
           {is3DMode ? (
-            <div className="w-full h-[420px] rounded-2xl overflow-hidden border border-[#1e293b]/70 bg-gradient-to-b from-[#080d14] via-[#05080d] to-[#020406] shadow-[inset_0_0_80px_rgba(0,0,0,0.85)] relative">
+            <div className={`w-full h-[420px] rounded-2xl overflow-hidden border shadow-[inset_0_0_60px_rgba(0,0,0,0.6)] relative transition-colors duration-500 ${BREW_BACKDROPS[brewColor]}`}>
               <Canvas camera={{ position: [0, 1.6, 4.8], fov: 42 }}>
                 <CauldronBrew3D
                   brewColor={brewColor}

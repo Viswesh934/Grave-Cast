@@ -1,17 +1,23 @@
 /**
  * Stone Shader for Tombstone and Gothic Horror Surfaces
- * Procedural basalt with living organic vein corruption,
- * ambient illumination for high visibility, and torchlight specular response.
+ * Procedural granite that weathers the way real headstones do: the polish
+ * fades to grey, rain streaks the face, lichen and soil gather, then thin
+ * cracks open and moss climbs the base. Torchlight follows the pointer.
+ *
+ * Detail is computed in the stone's own coordinates, so it stays put on the
+ * stone as it moves.
  */
 
 export const stoneVertexShader = `
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vPosition;
+  varying vec3 vObjPos;
   varying vec3 vWorldNormal;
   
   void main() {
     vUv = uv;
+    vObjPos = position;
     vNormal = normalize(normalMatrix * normal);
     vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
     vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
@@ -21,7 +27,8 @@ export const stoneVertexShader = `
 
 export const stoneFragmentShader = `
   uniform float uTime;
-  uniform float uWeathering; // 0.0 = pristine, 1.0 = crumbling
+  uniform float uWeathering; // 0.0 = pristine, 0.3 aged, 0.6 cracked, 0.9 crumbling
+  uniform float uHalfHeight; // half the stone's height, for "near the foot" and "under the arch"
   uniform vec3 uLightPosition;
   uniform vec3 uLightColor;
   uniform float uLightIntensity;
@@ -29,6 +36,7 @@ export const stoneFragmentShader = `
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vPosition;
+  varying vec3 vObjPos;
   varying vec3 vWorldNormal;
   
   // Simplex noise for procedural detail
@@ -96,68 +104,92 @@ export const stoneFragmentShader = `
     m = m * m;
     return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
   }
+
+  // Thin lines where the noise crosses zero: a branching crack network.
+  float crackLines(vec3 p, float sharpness) {
+    float n = abs(snoise(p));
+    float n2 = abs(snoise(p * 2.1 + vec3(5.2, 1.3, 8.7)));
+    return max(1.0 - smoothstep(0.0, sharpness, n), (1.0 - smoothstep(0.0, sharpness * 0.6, n2)) * 0.6);
+  }
   
   void main() {
-    // Gothic Basalt Palette (High contrast, clearly visible relief)
-    vec3 stoneBase = vec3(0.24, 0.23, 0.27);
-    vec3 stoneHighlight = vec3(0.44, 0.41, 0.40);
-    
-    // Procedural stone grain
-    float scale = 6.0;
-    float noise1 = snoise(vPosition * scale) * 0.5 + 0.5;
-    float noise2 = snoise(vPosition * scale * 2.5) * 0.5 + 0.5;
-    float grain = mix(noise1, noise2, 0.55);
-    
+    vec3 p = vObjPos;
+    // 0 at the foot of the stone, 1 at the top of the arch.
+    float heightFrac = clamp((p.y + uHalfHeight) / (2.0 * uHalfHeight), 0.0, 1.0);
+
+    // Polished granite: dark grey with light and dark mineral flecks.
+    vec3 stoneBase = vec3(0.30, 0.31, 0.33);
+    vec3 stoneHighlight = vec3(0.47, 0.47, 0.47);
+    float grain = mix(snoise(p * 7.0) * 0.5 + 0.5, snoise(p * 19.0) * 0.5 + 0.5, 0.55);
     vec3 stoneColor = mix(stoneBase, stoneHighlight, grain);
+    float flecks = smoothstep(0.62, 0.8, snoise(p * 46.0) * 0.5 + 0.5);
+    stoneColor = mix(stoneColor, vec3(0.70, 0.69, 0.66), flecks * 0.55);
+    float darkFlecks = smoothstep(0.66, 0.84, snoise(p * 38.0 + vec3(4.0)) * 0.5 + 0.5);
+    stoneColor = mix(stoneColor, vec3(0.10, 0.10, 0.11), darkFlecks * 0.5);
+
+    // How far weathering has gone: 0 for pristine, 1 from "aged" on.
+    float exposure = smoothstep(0.0, 0.3, uWeathering);
+
+    // The polish goes and the stone pales to a dry, slightly warm grey.
+    vec3 paled = mix(vec3(dot(stoneColor, vec3(0.333))), vec3(0.50, 0.48, 0.44), 0.55);
+    stoneColor = mix(stoneColor, paled, exposure * 0.75);
+
+    // Rain streaks running down the face, and grime under the arch.
+    float streakNoise = snoise(vec3(p.x * 13.0, p.y * 0.8, p.z * 13.0)) * 0.5 + 0.5;
+    float streaks = smoothstep(0.58, 0.85, streakNoise) * exposure;
+    float runoff = smoothstep(0.6, 1.0, heightFrac) * exposure;
+    stoneColor *= 1.0 - streaks * 0.3 - runoff * 0.18;
+
+    // Lichen crusts: pale grey-green, with a few ochre spots.
+    float lichenNoise = snoise(p * 3.2 + vec3(3.1, 7.4, 1.9)) * 0.5 + 0.5;
+    float lichenDetail = snoise(p * 26.0) * 0.5 + 0.5;
+    float lichen = smoothstep(0.62, 0.78, lichenNoise) * smoothstep(0.3, 0.55, lichenDetail) * exposure;
+    float ochre = smoothstep(0.55, 0.72, snoise(p * 1.8 + vec3(9.0)) * 0.5 + 0.5);
+    vec3 lichenColor = mix(vec3(0.66, 0.68, 0.58), vec3(0.72, 0.56, 0.30), ochre);
+    stoneColor = mix(stoneColor, lichenColor, lichen * 0.8);
+
+    // Soil splashed onto the foot of the stone.
+    float soil = (1.0 - smoothstep(0.0, 0.22, heightFrac)) * exposure * (0.6 + 0.4 * (snoise(p * 9.0) * 0.5 + 0.5));
+    stoneColor = mix(stoneColor, vec3(0.22, 0.17, 0.12), soil * 0.7);
+
+    // Cracks: none on aged stone, thin dark lines once cracked, deeper when crumbling.
+    float crackAmount = smoothstep(0.45, 0.6, uWeathering);
+    float crackWidth = mix(0.035, 0.06, smoothstep(0.6, 0.9, uWeathering));
+    float cracks = crackLines(p * vec3(1.6, 1.1, 1.6) + vec3(1.7), crackWidth) * crackAmount;
+    stoneColor = mix(stoneColor, vec3(0.06, 0.05, 0.05), cracks * 0.9);
+
+    // Moss climbing the base of a crumbling stone.
+    float mossAmount = smoothstep(0.75, 0.9, uWeathering);
+    float mossNoise = snoise(p * 5.0 + vec3(2.0, 0.0, 6.0)) * 0.5 + 0.5;
+    float moss = (1.0 - smoothstep(0.05, 0.4, heightFrac + (mossNoise - 0.5) * 0.25)) * mossAmount * smoothstep(0.35, 0.6, mossNoise);
+    stoneColor = mix(stoneColor, vec3(0.20, 0.30, 0.15), moss * 0.85);
     
-    // Weathering cracks
-    float crackNoise = snoise(vPosition * 12.0 + vec3(uTime * 0.04));
-    float cracks = smoothstep(0.70, 0.85, crackNoise) * uWeathering;
-    stoneColor = mix(stoneColor, vec3(0.12, 0.10, 0.12), cracks * 0.8);
-    
-    // Ancient Lichen & Moss Decay
-    float mossNoise = snoise(vPosition * 8.0);
-    float moss = smoothstep(0.55, 0.85, mossNoise) * uWeathering * 0.6;
-    vec3 mossColor = vec3(0.16, 0.28, 0.14); // Visible forest-rot emerald
-    stoneColor = mix(stoneColor, mossColor, moss);
-    
-    // Living Flesh-Stone Fusion (pulsing blood veins running through ancient stone)
-    float veinNoise = snoise(vPosition * 14.0 + vec3(0.0, 0.0, uTime * 0.15));
-    float veins = smoothstep(0.72, 0.88, veinNoise) * (0.2 + 0.8 * uWeathering);
-    float veinPulse = sin(uTime * 2.8) * 0.5 + 0.5;
-    vec3 fleshCrimson = vec3(0.85, 0.10, 0.15); // Sacrificial crimson
-    vec3 veinEmissive = fleshCrimson * veins * (0.7 + 0.5 * veinPulse);
-    
-    // Dynamic lighting from torchlight cursor
+    // Torchlight from the pointer
     vec3 lightDir = normalize(uLightPosition - vPosition);
     float diffuse = max(dot(vNormal, lightDir), 0.0);
-    
-    // Attenuation
     float distance = length(uLightPosition - vPosition);
     float attenuation = 1.0 / (1.0 + 0.08 * distance + 0.008 * distance * distance);
     
-    // Specular highlight (wet stone sheen)
+    // Polished stone shines; weathered stone is matte.
     vec3 viewDir = normalize(-vPosition);
     vec3 halfDir = normalize(lightDir + viewDir);
-    float specular = pow(max(dot(vNormal, halfDir), 0.0), 24.0) * 0.35;
+    float shine = mix(0.4, 0.05, exposure);
+    float specular = pow(max(dot(vNormal, halfDir), 0.0), mix(48.0, 12.0, exposure)) * shine;
     
-    // Dramatic Rim Lighting (Gothic silhouette definition)
+    // A soft, cool edge light so the silhouette reads against the night.
     float rim = 1.0 - max(dot(viewDir, vNormal), 0.0);
     rim = smoothstep(0.55, 1.0, rim);
-    vec3 rimGlow = mix(vec3(0.55, 0.18, 0.30), vec3(1.0, 0.60, 0.25), diffuse) * rim * 0.45;
+    vec3 rimGlow = mix(vec3(0.30, 0.32, 0.36), vec3(0.62, 0.52, 0.40), diffuse) * rim * 0.35;
     
-    // Ambient Occlusion
-    float ao = 1.0 - (cracks * 0.4);
+    // Cracks sit in shadow.
+    float ao = 1.0 - cracks * 0.5;
     
-    // Balanced lighting: Generous ambient ensures details are clearly visible!
-    vec3 ambient = stoneColor * 0.42; 
+    vec3 ambient = stoneColor * 0.48;
     vec3 lit = stoneColor * diffuse * uLightColor * uLightIntensity * attenuation * ao;
-    vec3 spec = uLightColor * specular * attenuation;
+    vec3 spec = uLightColor * specular * attenuation * (1.0 - cracks);
     
-    // Inner demonic crack glow when weathered
-    vec3 crackGlow = vec3(1.0, 0.35, 0.05) * cracks * uWeathering * (0.6 + 0.4 * sin(uTime * 3.5));
-    
-    vec3 finalColor = ambient + lit + spec + veinEmissive + rimGlow + crackGlow;
+    // Stone does not glow: no veins or ember light in the face itself.
+    vec3 finalColor = ambient * ao + lit + spec + rimGlow;
     
     gl_FragColor = vec4(finalColor, 1.0);
   }

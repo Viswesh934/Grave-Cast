@@ -33,6 +33,44 @@
   --grave-bone-decayed: #b8a99a;
   --grave-bone-ash: #6b625b;
 
+  /* Headstone Stone: polished granite, and the paler grey it weathers to.
+     Letters stay at 5:1 or better on both. */
+  --grave-granite-top: #55585c;
+  --grave-granite-bottom: #36383b;
+  --grave-granite-base: #2a2c2e;
+  --grave-weathered-top: #615d56;
+  --grave-weathered-bottom: #48443e;
+  --grave-weathered-base: #3a3732;
+  --grave-stone-letter: #f1eee8;
+  --grave-stone-letter-soft: #e4e1da;
+  --grave-stone-edge: rgba(0, 0, 0, 0.55);
+  --grave-stone-chamfer: rgba(255, 255, 255, 0.12);
+  --grave-stone-hollow: rgba(0, 0, 0, 0.55);
+  --grave-stone-cut: rgba(0, 0, 0, 0.35);
+  --grave-stone-sheen: rgba(255, 255, 255, 0.07);
+  --grave-stone-sheen-polished: rgba(255, 255, 255, 0.14);
+  --grave-stone-drop: 0 16px 24px -10px rgba(0, 0, 0, 0.85);
+  --grave-stone-plinth-height: 0.9rem;
+  --grave-stone-soil: rgba(46, 34, 22, 0.6);
+  --grave-stone-runoff: rgba(22, 20, 17, 0.28);
+  --grave-stone-moss: rgba(62, 84, 44, 0.55);
+  /* Light and dark mineral flecks in the granite. */
+  --grave-stone-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.1 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grave-stone-fleck: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.3 -0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  /* Rain streaks running down the face. */
+  --grave-stone-streaks: linear-gradient(90deg, transparent 18%, rgba(22, 20, 17, 0.12) 19%, transparent 21%, transparent 47%, rgba(22, 20, 17, 0.08) 48%, transparent 50%, transparent 73%, rgba(22, 20, 17, 0.11) 74%, transparent 76%);
+  /* Crusts of lichen near the edges, kept clear of the lettering. */
+  --grave-stone-lichen:
+    radial-gradient(circle at 12% 30%, rgba(201, 184, 120, 0.55) 0 1.6%, rgba(201, 184, 120, 0.28) 2.6%, transparent 4%),
+    radial-gradient(circle at 16% 36%, rgba(201, 184, 120, 0.45) 0 1%, transparent 2.4%),
+    radial-gradient(circle at 88% 26%, rgba(190, 198, 170, 0.5) 0 2%, rgba(190, 198, 170, 0.22) 3.4%, transparent 5%),
+    radial-gradient(circle at 84% 20%, rgba(190, 198, 170, 0.4) 0 1%, transparent 2.2%),
+    radial-gradient(circle at 92% 78%, rgba(176, 140, 74, 0.5) 0 1.8%, transparent 3.6%),
+    radial-gradient(circle at 8% 84%, rgba(190, 198, 170, 0.45) 0 2.4%, rgba(190, 198, 170, 0.2) 3.8%, transparent 5.5%);
+  /* A fracture from the arch, and a second one low on the right. */
+  --grave-stone-crack: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300' preserveAspectRatio='none'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M36 34 L47 55 L43 68 L60 90 L63 110 L84 127 L89 148 L110 162 L114 182' stroke='%23161411' stroke-width='1.4'/%3E%3Cpath d='M63 110 L47 121 L42 136' stroke='%23161411' stroke-width='0.9'/%3E%3Cpath d='M36 34 L47 55 L43 68 L60 90 L63 110 L84 127 L89 148 L110 162 L114 182' stroke='white' stroke-opacity='0.16' stroke-width='0.7' transform='translate(1 1.2)'/%3E%3C/g%3E%3C/svg%3E");
+  --grave-stone-crack-low: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300' preserveAspectRatio='none'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M196 196 L178 204 L172 222 L154 232 L150 252' stroke='%23161411' stroke-width='1.3'/%3E%3Cpath d='M172 222 L182 238' stroke='%23161411' stroke-width='0.8'/%3E%3Cpath d='M196 196 L178 204 L172 222 L154 232 L150 252' stroke='white' stroke-opacity='0.14' stroke-width='0.6' transform='translate(-1 1.2)'/%3E%3C/g%3E%3C/svg%3E");
+
   /* Abyss & Neutral Darks */
   --grave-dark-950: #060608;
   --grave-dark-900: #0a0a0f;
@@ -476,43 +514,118 @@
 
 /* ==========================================================================
    Crypt: TombstoneCard (.grave-tombstone)
+   A carved headstone: a granite slab with an arched top, letters cut into
+   the stone, an incised border, and a wider base it stands on. Weathering
+   ages the stone the way real ones age: rain streaks, lichen, soil at the
+   foot, and finally cracks and moss.
    ========================================================================== */
 .grave-tombstone {
   position: relative;
-  background: radial-gradient(ellipse at 50% 12%, #4a5c54 0%, #35443d 55%, #24302a 100%);
-  border: 2px solid #63776c;
-  border-radius: 120px 120px 14px 14px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75), inset 0 2px 4px rgba(255, 255, 255, 0.2), inset 0 0 0 2px rgba(18, 26, 21, 0.8);
-  padding: 3.5rem 2rem 2rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  /* The base slab sits just below the headstone, outside the card. */
+  overflow: visible;
+  margin-bottom: var(--grave-stone-plinth-height);
+  backdrop-filter: none;
+  color: var(--grave-stone-letter);
+  border: 1px solid var(--grave-stone-edge);
+  border-radius: 46% 46% 4px 4px / 20% 20% 4px 4px;
+  background:
+    var(--grave-stone-fleck),
+    var(--grave-stone-grain),
+    linear-gradient(115deg, var(--grave-stone-sheen) 0%, transparent 40%),
+    linear-gradient(180deg, var(--grave-granite-top) 0%, var(--grave-granite-bottom) 100%);
+  box-shadow:
+    inset 2px 2px 0 var(--grave-stone-chamfer),
+    inset -3px -4px 8px var(--grave-stone-hollow),
+    var(--grave-stone-drop);
+  padding: 3.5rem 2rem 2.5rem;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+/* The incised line that frames the inscription. */
+.grave-tombstone::before {
+  content: '';
+  position: absolute;
+  inset: 0.8rem;
+  border-radius: inherit;
+  border: 1px solid var(--grave-stone-cut);
+  box-shadow: 0 1px 0 var(--grave-stone-chamfer);
+  pointer-events: none;
+}
+
+/* The base slab the headstone stands on. */
+.grave-tombstone::after {
+  content: '';
+  position: absolute;
+  left: -7%;
+  right: -7%;
+  bottom: calc(var(--grave-stone-plinth-height) * -1);
+  height: var(--grave-stone-plinth-height);
+  border-radius: 2px;
+  background:
+    var(--grave-stone-grain),
+    linear-gradient(180deg, var(--grave-granite-bottom) 0%, var(--grave-granite-base) 100%);
+  box-shadow: inset 0 1px 0 var(--grave-stone-chamfer), var(--grave-stone-drop);
+  pointer-events: none;
 }
 
 .grave-tombstone:hover {
-  transform: translateY(-4px);
-  border-color: #829a8d;
-  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(130, 154, 141, 0.35);
+  transform: translateY(-2px);
 }
 
+/* Pristine: freshly polished granite with a clear sheen. */
 .grave-tombstone--pristine {
-  border-color: #3d4f44;
+  --grave-stone-sheen: var(--grave-stone-sheen-polished);
 }
 
-.grave-tombstone--aged {
-  border-color: #4a5e52;
-  background: radial-gradient(ellipse at 50% 12%, #324038 0%, #1c2721 60%, #101914 100%);
-}
-
-.grave-tombstone--cracked {
-  border-color: #5a7364;
-  border-style: dashed;
-}
-
+/* Weathered stone: the polish is gone, the granite has paled to grey, and
+   rain has left streaks under the arch and dirt at the foot. */
+.grave-tombstone--aged,
+.grave-tombstone--cracked,
 .grave-tombstone--crumbling {
-  border-color: #43544a;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), inset 0 0 25px rgba(16, 185, 129, 0.1);
+  --grave-granite-top: var(--grave-weathered-top);
+  --grave-granite-bottom: var(--grave-weathered-bottom);
+  --grave-granite-base: var(--grave-weathered-base);
+  --grave-stone-sheen: transparent;
+  background:
+    var(--grave-stone-lichen),
+    var(--grave-stone-fleck),
+    var(--grave-stone-grain),
+    linear-gradient(to top, var(--grave-stone-soil) 0%, transparent 18%),
+    linear-gradient(180deg, var(--grave-stone-runoff) 0%, transparent 35%),
+    var(--grave-stone-streaks),
+    linear-gradient(180deg, var(--grave-granite-top) 0%, var(--grave-granite-bottom) 100%);
+}
+
+/* Cracked: one real fracture, running down from the arch. */
+.grave-tombstone--cracked {
+  background:
+    var(--grave-stone-crack) center / 100% 100% no-repeat,
+    var(--grave-stone-lichen),
+    var(--grave-stone-fleck),
+    var(--grave-stone-grain),
+    linear-gradient(to top, var(--grave-stone-soil) 0%, transparent 18%),
+    linear-gradient(180deg, var(--grave-stone-runoff) 0%, transparent 35%),
+    var(--grave-stone-streaks),
+    linear-gradient(180deg, var(--grave-granite-top) 0%, var(--grave-granite-bottom) 100%);
+}
+
+/* Crumbling: a second fracture, and moss creeping up from the ground. */
+.grave-tombstone--crumbling {
+  background:
+    var(--grave-stone-crack) center / 100% 100% no-repeat,
+    var(--grave-stone-crack-low) center / 100% 100% no-repeat,
+    var(--grave-stone-lichen),
+    var(--grave-stone-fleck),
+    var(--grave-stone-grain),
+    linear-gradient(to top, var(--grave-stone-moss) 0%, transparent 26%),
+    linear-gradient(to top, var(--grave-stone-soil) 0%, transparent 18%),
+    linear-gradient(180deg, var(--grave-stone-runoff) 0%, transparent 40%),
+    var(--grave-stone-streaks),
+    linear-gradient(180deg, var(--grave-granite-top) 0%, var(--grave-granite-bottom) 100%);
 }
 
 .grave-tombstone__header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -523,44 +636,55 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--grave-mist-400);
+  color: var(--grave-stone-letter-soft);
+  filter: drop-shadow(0 -1px 0 var(--grave-stone-hollow)) drop-shadow(0 1px 0 var(--grave-stone-chamfer));
 }
 
 .grave-tombstone__engraving {
+  position: relative;
   text-align: center;
   padding: 0.5rem 0;
 }
 
+/* Letters cut into the stone: shadow on the upper edge, light on the lower. */
+.grave-tombstone__title,
+.grave-tombstone__subtitle,
+.grave-tombstone__epitaph {
+  text-shadow: 0 -1px 0 var(--grave-stone-hollow), 0 1px 0 var(--grave-stone-chamfer);
+}
+
 .grave-tombstone__title {
-  font-family: Georgia, Cambria, serif;
+  font-family: Georgia, Cambria, 'Times New Roman', serif;
   font-size: 1.35rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--grave-bone-100);
+  letter-spacing: 0.08em;
+  color: var(--grave-stone-letter);
   text-transform: uppercase;
   margin: 0;
 }
 
 .grave-tombstone__subtitle {
-  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-family: Georgia, Cambria, 'Times New Roman', serif;
   font-size: 0.8125rem;
-  letter-spacing: 0.12em;
-  color: var(--grave-mist-400);
-  margin-top: 0.35rem;
+  letter-spacing: 0.18em;
+  color: var(--grave-stone-letter-soft);
+  margin-top: 0.4rem;
   text-transform: uppercase;
 }
 
 .grave-tombstone__epitaph {
-  font-family: Georgia, Cambria, serif;
+  font-family: Georgia, Cambria, 'Times New Roman', serif;
   font-style: italic;
-  font-size: 0.875rem;
-  color: var(--grave-mist-300);
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px dashed var(--grave-dark-700);
+  font-size: 0.9rem;
+  color: var(--grave-stone-letter-soft);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--grave-stone-cut);
+  box-shadow: inset 0 1px 0 var(--grave-stone-chamfer);
 }
 
 .grave-tombstone__content {
+  position: relative;
   margin-top: 1rem;
 }
 

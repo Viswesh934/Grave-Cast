@@ -52,7 +52,7 @@ export function TombstoneDoc() {
       description={
         is3DMode
           ? "A monolithic 3D gothic basalt headstone featuring hand-sculpted reliefs (sigil, reaper, skull, gargoyle, talisman), living breathing stone physics, and dynamic torchlight cursor shadows."
-          : "A weathered granite grave marker card featuring chiseled epitaph typography, customizable weathering states, and cemetery mist hover physics."
+          : "A carved granite headstone on its base: letters cut into the stone and an incised border. Weathering ages it the way real stones age, with rain streaks, lichen, soil at the foot, cracks, and moss."
       }
       packageName="tombstone-card"
       has3DMode={true}

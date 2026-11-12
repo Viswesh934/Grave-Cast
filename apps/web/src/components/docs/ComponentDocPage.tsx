@@ -161,7 +161,7 @@ export function ComponentDocPage({
                         ? 'bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 text-emerald-100 border border-emerald-500/80 font-semibold shadow-md shadow-emerald-950/60'
                         : 'text-stone-400 hover:text-stone-200'
                     }`}
-                    title="3D WebGL Mode (Default)"
+                    title="3D Mode"
                   >
                     <span>3D WebGL</span>
                     <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-emerald-600 text-white font-sans tracking-wider">Default</span>
