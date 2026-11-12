@@ -15,7 +15,16 @@ export { RiteSigil, SIGIL_GLYPHS, type RiteSigilProps, type SigilGlyph } from '.
 export { BoxModelDiagram, type BoxModelDiagramProps } from './BoxModelDiagram';
 export { ColorSwatch, type ColorSwatchProps } from './ColorSwatch';
 export { ContrastBadge, type ContrastBadgeProps } from './ContrastBadge';
-export { formatPx, formatSide, formatSize, formatDuration, describeDoubts, readabilityAdvice } from './format';
+export {
+  formatPx,
+  formatSide,
+  formatSize,
+  formatDuration,
+  formatBytes,
+  formatTimeOfDay,
+  describeDoubts,
+  readabilityAdvice,
+} from './format';
 export { RiteElementOutline, type RiteElementOutlineProps } from './RiteElementOutline';
 export * from './rites';
 export {

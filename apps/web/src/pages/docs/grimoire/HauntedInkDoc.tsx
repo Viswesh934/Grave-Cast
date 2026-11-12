@@ -8,7 +8,7 @@ function HauntedInkDemo() {
   const [stage, setStage] = useState<HTMLDivElement | null>(null);
   return (
     <div className="grid w-full max-w-6xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-      <HauntedStage stageRef={setStage} label="The Hollow Inn, a sample page to search" />
+      <HauntedStage stageRef={setStage} label="Maple Street Café, a sample page to search" />
       <HauntedInkRite root={stage} defaultQuery="the" headingLevel={3} />
     </div>
   );

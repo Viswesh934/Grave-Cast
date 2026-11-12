@@ -60,3 +60,26 @@ export const readabilityAdvice = (rating: 'AAA' | 'AA' | 'fail', large: boolean)
   if (rating === 'AA') return 'Readable for most people.';
   return 'Easy to read, even in poor light.';
 };
+
+const BYTES_PER_UNIT = 1024;
+const BYTE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB'] as const;
+
+/** A size in bytes for reading: `512 B`, `1.5 KB`, `20 MB`. */
+export const formatBytes = (bytes: number): string => {
+  let value = Math.max(0, bytes);
+  let unit = 0;
+  while (value >= BYTES_PER_UNIT && unit < BYTE_UNITS.length - 1) {
+    value /= BYTES_PER_UNIT;
+    unit += 1;
+  }
+  return `${unit === 0 ? Math.round(value) : formatPx(value)} ${BYTE_UNITS[unit]}`;
+};
+
+const CLOCK_DIGITS = 2;
+const pad = (value: number): string => String(value).padStart(CLOCK_DIGITS, '0');
+
+/** A moment as a clock time, such as `09:04:31`, in the local time zone. */
+export const formatTimeOfDay = (ms: number): string => {
+  const date = new Date(ms);
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};

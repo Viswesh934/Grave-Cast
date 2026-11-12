@@ -10,11 +10,11 @@ export interface HauntedStageProps {
 }
 
 /**
- * A small, believable website for rites to work on: headings, links, a
- * button, cards, a form, a list, an image-like block, things that move, and
- * one deliberately faint caption. Nothing in it goes anywhere.
+ * A small, ordinary website for rites to work on: a header, a heading, a
+ * button, a list, a form, an image block, one gentle animation, and one
+ * deliberately faint caption. Nothing in it goes anywhere.
  */
-export function HauntedStage({ stageRef, awake = false, label = 'The Hollow Inn, a sample page' }: HauntedStageProps) {
+export function HauntedStage({ stageRef, awake = false, label = 'Maple Street Café, a sample page' }: HauntedStageProps) {
   const stay = (event: MouseEvent) => event.preventDefault();
   const keep = (event: FormEvent) => event.preventDefault();
 
@@ -23,82 +23,64 @@ export function HauntedStage({ stageRef, awake = false, label = 'The Hollow Inn,
       ref={stageRef}
       role="region"
       aria-label={label}
-      className={`overflow-hidden rounded-2xl border border-[#2a2433] bg-[#16141c] text-left shadow-2xl ${awake ? 'cursor-crosshair' : ''}`}
+      className={`overflow-hidden rounded-xl border border-slate-200 bg-white text-left text-slate-900 shadow-sm ${awake ? 'cursor-crosshair' : ''}`}
     >
-      <header className="flex items-center justify-between gap-4 border-b border-[#2a2433] bg-[#1d1a25] px-5 py-3">
-        <span className="font-serif text-lg font-bold text-[#efe6d2]">The Hollow Inn</span>
-        <nav aria-label="Inn" className="flex gap-4 text-sm">
-          <a href="#rooms" onClick={stay} className="text-[#c9bfa8] hover:text-white">Rooms</a>
-          <a href="#dining" onClick={stay} className="text-[#c9bfa8] hover:text-white">Dining</a>
-          <a href="#crypt" onClick={stay} className="text-[#c9bfa8] hover:text-white">The crypt</a>
+      <header className="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-3">
+        <span className="text-base font-semibold">Maple Street Café</span>
+        <nav aria-label="Café" className="flex gap-4 text-sm">
+          <a href="#menu" onClick={stay} className="text-slate-600 hover:text-slate-900">Menu</a>
+          <a href="#hours" onClick={stay} className="text-slate-600 hover:text-slate-900">Hours</a>
+          <a href="#contact" onClick={stay} className="text-slate-600 hover:text-slate-900">Contact</a>
         </nav>
       </header>
 
-      <section className="relative space-y-3 px-5 py-6">
-        {/* A small ghost that drifts, for rites that watch motion. */}
-        <span
-          aria-hidden="true"
-          className="ghost absolute right-6 top-6 h-10 w-8 animate-bounce rounded-t-full bg-[#efe6d2]/80 shadow-[0_0_18px_rgba(239,230,210,0.35)]"
-        />
-        <span className="inline-block rounded-full bg-[#2c1d24] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-[#ff8f9a]">
-          Vacancy
-        </span>
-        <h3 className="title font-serif text-2xl font-bold text-[#f5efe2]">Rooms for the restless</h3>
-        <p className="max-w-md text-sm leading-relaxed text-[#b9b0a0]">
-          Thirteen candlelit rooms above an old family crypt. Breakfast is served at midnight, and the stairs only
-          creak when someone is on them.
+      <section className="space-y-3 px-5 py-5">
+        <h3 className="title text-2xl font-bold">Fresh coffee, every morning</h3>
+        <p className="max-w-md text-sm leading-relaxed text-slate-600">
+          A small neighborhood café with house-roasted beans, fresh pastries, and plenty of seats by the window.
         </p>
         <div className="flex flex-wrap items-center gap-4">
-          <button type="button" className="rounded-lg bg-[#8b5cf6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#7c4fe6]">
-            Book a night
+          <button type="button" className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            Order ahead
           </button>
-          <span className="candle inline-flex items-center gap-2 text-xs text-[#c9bfa8]">
-            <span aria-hidden="true" className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#f5b942] shadow-[0_0_10px_#f5b942]" />
-            Candles lit in every room
+          <span className="status inline-flex items-center gap-2 text-xs text-slate-600">
+            <span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+            Open now
           </span>
         </div>
       </section>
 
-      <section className="grid gap-3 px-5 pb-5 sm:grid-cols-2">
-        <article className="rounded-xl border border-[#2a2433] bg-[#1f1b28] p-4">
-          <h4 className="font-semibold text-[#efe6d2]">The Widow’s Suite</h4>
-          <p className="mt-1 text-sm text-[#b9b0a0]">A four-poster bed and a mirror that looks back.</p>
-        </article>
-        <article className="rounded-xl border border-[#2a2433] bg-[#1f1b28] p-4">
-          <h4 className="font-semibold text-[#efe6d2]">The Bell Tower</h4>
-          <p className="mt-1 text-sm text-[#b9b0a0]">Quiet, except at three in the morning.</p>
-        </article>
-      </section>
-
-      <section className="grid items-end gap-4 border-t border-[#2a2433] px-5 py-5 sm:grid-cols-[1fr_auto]">
-        <div className="space-y-3">
-          <ul className="tonight space-y-1 text-sm text-[#b9b0a0]">
-            <li>Séance in the parlour, eleven at night</li>
-            <li>Bell tower tour, three in the morning</li>
+      <section className="grid items-start gap-4 border-t border-slate-200 px-5 py-5 sm:grid-cols-[1fr_auto]">
+        <div className="space-y-4">
+          <ul className="menu space-y-1 text-sm text-slate-700">
+            <li>Espresso, 3.00</li>
+            <li>Oat milk latte, 4.50</li>
+            <li>Blueberry muffin, 3.25</li>
           </ul>
           <form onSubmit={keep} className="flex flex-wrap items-end gap-2">
-            <label className="grid gap-1 text-xs text-[#c9bfa8]">
-              Your name
+            <label className="grid gap-1 text-xs text-slate-600">
+              Email for our newsletter
               <input
-                name="guest"
-                placeholder="Unnamed guest"
-                className="rounded-md border border-[#3a3047] bg-[#0f0d14] px-2 py-1 text-sm text-[#efe6d2] placeholder:text-[#8f8799]"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 placeholder:text-slate-400"
               />
             </label>
-            <button type="submit" className="rounded-md border border-[#3a3047] px-3 py-1 text-sm text-[#efe6d2] hover:bg-[#241f2e]">
-              Sign the ledger
+            <button type="submit" className="rounded-md border border-slate-300 px-3 py-1 text-sm text-slate-800 hover:bg-slate-50">
+              Sign up
             </button>
           </form>
         </div>
         <div
           role="img"
-          aria-label="A portrait whose eyes follow you"
-          className="portrait h-24 w-20 rounded-lg border border-[#3a3047] bg-[radial-gradient(circle_at_50%_35%,#3b3046_0%,#1a1520_60%,#0c0a10_100%)]"
+          aria-label="A cup of coffee on a wooden table"
+          className="photo h-24 w-28 rounded-lg bg-gradient-to-br from-amber-200 to-amber-700"
         />
       </section>
 
       {/* Deliberately faint, so rites have something to warn about. */}
-      <p className="caption px-5 pb-5 text-xs text-[#4a4550]">Checkout at dawn. No refunds for the possessed.</p>
+      <p className="caption px-5 pb-4 text-xs text-slate-300">Prices include tax. Closed on public holidays.</p>
     </div>
   );
 }

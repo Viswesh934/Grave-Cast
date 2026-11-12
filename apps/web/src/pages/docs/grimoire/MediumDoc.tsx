@@ -11,7 +11,7 @@ function MediumDemo() {
   return (
     <div className="grid w-full max-w-6xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
       <div className="space-y-3">
-        <HauntedStage stageRef={setStage} awake={awake} label="The Hollow Inn, a sample page to inspect" />
+        <HauntedStage stageRef={setStage} awake={awake} label="Maple Street Café, a sample page to inspect" />
         <p className="m-0 px-1 text-xs text-stone-400">
           {awake ? 'Point at anything on the page. Click to pin it.' : 'A sample page. Wake the Medium to look inside it.'}
         </p>

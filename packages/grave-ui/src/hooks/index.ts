@@ -44,3 +44,6 @@ export * from './useEyeDropper';
 export * from './useHauntedInk';
 export * from './useFullscreen';
 export * from './useVigil';
+export * from './useNecromancer';
+export * from './useSeance';
+export * from './useMutationLog';

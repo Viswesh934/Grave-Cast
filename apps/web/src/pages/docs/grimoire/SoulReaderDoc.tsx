@@ -8,7 +8,7 @@ function SoulReaderDemo() {
   const [stage, setStage] = useState<HTMLDivElement | null>(null);
   return (
     <div className="grid w-full max-w-6xl items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-      <HauntedStage stageRef={setStage} label="The Hollow Inn, a sample page to read" />
+      <HauntedStage stageRef={setStage} label="Maple Street Café, a sample page to read" />
       <SoulReaderRite root={stage} headingLevel={3} />
     </div>
   );
