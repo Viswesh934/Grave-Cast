@@ -18,6 +18,7 @@ export default defineConfig({
     'video/index': 'src/video/index.ts',
     'voice/index': 'src/voice/index.ts',
     'studio/index': 'src/studio/index.ts',
+    'grimoire/index': 'src/grimoire/index.ts',
     'hooks/index': 'src/hooks/index.ts',
     'tokens/index': 'src/tokens/index.ts',
     'tailwind/index': 'src/tailwind/index.ts',

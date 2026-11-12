@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { PumpkinIcon, SearchIcon, VolumeIcon, GitHubIcon } from './DocsIcons';
 import { CommandPalette } from './CommandPalette';
 import { playSound } from 'groove-ui';
+import { GRIMOIRE_PATH, documentedRites, ritePath } from '../../pages/docs/grimoire/paths';
 
 interface NavItem {
   title: string;
@@ -59,6 +60,13 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'ASCII', path: '/docs/components/ascii', badge: 'New' },
       { title: 'SurveillanceCam', path: '/docs/components/surveillance-cam', badge: 'New' },
       { title: 'Voice', path: '/docs/components/voice', badge: 'New' },
+    ],
+  },
+  {
+    title: 'THE GRIMOIRE',
+    items: [
+      { title: 'Overview', path: GRIMOIRE_PATH, badge: 'New' },
+      ...documentedRites.map((rite) => ({ title: rite.name, path: ritePath(rite.id) })),
     ],
   },
 ];

@@ -32,3 +32,6 @@ export * from './horror3d';
 
 // Effects - cross-cutting cursors, backgrounds, overlays
 export * from './effects';
+
+// Grimoire - rite frames, page overlays, and shared rite pieces
+export * from './grimoire';

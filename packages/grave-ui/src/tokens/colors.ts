@@ -195,3 +195,18 @@ export const palette = {
     500: '#4a4d60',
   },
 } as const;
+
+/**
+ * Mixes a color with transparency, so any token can be used as a soft
+ * overlay or tint. Produces a CSS `color-mix()` value.
+ *
+ * @example
+ * ```tsx
+ * <div style={{ background: withAlpha(palette.witch.fire, 20) }} />
+ * ```
+ *
+ * @param color - Any CSS color, usually a palette token.
+ * @param percent - How much of the color to keep, from 0 (invisible) to 100 (solid).
+ */
+export const withAlpha = (color: string, percent: number): string =>
+  `color-mix(in srgb, ${color} ${percent}%, transparent)`;

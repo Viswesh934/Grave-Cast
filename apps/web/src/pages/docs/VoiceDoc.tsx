@@ -236,7 +236,7 @@ const echo = useVoiceEcho({ stream: mic.stream, persona: '${persona}' });
         { name: 'Building blocks', type: 'functions', default: '—', description: 'PERSONAS, adaptPersona(), pickVoice(), chunkText(), createUtteranceGate(), renderPersona()' },
       ]}
       prevPage={{ title: 'SurveillanceCam', path: '/docs/components/surveillance-cam' }}
-      nextPage={{ title: 'Button', path: '/docs/components/button' }}
+      nextPage={{ title: 'Grimoire', path: '/docs/components/grimoire' }}
     />
   );
 }
