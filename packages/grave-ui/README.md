@@ -1,244 +1,90 @@
 # Groove UI
 
-Horror-themed React components, hooks, and browser tools with a folklore look. Graves, covens, cobwebs, a drawing layer, synthesized sound, and the Grimoire: twelve "rites" that show what the browser can do.
+A horror-themed React library where every sound is synthesized, every stone is weathered by hand, and every browser trick comes with a ghost story.
 
-Package name: `groove-ui` (source folder `packages/grave-ui`).
+Install it with `npm install groove-ui`, import `groove-ui/styles.css` once, and you're haunted. Works with React 18 and 19.
 
-## Install
+---
 
-```bash
-npm install groove-ui react react-dom
-```
+## 🪦 The Crypt: components with real character
 
-React 18 or 19 is required as a peer dependency. The 3D components use `three`, `@react-three/fiber`, `@react-three/drei`, and `@react-three/postprocessing`. These install with the package, so you don't need to add them yourself.
+Tombstones, coffins, cauldrons, cobwebs, blood vials, moon phases, a witch on a broom. Each one is built on three small primitives (a button, a card, and a badge), so they all share the same feel and the same accessibility.
 
-### Styles
+The headstone is a good example of the care that goes in. It's pure CSS: layered granite gradients, mineral flecks drawn with SVG noise, an incised border, and letters that look cut into the stone. Turn up its weathering and it ages the way real stones do: the polish fades, rain streaks appear, lichen settles at the edges, and finally cracks and moss take over.
 
-Import the stylesheet once, near the root of your app:
+## 🕯️ The 3D Vault: the same stones, in WebGL
 
-```ts
-import 'groove-ui/styles.css';
-```
+Many components have a 3D twin built on Three.js and React Three Fiber. The 3D headstone runs a custom shader that paints the same four stages of decay, lit by a torch that follows your cursor. For browsers without WebGL, or people who prefer less motion, the 3D versions can step aside for their 2D counterparts.
 
-If you use Tailwind CSS 4, point it at the package so the utility classes the components use get generated:
+## 🔊 The Sound Cellar: no audio files at all
 
-```css
-@import "tailwindcss";
-@source "../node_modules/groove-ui/dist";
-@import "groove-ui/styles.css";
-```
+Over sixty effects, from coffin creaks and wolf howls to church bells and old floppy drives, and not a single audio file. Each sound is a short recipe of tones and filtered noise that the Web Audio API plays on the spot. That keeps the package tiny, lets you change the pitch of any sound, and means a new sound is just a new recipe.
 
-There is also an optional Tailwind plugin with token-based utilities:
+Everything plays through one shared audio channel with a limiter, so stacking sounds won't blow out your speakers. Sound stays off until you switch it on, and any effect can be saved as a WAV file.
 
-```css
-@plugin "groove-ui/tailwind";
-```
+## 🎙️ The Séance Room: voice, music, and video
 
-The plugin is exported as `graveUIPlugin` (also the default export) if you prefer a JS config.
+- **Voice:** record yourself and play it back as a demon, a ghost, an imp, or a dead radio.
+- **Music:** a synth that knows scales and ragas, in equal or just tuning.
+- **Studio:** a small multitrack studio that records takes and mixes them down.
+- **Camera:** turn a live camera feed into ASCII art, give it a surveillance-camera look, or watch for motion.
 
-## Quick start
+All of it runs in the browser. Nothing gets uploaded.
 
-```tsx
-import { TombstoneCard, CauldronBrew, AudioProvider } from 'groove-ui';
+## 📖 The Grimoire: twelve rites for modern browser powers
 
-export function App() {
-  return (
-    <AudioProvider initialEnabled>
-      <TombstoneCard
-        title="Here Lies Version 1"
-        subtitle="2019 – 2026"
-        epitaph="It shipped, mostly."
-        weathering="aged"
-      />
-      <CauldronBrew />
-    </AudioProvider>
-  );
-}
-```
+Each rite takes one modern browser capability and wraps it in a ready-made, themed panel.
 
-## Entry points
-
-Everything is exported from the root, `groove-ui`. Each area also has its own subpath, so bundlers only pull in what you use.
-
-| Import | What's inside |
+| Rite | What it does |
 | --- | --- |
-| `groove-ui/primitives` | `Button`, `Card`, `Badge` |
-| `groove-ui/crypt` | `TombstoneCard`, `ExcavationLoader`, `MausoleumDrawer`, `BoneOssuaryDivider`, `CoffinAccordion`, `SpectralPortal` |
-| `groove-ui/coven` | `CauldronBrew`, `RunicButton`, `WitchOnBroom` |
-| `groove-ui/sanguine` | `BloodVialProgress` |
-| `groove-ui/lycan` | `LunarPhaseSelector` |
-| `groove-ui/slavic` | `ChickenLegStepper` |
-| `groove-ui/arachnid` | `CobwebCorner` |
-| `groove-ui/bestiary` | Bestiary characters |
-| `groove-ui/horror3d` | `*3D` versions of the components, `GlobalCanvasProvider`, `TorchlightCursor`, plus re-exported `Canvas`, `useFrame`, `useThree`, `OrbitControls`, `Text`, `Center`, `Float`, `View` |
-| `groove-ui/effects` | `Scribble`, `HorrorCursor`, `HorrorBackground`, `HauntedKeyboard`, `ClickToBegin`, `SoundLibrary`, `SoundTrigger`, `Ascii`, `SurveillanceCam`, `VoiceStudio` |
-| `groove-ui/grimoire` | Rite specs, capability checks, color and DOM helpers, the ready-made `*Rite` panels and the parts they're built from |
-| `groove-ui/audio` | `playSound`, `AudioProvider`, `useSpookyAudio`, the effect engine, music and mic helpers |
-| `groove-ui/ascii` | ASCII art and video rendering |
-| `groove-ui/video` | Video source helpers |
-| `groove-ui/voice` | Speech and voice effects |
-| `groove-ui/studio` | Recording studio helpers |
-| `groove-ui/hooks` | All hooks (see below) |
-| `groove-ui/tokens` | Design tokens |
-| `groove-ui/tailwind` | `graveUIPlugin` |
-| `groove-ui/styles.css` | Component styles |
+| **Medium** | Sees through any element: its box, its colors, and whether its text can be read |
+| **Soul Reader** | Finds text that fails contrast, and picks any color off the screen |
+| **Haunted Ink** | Makes words glow anywhere on the page without touching the HTML |
+| **Autopsy** | Measures how fast the page loaded, how much it jumped, and how quickly it responds |
+| **Necromancer** | Freezes, slows, and scrubs every animation on the page |
+| **Poltergeist** | Watches every change to the page, causes mischief, and undoes it all |
+| **Watching Eyes** | Shows which parts of the page were on screen, and for how long, as a heatmap |
+| **Crypt** | Saves things on the device so they survive a reload |
+| **Seal** | Locks a message with a passphrase (real encryption, and nothing leaves the device) |
+| **Vigil** | Keeps the screen awake while a candle burns |
+| **Séance** | Lets open tabs of the same site see each other and pass whispers |
+| **Apparition** | Makes page changes fade or rise into place instead of snapping |
 
-## Components at a glance
+Every rite follows the same rules:
 
-### TombstoneCard
+- It does nothing until someone asks.
+- It explains plainly when a browser can't do it.
+- It cleans up after itself completely.
 
-A carved granite headstone. `weathering` sets how much time has passed: `'pristine' | 'aged' | 'cracked' | 'crumbling'`. It also takes `title`, `subtitle`, `epitaph`, `showIcon`, `status`, and `statusVariant`. `TombstoneCard3D` in `groove-ui/horror3d` renders the same stone with a weathering shader.
+That shared lifecycle is a single hook, so writing a thirteenth rite takes a few lines.
 
-### CauldronBrew
+## ✏️ Scribble: draw on anything
 
-A bronze cauldron that bubbles over a fire.
+An Excalidraw-style drawing layer you can drop over any page. It has pens, highlighters, arrows, shapes, and text, with a sketchy hand-drawn mode. Each tool has a one-letter shortcut.
 
-### WitchOnBroom
+- **Laser pointer:** for presenting. Its trail fades and is never saved.
+- **Eraser:** fades shapes as you sweep over them and only removes them when you let go, so a slip is easy to take back.
+- **Saving and export:** drawings are kept on the device and can be exported as PNG or SVG.
 
-A line-art witch flying across the screen. It replaces the old `WitchOnBroom3D`.
+## 🎨 The Palette: one source of truth
 
-### CoffinAccordion
+Colors, shadows, type, motion timing, and stacking order all come from one token set. Components, the stylesheet, and the optional Tailwind plugin share those values, so the whole library stays in tune.
 
-A compound component: `CoffinAccordion.Item`, `CoffinAccordion.Trigger`, `CoffinAccordion.Content`.
+Accessibility is built in:
 
-### SpectralPortal
+- Colors are chosen to stay readable.
+- Motion respects reduced-motion settings.
+- Controls work from the keyboard.
+- Changes are announced to screen readers.
 
-A portal with a render-prop API.
+Full WCAG compliance still needs manual testing with assistive technology.
 
-## Scribble
+## ⚙️ How it's packaged
 
-Scribble lets people draw on top of any page, much like Excalidraw. It renders SVG, keeps an undo history, saves to `localStorage` when you give it a `storageKey`, and exports PNG or SVG.
+The library is shipped as modern ES modules, with one entry point per area, so you only load what you import. Shared pieces like the audio channel are bundled once, so the whole app shares one sound system. Full TypeScript types are included.
 
-```tsx
-import { Scribble } from 'groove-ui/effects';
+---
 
-// A launcher button that opens a full-screen drawing layer
-<Scribble storageKey="my-page-notes" />
+**Recently buried:** `ExcavationLoader3D` and `WitchOnBroom3D` are gone. Use the 2D loader and the new line-art witch instead. See the [changelog](./CHANGELOG.md).
 
-// Or a drawing area inside your layout
-<Scribble inline defaultOpen defaultTool="pen" />
-```
-
-Main props:
-
-- Open state: `open` / `defaultOpen` / `onOpenChange`.
-- Layout: `inline`, `showLauncher`, `keepVisible`.
-- Tool setup: `defaultTool`, `defaultSketchy`, and custom `inks` and `widths`.
-- Saving and exporting: `storageKey`, `exportBackground`, `fileName`.
-- Changes: `onChange(shapes)`.
-
-| Tool | Key | Notes |
-| --- | --- | --- |
-| Pen | P | Freehand |
-| Highlighter | H | Wide, see-through |
-| Line | L | |
-| Arrow | A | |
-| Rectangle | R | |
-| Ellipse | O | |
-| Text | T | Click to place |
-| Laser pointer | K | A glowing trail that fades. It is never saved, undone, or exported. |
-| Eraser | E | Shapes you touch dim as you drag and are removed on release, as one undo step. Escape puts them back. |
-
-Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes. Escape closes the layer.
-
-For your own drawing UI, use `useScribble`. It returns the shapes along with `undo`, `redo`, `clear`, `load`, `addText`, the eraser controls (`startErasing`, `eraseAt`, `stopErasing`, `cancelErasing`, `pendingErase`), and the rest of the editing state. `useFadingTrail` powers the laser and eraser trails, and you can use it on its own. Use `scribbleToSvg` from the same module to export.
-
-## Grimoire
-
-The Grimoire is a set of twelve rites. Each one shows off a browser capability, checks whether that capability is available before using it, and ships as a ready-made panel. Each rite is also available as a hook if you want to build your own UI.
-
-| Family | Rite | What it does | Panel |
-| --- | --- | --- | --- |
-| Seeing | Medium | Inspects any element: its box, its colors, and whether its text is readable | `MediumRite` |
-| Seeing | Soul Reader | Reads a page's colors, flags text that fails contrast, and picks colors from the screen | `SoulReaderRite` |
-| Seeing | Haunted Ink | Highlights words anywhere on the page without changing the DOM, using the CSS Highlight API | `HauntedInkRite` |
-| Seeing | Autopsy | Measures LCP, CLS, INP, FCP, TTFB, and long tasks | `AutopsyRite` |
-| Watching | Necromancer | Pauses, slows down, and scrubs every animation on the page | `NecromancerRite` |
-| Watching | Poltergeist | Logs DOM changes, makes mischief on command, and undoes all of it | `PoltergeistRite` |
-| Watching | Watching Eyes | Tracks which parts of the page were on screen, and for how long, and shows it as a heatmap | `WatchingEyesRite` |
-| Keeping | Crypt | Stores data in IndexedDB, shows storage usage, and requests persistence | `CryptRite` |
-| Keeping | Seal | Encrypts text with a passphrase using PBKDF2 and AES-GCM. Nothing leaves the device. | `SealRite` |
-| Binding | Vigil | Keeps the screen awake (Wake Lock) and can go fullscreen | `VigilRite` |
-| Binding | Séance | Lists the other open tabs of the site and passes messages between them (BroadcastChannel) | `SeanceRite` |
-| Binding | Apparition | Animates DOM updates with View Transitions, and respects reduced motion | `ApparitionRite` |
-
-```tsx
-import { MediumRite, grimoireRites, findRite } from 'groove-ui/grimoire';
-
-<MediumRite headingLevel={2} />
-```
-
-`grimoireRites` lists every rite spec: id, name, tagline, family, and browser support. `findRite(id)` looks one up by id. To write your own rite, combine `defineCapability` and `defineRite` with the `useRite(capability, options)` hook. The hook handles support checks, permissions, start and stop, and cleanup. Lower-level helpers are exported too: `sealText`/`openSeal`, `openCrypt`, `observeAutopsy`, `summon`, `auditContrast`, and the `color` and `dom` utilities.
-
-## Hooks
-
-All hooks are exported from `groove-ui/hooks`.
-
-| Group | Hooks |
-| --- | --- |
-| Interaction | `useHorrorHover`, `useAnimationState`, `useCursorTracker`, `useHauntedKeystrokes`, `useTypewriter`, `useElementPicker`, `useElementBox`, `useCopyText`, `useEyeDropper`, `useFullscreen` |
-| Drawing | `useScribble`, `useFadingTrail` |
-| Grimoire | `useRite`, `useHauntedInk`, `useVigil`, `useNecromancer`, `useSeance`, `useMutationLog`, `useSeal`, `useWatchingEyes`, `useApparition`, `useAutopsy`, `useKeepsake` |
-| Sound and media | `useSpookyMusic`, `useSoundLibrary`, `useSoundTrigger`, `useOccultMic`, `useMediaStream`, `useVideoSource`, `useFrameSampler`, `useAsciiVideo`, `useMotionDetector`, `useSpookySpeech`, `useVoiceEcho`, `useStudio` |
-| Environment | `useMediaQuery`, `useReducedMotion`, `usePageVisible`, `useCapability`, `usePermissionState`, `useThemeToken`, `useHorrorFallback`, `useSnowfall` |
-| Utilities | `useLatest`, `useEventListener`, `useRafLoop`, `useInterval`, `useNow`, `useAriaAnnounce`, `useIsomorphicLayoutEffect` |
-
-## Sound
-
-Every sound is synthesized with the Web Audio API, so there are no audio files to download.
-
-```tsx
-import { playSound, AudioProvider, useSpookyAudio } from 'groove-ui/audio';
-
-// Anywhere
-playSound('coffinCreak', 0.6);
-
-// With a global on/off switch
-function CreakButton() {
-  const { playSound, enabled, setEnabled } = useSpookyAudio();
-  return <button onClick={() => playSound('doorCreak')}>Knock</button>;
-}
-
-<AudioProvider initialEnabled={false}>{/* app */}</AudioProvider>
-```
-
-Some of the effect names: `boneClick`, `stoneTap`, `woodKnock`, `coffinCreak`, `doorCreak`, `gateSlam`, `chainRattle`, `cauldronBubble`, `spellCast`, `portalOpen`, `witchCackle`, `ghostMoan`, `banshee`, `wolfHowl`, `ravenCaw`, `heartbeat`, `whisper`, `zombieGroan`. The `SoundLibrary` component lists them all. Browsers only allow audio after the user interacts with the page; `ClickToBegin` handles that for you.
-
-## Tokens
-
-```ts
-import { palette, colors, semanticColors, withAlpha, zLayers, srOnlyStyle } from 'groove-ui/tokens';
-```
-
-- `palette`, `colors`, and `semanticColors` hold the grave color system. `withAlpha(color, percent)` adds transparency to a color.
-- `zLayers` is the shared stacking order. Use it instead of hard-coded z-index values. `zLayers.annotation` sits just under the cursor layers so Scribble draws over everything else.
-- `srOnlyStyle` hides content visually but keeps it available to screen readers.
-- Shadows, typography, animation easings and durations, and spacing scales are also exported.
-
-## Accessibility
-
-The components use semantic elements, keyboard support, visible focus states, and `aria-live` announcements (`useAriaAnnounce`). Motion respects `prefers-reduced-motion` (`useReducedMotion`). These are good foundations, but they don't guarantee WCAG compliance. Full validation needs manual testing with assistive technologies and an expert accessibility review of your own app.
-
-## Browser support
-
-Modern evergreen browsers. Some rites depend on newer APIs:
-
-- EyeDropper
-- CSS Custom Highlight API
-- View Transitions
-- Wake Lock
-- Event Timing
-
-When an API is missing, the rite reports partial or no support through its `support` spec and falls back gracefully. The 3D components need WebGL.
-
-## Breaking changes since 0.1.0
-
-- `ExcavationLoader3D` was removed. Use the 2D `ExcavationLoader`.
-- `WitchOnBroom3D` was replaced by the line-art `WitchOnBroom` in `groove-ui/coven`.
-- The old `useAudio()` URL-based API no longer exists. Use `playSound`, `AudioProvider`, and `useSpookyAudio`.
-
-See [CHANGELOG.md](./CHANGELOG.md) for the full list.
-
-## License
-
-MIT
+MIT licensed.
