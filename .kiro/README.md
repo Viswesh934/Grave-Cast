@@ -32,6 +32,16 @@ This directory contains Kiro IDE automation and development guidance for the Gra
 
 ## Steering Files
 
+### Gravecast (the product)
+
+| File | Loads | Covers |
+| --- | --- | --- |
+| `gravecast-product.md` | Always | The baseline: a working agreement for how Kiro decides and asks, non-negotiables, and a link to `docs/GRAVECAST_VISION.md` |
+| `gravecast-backend.md` | When working in `apps/api/**` | FastAPI module layout, errors, settings, safe fetching, tests |
+| `gravecast-app.md` | When working in `apps/gravecast/**` | Groove UI first, little-internet rules, outbox, grave card, accessibility |
+
+The single source of truth is `docs/GRAVECAST_VISION.md`. When a decision changes, update its Decisions table first.
+
 ### grave-ui-rules.md
 Comprehensive development standards for the Grave-UI horror component library. Covers:
 - Component composition patterns

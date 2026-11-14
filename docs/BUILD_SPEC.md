@@ -2,6 +2,8 @@
 
 > **Kiroween 2026** · A repository graveyard that turns real code problems into a place you can explore and a signal you can decode.
 
+> **Note:** This spec covers the repo graveyard, which is now Gravecast's developer mode. For the overall product, including the link safety scan, the Emergency Channel, and grave cards, see [GRAVECAST_VISION.md](./GRAVECAST_VISION.md). Where the two conflict, the vision doc wins.
+
 ## 1. Product
 
 Paste a public GitHub repository URL. Gravecast scans its source and history, then renders the findings as a 3D graveyard:
