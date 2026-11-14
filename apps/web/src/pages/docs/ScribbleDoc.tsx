@@ -96,7 +96,7 @@ export function ScribbleDoc() {
         { name: 'useScribble({ storageKey })', type: 'hook', default: '—', description: 'The drawing state on its own: shapes, undo and redo, eraser, and text notes' },
       ]}
       prevPage={{ title: 'Voice', path: '/docs/components/voice' }}
-      nextPage={{ title: 'Grimoire', path: '/docs/components/grimoire' }}
+      nextPage={{ title: 'Doodle', path: '/docs/components/doodle' }}
     />
   );
 }

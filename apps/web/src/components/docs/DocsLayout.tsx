@@ -61,6 +61,7 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'SurveillanceCam', path: '/docs/components/surveillance-cam', badge: 'New' },
       { title: 'Voice', path: '/docs/components/voice', badge: 'New' },
       { title: 'Scribble', path: '/docs/components/scribble', badge: 'New' },
+      { title: 'Doodle', path: '/docs/components/doodle', badge: 'New' },
     ],
   },
   {
