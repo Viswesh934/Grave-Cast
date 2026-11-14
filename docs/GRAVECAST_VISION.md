@@ -69,7 +69,7 @@ Any scan result or channel message can become a **grave card**. Cards are made o
 A card can be sent three ways:
 
 - **QR code:** shown on screen and scanned by another phone. Works offline.
-- **Haunted radio:** the card is played as eerie modem-like chirps, and another phone's mic decodes it. Needs no internet, and works over a phone call, a walkie-talkie, or a real radio. It is slow (tens of bytes per second), which is fine for a card.
+- **Haunted radio:** the card is played as eerie modem-like chirps using [ggwave](https://github.com/ggerganov/ggwave), an open-source data-over-sound library, and another phone's mic decodes it. Needs no internet, and works over a phone call, a walkie-talkie, or a real radio. It is slow (tens of bytes per second), which is fine for a card.
 - **The channel:** posted to an echo in Chat, or pinned to the Board.
 
 A card can optionally be locked with a passphrase using Groove UI's Seal before sharing.
@@ -91,7 +91,7 @@ Each guide is a **kit card**, drawn as a short **comic strip** in stick-figure l
 - **One panel per step.** A stick figure shows the action, such as kneeling beside someone, hands on the centre of the chest, or pushing down. A short caption under the panel states the step.
 - **A Do / Don't panel** at the end, with a tick or a cross.
 - **Hand-drawn look.** Sketchy single-colour lines (bone on dark), with at most one muted accent to point at the key detail, like where the hands go. No shading and no photos, so cards stay tiny and calm.
-- **Panels draw themselves** one at a time as you scroll or tap Next. With reduced motion, the finished panels show straight away.
+- **The whole page shows at once**, like a comic page: every panel is framed and numbered, so nobody has to tap through steps in an emergency. Panels sit side by side when there is room and stack on a phone. They draw in quickly; with reduced motion, the finished page shows straight away.
 - **Text is always there.** Every panel has its caption as real text and a description for screen readers. The drawing explains the caption and never replaces it.
 
 Each card names its source and the date it was reviewed.
@@ -143,13 +143,24 @@ Use Groove UI first. Anything missing gets built in Groove UI, so the Gravecast 
 | Gravecast piece | Groove UI piece |
 | --- | --- |
 | Graves, severity | `TombstoneCard` / `TombstoneCard3D` weathering (pristine → crumbling) |
-| Haunted radio | Sound engine (tones, static) + `useOccultMic` (listening) |
+| Haunted radio | ggwave for encoding and decoding, wrapped in Groove UI with the sound engine (static, atmosphere) and `useOccultMic` (listening) |
 | Locked cards | `Seal` |
 | Board | ASCII and typewriter effects |
 | Presenting | `Scribble` |
-| Kit card comics | `Scribble`'s sketchy line drawing, plus a new stick-figure pose set and a comic-strip panel player |
+| Kit card comics | The doodle system (below), drawn with Rough.js |
 | CPR metronome, SOS sound | Sound engine |
-| To build | QR display, "transmitting" animation, stick-figure pose set, comic-strip panel player |
+| To build | QR display, "transmitting" animation, the doodle system |
+
+**The doodle system.** Kit card drawings are generated from data, not drawn one by one:
+
+- **A stick figure** is a skeleton of joints (head, shoulders, elbows, hands, hips, knees, feet). A **pose** is the joint positions, stored as data.
+- **Props** are reusable pieces: a lying person, a hand marker, arrows, ticks and crosses, water, a phone.
+- **A doodle** is a small data file: poses plus props plus an optional highlight. Adding a doodle means adding a file, not drawing an SVG.
+- **A doodle script** is what the content owner writes for each doodle: the sourced caption, the source, the view, the figures and their poses, the props, and the highlight. A script becomes one data file.
+- **Rendering** uses [Rough.js](https://roughjs.com/) to SVG, with a fixed seed per doodle, so every doodle looks hand-drawn and identical on every device, in the calm palette. Rough.js is a dependency of Groove UI, not of the app.
+- **The panel player** draws a strip one panel at a time, with reduced-motion and screen-reader support.
+
+The list of doodles needed comes from the kit card content. Each doodle illustrates exactly its sourced caption.
 
 ## 5. Principles
 
@@ -221,7 +232,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 
 5. Emergency section shell at `/emergency`: installable, scoped manifest and service worker, opens offline.
 6. Kit cards for first aid, survival, and general disasters, sourced from international guidance.
-7. Comic-strip kit cards: a stick-figure pose set and panel player in Groove UI.
+7. The doodle system in Groove UI (skeleton, poses, props, panel player), then the doodles from the list.
 8. Tools: CPR metronome, SOS light, SOS sound, compass and level, help message, emergency call.
 9. The base pack ships with the install and opens in flight mode.
 
@@ -234,7 +245,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 
 ### Iteration 4: haunted radio
 
-14. Grave card over sound (send and receive).
+14. Grave card over sound with ggwave (send and receive).
 
 ### Later
 
@@ -262,6 +273,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | The survival kit is part of the app, as the fourth tab of the Emergency section (replaces "the kit is separate") | Agreed |
 | Base pack first: content valid worldwide; location packs later | Agreed |
 | Life-safety content comes from recognized sources and names its source | Agreed |
+| Hackathon: all kit cards ship with one prototype notice; the per-card `review: verified` gate applies only to a production release | Agreed |
 | No made-up information anywhere: if it can't be sourced or verified, leave it out | Agreed |
 | Kit cards are comic strips in stick-figure line art, one panel per step | Agreed |
 | Installed ahead of time; size is not a hard limit | Agreed |
@@ -273,6 +285,11 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Only Vercel and Lambda: no always-on server, no Lightsail, no DNS | Agreed |
 | Zero-cost deploy inside free tiers: Vercel Hobby, Lambda with Function URLs, DynamoDB provisioned at 25/25, a $1 billing alert | Agreed |
 | Demo with a real tester group in a `DEMO` echo (§12) | Agreed |
+| Haunted radio uses ggwave | Agreed |
+| Kit drawings come from a doodle system (skeleton, poses, props as data), not hand-drawn one by one | Agreed |
+| The doodle system renders with Rough.js (a new Groove UI dependency) | Agreed |
+| Doodles are built in iterations: foundations first, then batches from doodle scripts | Agreed |
+| A second developer builds the website (link scan, graveyard, grave card); see §13 | Agreed |
 | Groove UI provides the look; missing pieces are built there | Agreed |
 | One app: a website (link scan, developer mode) with an installable Emergency section (channel and survival kit). No separate apps. | Agreed |
 | Clean, calm UI with muted colors and no bright accents (§4) | Agreed |
@@ -287,7 +304,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 2. Which public radio streams allow embedding? Test this before building the dial.
 3. Google Safe Browsing terms for our use.
 4. The exact grave card format. Align it with the signal envelope in BUILD_SPEC §8.
-5. Haunted radio: write our own modem, or use ggwave?
+5. ggwave: check its payload limit against the grave card's size (about 200 bytes) and split or shrink the card if needed. Also confirm its JavaScript/WebAssembly build and licence.
 6. Licensing for kit content. IFRC and WHO material may need permission or attribution when adapted. Check before shipping.
 7. Browser-support claims in this doc are not yet verified: Background Sync, the torch API, the compass permission on iPhone, and haunted radio speed. Check each against current documentation, or test it, before building on it.
 
@@ -310,6 +327,9 @@ Use these terms everywhere: code, UI, and docs.
 | **Board / Chat / Radio / Survival kit** | The four tabs of the Emergency section |
 | **Kit card** | One offline guide, drawn as a comic strip: panels for the steps, Do / Don't, and its source |
 | **Panel** | One step of a kit card: a stick-figure drawing and its caption |
+| **Doodle** | The drawing in one panel, generated from a data file |
+| **Doodle script** | The written spec for one doodle, from which its data file is made |
+| **Pose / prop** | A reusable figure position / a reusable object in a doodle |
 | **Base pack** | Kit content valid worldwide, shipped to everyone |
 | **Location pack** | Opt-in kit content for one place (later) |
 | **Outbox** | Messages waiting for the network |
@@ -332,3 +352,13 @@ The demo uses real people and real messages. Nothing is staged with invented con
 7. **Haunted radio.** The laptop plays a grave card as modem tones, and a phone decodes it with no network.
 
 **Fallbacks:** run both devices on a phone hotspot. Use demo mode (labelled sample data) for the link scan if an outside service fails. Keep a recorded clip of haunted radio in case the room is noisy.
+
+## 13. Who builds what
+
+| Workstream | Owner | Covers |
+| --- | --- | --- |
+| **Website** | Second developer | Iteration 1: link scan (`apps/api/app/modules/linkscan`), graveyard view, grave card and QR, demo mode |
+| **Emergency section** | Core team | Iterations 2–4: installable shell, survival kit and doodle system, Board, Chat (mail runs), outbox, Radio, haunted radio |
+| **Kit content** | Core team | Sourcing kit cards from IFRC, ILCOR, and WHO guidance, checking licences, and the list of doodles needed |
+
+**The shared contract is the grave card.** Both sides use the same versioned format, so a card made on the website can be scanned, played over haunted radio, or posted to an echo. Agree on the format first, as one TypeScript module with tests, before either side builds on it. The second developer follows the same steering files and this doc.
