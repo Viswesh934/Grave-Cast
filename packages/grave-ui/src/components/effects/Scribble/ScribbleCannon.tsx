@@ -3,6 +3,7 @@
  * @module components/effects/Scribble/ScribbleCannon
  */
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { useSpookyAudio } from '../../../audio';
 import { usePageVisible } from '../../../hooks/usePageVisible';
 import { useRafLoop } from '../../../hooks/useRafLoop';
@@ -12,8 +13,10 @@ import { Scribble, SCRIBBLE_TOOL_INFO, type ScribbleProps } from './Scribble';
 
 /** How the cannonball flies. Distances in px, times in ms, speeds in px per second. */
 export const SCRIBBLE_CANNON = {
-  /** Width of the ball. */
+  /** Width of the ball in flight. */
   ball: 56,
+  /** Width of the ball once it has landed in its corner, small enough to sit in a top bar. */
+  dockBall: 40,
   /** Gap kept from the edges of the screen. */
   margin: 16,
   /** Pull toward the floor, in px per second squared. */
@@ -88,7 +91,7 @@ export interface ScribbleCannonProps {
   shots?: number;
   /** The corner it rests in. @default 'bottom-right' */
   dock?: ScribbleCannonDock;
-  /** Extra distance from the corner, in px, for example to clear a fixed header. */
+  /** Distance from the corner where it lands, in px. @default SCRIBBLE_CANNON.margin on both sides */
   dockInset?: { x?: number; y?: number };
   /** Remember "Turn it off" in localStorage under this key, so it stays off on the next visit. */
   storageKey?: string;
@@ -112,7 +115,7 @@ interface Flight {
  * A launcher for {@link Scribble} that won't sit still, and steps aside when
  * asked. A pen in a ball is fired from a bottom corner, bounces off the edges
  * of the screen, and rolls to a stop. After a few shots it rests in its
- * corner and glows, asking whether to keep firing or turn it off. It also
+ * corner, glowing red, with a small menu: draw, keep firing, or turn it off. It also
  * rests the moment someone starts typing in a field, so it never gets in the
  * way. Catch it at any time (click, tap, or Enter) to draw.
  *
@@ -247,33 +250,33 @@ export function ScribbleCannon({
     playSound('lockClick', 0.25);
   };
 
-  const { ball: size, margin } = SCRIBBLE_CANNON;
+  const { ball: flightSize, dockBall, margin } = SCRIBBLE_CANNON;
+  const size = flying ? flightSize : dockBall;
   const onRight = dock.endsWith('right');
   const onTop = dock.startsWith('top');
   const dockStyle: CSSProperties = {
-    [onRight ? 'right' : 'left']: margin + (dockInset?.x ?? 0),
-    [onTop ? 'top' : 'bottom']: margin + (dockInset?.y ?? 0),
+    [onRight ? 'right' : 'left']: dockInset?.x ?? margin,
+    [onTop ? 'top' : 'bottom']: dockInset?.y ?? margin,
   };
-  // Questions open toward the middle of the screen, away from the edge.
-  const beside = onRight ? 'right-full mr-3' : 'left-full ml-3';
+  // The menu drops toward the middle of the screen, away from the edge it landed on.
+  const menuPlace = `${onTop ? 'top-full mt-3' : 'bottom-full mb-3'} ${onRight ? 'right-0' : 'left-0'}`;
   const asking = mode === 'asking' && !reduced;
   const ballLabel = flying ? label : 'Draw on the page';
 
-  return (
-    <>
-      {!open && !paused && (
+  const cannon =
+    !open && !paused ? (
         <div
           ref={holder}
           className="group/cannon fixed"
           style={
             flying
               ? // Off screen until the first frame places it.
-                { left: 0, top: 0, width: size, height: size, zIndex: zLayers.raised, transform: `translate3d(${-size * 2}px, 0, 0)`, willChange: 'transform' }
+                { left: 0, top: 0, width: size, height: size, zIndex: zLayers.raised, transform: `translate3d(${-flightSize * 2}px, 0, 0)`, willChange: 'transform' }
               : { ...dockStyle, width: size, height: size, zIndex: zLayers.raised }
           }
         >
           {asking && (
-            <span aria-hidden="true" className="pointer-events-none absolute -inset-2 rounded-full bg-grave-bone-200/25 blur-md motion-safe:animate-pulse" />
+            <span aria-hidden="true" className="pointer-events-none absolute -inset-2 rounded-full bg-grave-sanguine-crimson/45 blur-md motion-safe:animate-pulse" />
           )}
           <button
             type="button"
@@ -286,7 +289,7 @@ export function ScribbleCannon({
           >
             <span
               ref={ball}
-              className="grid size-full place-items-center rounded-full border-2 border-grave-bone-200 bg-grave-dark-800 text-grave-bone-100 shadow-lg transition-colors group-hover:bg-grave-dark-700 group-focus-visible:outline-2 group-focus-visible:outline-grave-bone-100"
+              className={`grid size-full place-items-center rounded-full border-2 ${asking ? 'border-grave-sanguine-plasma' : 'border-grave-bone-200'} bg-grave-dark-800 text-grave-bone-100 shadow-lg transition-colors group-hover:bg-grave-dark-700 group-focus-visible:outline-2 group-focus-visible:outline-grave-bone-100`}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -317,9 +320,15 @@ export function ScribbleCannon({
             <div
               role="group"
               aria-label="The Scribble cannon"
-              className={`absolute top-1/2 ${beside} flex -translate-y-1/2 items-center gap-2 rounded-lg border border-grave-dark-600 bg-grave-dark-900 px-3 py-2 text-xs whitespace-nowrap text-grave-bone-200 shadow-lg`}
+              className={`absolute ${menuPlace} flex items-center gap-2 rounded-lg border border-grave-sanguine-blood bg-grave-dark-900 px-3 py-2 text-xs whitespace-nowrap text-grave-bone-200 shadow-lg`}
             >
-              <span>Keep the cannon firing?</span>
+              <button
+                type="button"
+                onClick={catchIt}
+                className="cursor-pointer rounded-md border border-grave-bone-200 bg-grave-bone-200 px-2 py-1 text-grave-dark-950 hover:bg-grave-bone-100"
+              >
+                Draw
+              </button>
               <button
                 type="button"
                 onClick={keepFiring}
@@ -330,7 +339,7 @@ export function ScribbleCannon({
               <button
                 type="button"
                 onClick={turnOff}
-                className="cursor-pointer rounded-md border border-grave-bone-200 bg-grave-bone-200 px-2 py-1 text-grave-dark-950 hover:bg-grave-bone-100"
+                className="cursor-pointer rounded-md border border-grave-sanguine-crimson bg-transparent px-2 py-1 text-grave-bone-100 hover:bg-grave-sanguine-coagulated"
               >
                 Turn it off
               </button>
@@ -342,13 +351,18 @@ export function ScribbleCannon({
               type="button"
               onClick={keepFiring}
               aria-label="Fire the Scribble cannon again"
-              className={`absolute top-1/2 ${beside} -translate-y-1/2 cursor-pointer rounded-md border border-grave-dark-600 bg-grave-dark-900/90 px-2 py-1 text-xs whitespace-nowrap text-grave-mist-300 opacity-0 transition-opacity group-hover/cannon:opacity-100 hover:text-grave-bone-100 focus-visible:opacity-100`}
+              className={`absolute ${menuPlace} cursor-pointer rounded-md border border-grave-dark-600 bg-grave-dark-900/90 px-2 py-1 text-xs whitespace-nowrap text-grave-mist-300 opacity-0 transition-opacity group-hover/cannon:opacity-100 hover:text-grave-bone-100 focus-visible:opacity-100`}
             >
               Fire again
             </button>
           )}
         </div>
-      )}
+    ) : null;
+
+  return (
+    <>
+      {/* Rendered at the end of the page, so it can land on a top bar instead of under it. */}
+      {cannon && typeof document !== 'undefined' ? createPortal(cannon, document.body) : cannon}
       <Scribble {...scribbleProps} open={open} onOpenChange={onOpenChange} showLauncher={false} />
     </>
   );
