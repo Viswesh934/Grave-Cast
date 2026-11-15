@@ -25,6 +25,7 @@ import { AsciiDoc } from '../pages/docs/AsciiDoc';
 import { SurveillanceCamDoc } from '../pages/docs/SurveillanceCamDoc';
 import { VoiceDoc } from '../pages/docs/VoiceDoc';
 import { ScribbleDoc } from '../pages/docs/ScribbleDoc';
+import { DoodleDoc } from '../pages/docs/DoodleDoc';
 import { GrimoireDoc } from '../pages/docs/GrimoireDoc';
 import { RiteDocRoute } from '../pages/docs/grimoire/RiteDocRoute';
 import { BestiaryDoc } from '../pages/docs/BestiaryDoc';
@@ -91,6 +92,7 @@ export function docsRoutes() {
       <Route path="docs/components/surveillance-cam" element={<SurveillanceCamDoc />} />
       <Route path="docs/components/voice" element={<VoiceDoc />} />
       <Route path="docs/components/scribble" element={<ScribbleDoc />} />
+        <Route path="docs/components/doodle" element={<DoodleDoc />} />
 
       {/* The Grimoire */}
       <Route path="docs/components/grimoire" element={<GrimoireDoc />} />
