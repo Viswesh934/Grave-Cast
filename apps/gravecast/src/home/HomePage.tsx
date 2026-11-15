@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useId, useRef, useState, type CSSProperties, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
+  BitingFrame,
   BloodVialProgress,
   HauntedDiary,
   HorrorBackground,
@@ -10,7 +11,6 @@ import {
   useAriaAnnounce,
   useHauntedTyping,
   useHorrorFallback,
-  useNow,
   useReducedMotion,
   useSpookyAudio,
   zLayers,
@@ -26,7 +26,6 @@ import { GravePreview } from './GravePreview'
 import { GraveRow } from './GraveRow'
 import { GraveStories } from './GraveStories'
 import { summariseLink, summariseRepo, type CheckedLink, type Mode, type ScanSummary } from './graves'
-import { moonPhase } from './moon'
 import { Ritual } from './Ritual'
 import { RITUAL, type RitualStep } from './ritualSteps'
 import { useDiaryRitual } from './useDiaryRitual'
@@ -39,20 +38,20 @@ const COPY: Record<Mode, { lead: string; accent: string; sub: string; label: str
   link: {
     lead: 'Every danger leaves a',
     accent: 'grave.',
-    sub: 'Paste a link someone sent you. Whatever it hides rises from the ground.',
+    sub: 'Paste a link. Whatever it hides rises as a grave.',
     label: 'Link',
     placeholder: 'https://',
-    action: 'Check link',
+    action: 'Check',
     busy: 'Still checking the link. The graves rise when the site answers.',
     thing: 'link',
   },
   dev: {
     lead: 'Every TODO leaves a',
     accent: 'grave.',
-    sub: 'Paste a public GitHub repo. Every TODO, FIXME, HACK and XXX in its code rises from the ground.',
+    sub: 'Paste a public GitHub repo. Every TODO and FIXME rises as a grave.',
     label: 'Public GitHub repo',
     placeholder: 'owner/name',
-    action: 'Raise the graveyard',
+    action: 'Dig',
     busy: 'Still digging through the repo. Big repos take a little while.',
     thing: 'repo',
   },
@@ -114,7 +113,6 @@ export function HomePage() {
 
   const reduced = useReducedMotion()
   const flat = useHorrorFallback()
-  const now = useNow(30_000)
   const { announce } = useAriaAnnounce()
   const { playSound } = useSpookyAudio()
   const switchId = useId()
@@ -225,25 +223,17 @@ export function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,transparent_35%,var(--color-grave-dark-950)_100%)]" />
       </div>
 
-      <div className="relative grid h-[calc(100svh-3.5rem)] lg:grid-cols-[minmax(0,36rem)_1fr]">
+      <div className="relative grid h-[calc(100svh-3.5rem)] lg:grid-cols-[minmax(0,46rem)_1fr]">
         <section
           ref={panel}
           aria-label={mode === 'dev' ? 'Read a repo' : 'Check a link'}
           className="h-full overflow-y-auto border-grave-dark-700/70 bg-gradient-to-r from-grave-dark-950/95 via-grave-dark-950/85 to-grave-dark-950/60 backdrop-blur-[2px] lg:border-r"
         >
-          <div ref={panelContent} className="space-y-8 px-6 pt-8 pb-16 sm:px-10">
+          <div ref={panelContent} className="space-y-10 px-6 pt-10 pb-16 sm:px-12">
             <div className="gc-reveal" style={delay(0.4)}>
               <BloodVialProgress value={vial.value} label={vial.label} liquid="blood" showPercentage={false} />
             </div>
 
-            <p className="gc-reveal m-0 flex flex-wrap items-center gap-3 text-xs tracking-[0.3em] text-grave-mist-300 uppercase" style={delay(0.6)}>
-              <span aria-hidden="true" className="size-1.5 rounded-full bg-grave-grove-glow" />
-              <span>{moonPhase(now)} tonight</span>
-              <span aria-hidden="true" className="h-px w-8 bg-grave-mist-500" />
-              <span>
-                <time dateTime={now.toISOString()}>{now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time> where you are
-              </span>
-            </p>
 
             <div>
               <h1
@@ -280,14 +270,16 @@ export function HomePage() {
                   />
                 </button>
                 <label htmlFor={switchId} className="cursor-pointer text-xs tracking-[0.3em] text-grave-mist-300 uppercase">
-                  Dev mode {mode === 'dev' ? '\u00b7 reading repos' : '\u00b7 off'}
+                  Dev mode
                 </label>
               </div>
 
+              {/* The jaws close on the form while the scan runs. */}
+              <BitingFrame biting={busy}>
               <form
                 noValidate
                 onSubmit={onSubmit}
-                className="grid gap-4 rounded-2xl border-2 border-grave-grove-glow/60 bg-grave-dark-900/90 p-5 sm:grid-cols-[1fr_auto] sm:items-end"
+                className="grid grid-cols-[1fr_auto] items-end gap-3 rounded-2xl border-2 border-grave-grove-glow/60 bg-grave-dark-900/90 px-5 py-7"
               >
                 <div onFocusCapture={() => setTyping(true)} onBlurCapture={() => setTyping(false)}>
                   <RiteInput
@@ -306,10 +298,11 @@ export function HomePage() {
                     size="lg"
                   />
                 </div>
-                <RunicButton type="submit" element="bone" className="min-h-[3.4rem]" disabled={busy}>
+                <RunicButton type="submit" element="bone" sigils={'\u16b2'} className="min-h-[3.4rem] gap-2! px-3!" disabled={busy}>
                   {copy.action}
                 </RunicButton>
               </form>
+              </BitingFrame>
 
               {busy && !diary.open && (
                 <p role="status" className="m-0 font-serif text-lg text-grave-mist-300 italic">
@@ -381,7 +374,6 @@ export function HomePage() {
       {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar, and remembers being turned off. */}
       <ScribbleCannon
         paused={diary.open || storiesOpen}
-        dock="top-right"
         dockInset={{ x: 24, y: 8 }}
         storageKey="gravecast-cannon"
         scribbleProps={{ storageKey: 'gravecast-scribble' }}
