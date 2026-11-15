@@ -378,7 +378,14 @@ export function HomePage() {
       {storiesOpen && summary && <GraveStories summary={summary} onClose={closeStories} />}
 
       {/* A pen fired across the screen: catch it to draw on the page. */}
-      <ScribbleCannon paused={diary.open || storiesOpen} scribbleProps={{ storageKey: 'gravecast-scribble' }} />
+      {/* It rests top right, just under the top bar (3.5rem), and remembers being turned off. */}
+      <ScribbleCannon
+        paused={diary.open || storiesOpen}
+        dock="top-right"
+        dockInset={{ y: 56 }}
+        storageKey="gravecast-cannon"
+        scribbleProps={{ storageKey: 'gravecast-scribble' }}
+      />
     </div>
   )
 }

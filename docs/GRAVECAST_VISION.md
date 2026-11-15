@@ -304,7 +304,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | One page for both checks: a Dev mode switch turns the link check into the repo graveyard (`/dev` redirects to it). The page fits one screen: the form, a vial showing how far the scan has come, and the graveyard sit in the left column, with the 3D yard behind | Agreed |
 | Graves play as stories, one after another, with the witch on a broom riding the progress bar; each grave in the list has a bestiary creature beside it, chosen by how serious it is | Agreed |
 | In dev mode the drone gains a voice for each tenfold of the repo's open issues and pull requests | Agreed |
-| The home page has a Scribble cannon: a pen bounces around the screen, and catching it turns on drawing over the page. The status vial is red; Lord Alucard (the bestiary vampire) is the creature in the 3D yard | Agreed |
+| The home page has a Scribble cannon: a pen bounces around the screen, and catching it turns on drawing over the page. After a few shots, or as soon as someone types in a field, it rests top right and asks whether to keep firing; turning it off is remembered. The status vial is red; Lord Alucard (the bestiary vampire) is the creature in the 3D yard | Agreed |
 | The home page uses the docs' green grove palette (Groove UI `.grave-grove` and `palette.grove`), with one emerald accent. This relaxes "muted colors, no bright accents" for the website only | Agreed |
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
 
