@@ -52,6 +52,19 @@ class Settings:
     workspace_root: Path = Path("storage/repositories")
     workspace_ttl_seconds: int = 3600
 
+    # Repo graveyard: how many graves one scan returns at most.
+    graveyard_max_graves: int = 300
+
+    # Link scan: one passive request per hop, never reading the page body.
+    link_max_redirects: int = 5
+    link_connect_timeout_seconds: float = 8.0
+    link_total_timeout_seconds: float = 15.0
+    link_user_agent: str = "Gravecast-LinkCheck/0.1"
+
+    # Scans per client address per minute.
+    link_scans_per_minute: int = 20
+    repo_scans_per_minute: int = 4
+
     @classmethod
     def from_env(cls) -> Settings:
         token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
@@ -88,6 +101,19 @@ class Settings:
             workspace_ttl_seconds=_env_int(
                 "GRAVECAST_WORKSPACE_TTL_SECONDS", 3600
             ),
+            graveyard_max_graves=_env_int("GRAVECAST_GRAVEYARD_MAX_GRAVES", 300),
+            link_max_redirects=_env_int("GRAVECAST_LINK_MAX_REDIRECTS", 5),
+            link_connect_timeout_seconds=_env_float(
+                "GRAVECAST_LINK_CONNECT_TIMEOUT_SECONDS", 8.0
+            ),
+            link_total_timeout_seconds=_env_float(
+                "GRAVECAST_LINK_TOTAL_TIMEOUT_SECONDS", 15.0
+            ),
+            link_user_agent=os.getenv(
+                "GRAVECAST_LINK_USER_AGENT", "Gravecast-LinkCheck/0.1"
+            ),
+            link_scans_per_minute=_env_int("GRAVECAST_LINK_SCANS_PER_MINUTE", 20),
+            repo_scans_per_minute=_env_int("GRAVECAST_REPO_SCANS_PER_MINUTE", 4),
         )
 
 

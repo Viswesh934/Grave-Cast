@@ -47,6 +47,7 @@ export {
   type RiteSegmentedOption,
   type RiteSegmentedProps,
   type RiteInputProps,
+  type RiteErrorTone,
   type RiteSliderProps,
 } from './RiteParts';
 export { riteTones, type RiteTone } from './tokens';

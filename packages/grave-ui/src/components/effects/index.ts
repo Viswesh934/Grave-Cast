@@ -18,3 +18,4 @@ export * from './SurveillanceCam';
 export * from './VoiceStudio';
 export * from './Scribble';
 export * from './Doodle';
+export * from './Diary';

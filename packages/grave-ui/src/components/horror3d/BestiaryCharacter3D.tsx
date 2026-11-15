@@ -10,7 +10,7 @@ export interface BestiaryCharacter3DProps {
   characterId: string;
   /** Intensity of the creature's ghostly manifestation */
   hauntMode?: HauntMode;
-  /** Primary accent color override */
+  /** Primary accent color override. For the ghost and wisp it also colors the eyes. */
   accentColor?: string;
   /** Scale multiplier */
   scale?: number;
@@ -28,7 +28,7 @@ const HAUNT_SPEEDS: Record<HauntMode, { speed: number; wobble: number }> = {
  * Wisp3DModel - The Anguished Ghost
  * Gaunt hollow visage with gaping silent scream mouth and unearthly cyan soul-fire eyes.
  */
-function Wisp3DModel({ speed = 1.0 }: { speed?: number }) {
+function Wisp3DModel({ speed = 1.0, eyeColor }: { speed?: number; eyeColor: string }) {
   const shroudRef = useRef<Group>(null);
   const skirtRef = useRef<Group>(null);
 
@@ -97,13 +97,13 @@ function Wisp3DModel({ speed = 1.0 }: { speed?: number }) {
           </mesh>
           <mesh position={[0, 0, 0.03]}>
             <sphereGeometry args={[0.065, 16, 16]} />
-            <meshBasicMaterial color="#00f0ff" />
+            <meshBasicMaterial color={eyeColor} />
           </mesh>
           <mesh position={[-0.015, 0.015, 0.07]}>
             <sphereGeometry args={[0.02, 8, 8]} />
             <meshBasicMaterial color="#ffffff" />
           </mesh>
-          <pointLight color="#00f0ff" intensity={2.0} distance={1.2} />
+          <pointLight color={eyeColor} intensity={2.0} distance={1.2} />
         </group>
       ))}
 
@@ -806,7 +806,7 @@ export function BestiaryCharacter3D({
       {/* 3. DEDICATED BESPOKE 3D MONSTER MODELS (Every creature is distinct & scary!) */}
       <group ref={actorGroupRef} onClick={handleCurseClick}>
         {characterId === 'ghost' || characterId === 'wisp' ? (
-          <Wisp3DModel speed={config.speed} />
+          <Wisp3DModel speed={config.speed} eyeColor={resolvedAccent} />
         ) : characterId === 'pumpkin' ? (
           <Pumpkin3DModel speed={config.speed} />
         ) : characterId === 'vampire' ? (
@@ -826,7 +826,7 @@ export function BestiaryCharacter3D({
         ) : characterId === 'candyman' ? (
           <Candyman3DModel speed={config.speed} />
         ) : (
-          <Wisp3DModel speed={config.speed} />
+          <Wisp3DModel speed={config.speed} eyeColor={resolvedAccent} />
         )}
 
         {/* Shockwave Ring on Click */}

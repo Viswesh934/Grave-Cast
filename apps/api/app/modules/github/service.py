@@ -13,14 +13,18 @@ from app.common.errors import (
 from app.config import Settings, get_settings
 from app.modules.github.archive import extract_filtered_source
 from app.modules.github.client import GitHubClient
+from app.modules.github.markers import find_markers, sort_markers
 from app.modules.github.parser import parse_github_repo_url
 from app.modules.github.types import (
     CommitResolution,
     FileInfo,
+    GraveyardResponse,
+    GraveyardStats,
     IngestResponse,
     IngestStats,
     ManifestFileEntry,
     RepoMetadata,
+    RepoGrave,
     RepositoryInfo,
     SnapshotInfo,
     SnapshotManifest,
@@ -116,6 +120,36 @@ class GitHubIngestionService:
         finally:
             if owns_client:
                 await client.aclose()
+
+    async def graveyard(self, url: str) -> GraveyardResponse:
+        """Ingest a repo, collect its marker comments as graves, then delete the snapshot."""
+        ingested = await self.ingest(url)
+        snapshot_id = ingested.snapshot.id
+        try:
+            markers = []
+            for file in ingested.files:
+                text = self._workspaces.read_source_text(snapshot_id, file.path)
+                markers.extend(find_markers(file.path, text))
+        finally:
+            self._safe_delete(snapshot_id)
+
+        ordered = sort_markers(markers)
+        limit = self._settings.graveyard_max_graves
+        graves = [
+            RepoGrave(id=f"{m.path}:{m.line}", kind=m.kind, path=m.path, line=m.line, note=m.note)
+            for m in ordered[:limit]
+        ]
+        return GraveyardResponse(
+            repository=ingested.repository,
+            graves=graves,
+            stats=GraveyardStats(
+                files_read=len(ingested.files),
+                files_discovered=ingested.stats.files_discovered,
+                marker_count=len(ordered),
+                languages=sorted({f.language for f in ingested.files}),
+            ),
+            truncated=len(ordered) > limit,
+        )
 
     def cleanup_snapshot(self, snapshot_id: str) -> None:
         """Delete a snapshot workspace after analysis no longer needs it."""

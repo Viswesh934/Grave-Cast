@@ -16,6 +16,9 @@ export type GothicRelief =
   | 'talisman'       // Occult crying eye talisman
   | 'none';
 
+/** How far the stone's rounded edge sticks out from its body, in scene units. */
+const STONE_BEVEL = 0.08;
+
 export interface TombstoneCard3DProps {
   title: string;
   subtitle?: string;
@@ -295,9 +298,12 @@ export function TombstoneCard3D({
     bevelEnabled: true,
     bevelSegments: 4,
     steps: 1,
-    bevelSize: 0.08,
-    bevelThickness: 0.08,
+    bevelSize: STONE_BEVEL,
+    bevelThickness: STONE_BEVEL,
   }), [depth]);
+
+  // The bevel pushes the carved face forward, so text sits just in front of it.
+  const faceZ = depth * 0.5 + STONE_BEVEL + 0.02;
 
   // After every hook, so the hook order never changes between renders.
   if (shouldFallback) {
@@ -367,7 +373,7 @@ export function TombstoneCard3D({
 
       {/* Chiseled "R.I.P." arch crest */}
       <Text
-        position={[0, height * 0.36, depth * 0.5 + 0.02]}
+        position={[0, height * 0.36, faceZ]}
         fontSize={0.24}
         letterSpacing={0.22}
         color="#8fa396"
@@ -388,7 +394,7 @@ export function TombstoneCard3D({
       {title && (
         <Float speed={2} rotationIntensity={0} floatIntensity={0.015}>
           <Text
-            position={[0, -height * 0.04, depth * 0.5 + 0.02]}
+            position={[0, -height * 0.04, faceZ]}
             fontSize={0.26}
             maxWidth={width * 0.86}
             textAlign="center"
@@ -407,7 +413,7 @@ export function TombstoneCard3D({
       {/* SUBTITLE */}
       {subtitle && (
         <Text
-          position={[0, -height * 0.17, depth * 0.5 + 0.02]}
+          position={[0, -height * 0.17, faceZ]}
           fontSize={0.16}
           maxWidth={width * 0.86}
           textAlign="center"
@@ -424,7 +430,7 @@ export function TombstoneCard3D({
       {/* EPITAPH */}
       {epitaph && (
         <Text
-          position={[0, -height * 0.31, depth * 0.5 + 0.02]}
+          position={[0, -height * 0.31, faceZ]}
           fontSize={0.13}
           maxWidth={width * 0.82}
           textAlign="center"

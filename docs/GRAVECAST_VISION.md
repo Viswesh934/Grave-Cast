@@ -192,7 +192,7 @@ The list of doodles needed comes from the kit card content. Each doodle illustra
 | Look and sound | Groove UI | `packages/grave-ui` |
 | Echo storage | DynamoDB, provisioned mode at 25 read / 25 write units (the free tier) | Behind Lambda |
 | Board content | Gopher menu files | Static files on Vercel |
-| Docs site | Groove UI docs | `apps/web` (unchanged) |
+| Docs site | Groove UI docs, under `/docs` in the same app (moved from `apps/web`) | `apps/gravecast/src/docs` |
 
 **One app: a website with an installable section.** There is one codebase and one build:
 
@@ -295,7 +295,12 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Clean, calm UI with muted colors and no bright accents (§4) | Agreed |
 | Only the Emergency section is a PWA, scoped to `/emergency`; the link scan and developer mode are web only (§7) | Agreed |
 | Demo mode on labelled sample data for showing the app (§7) | Agreed |
-| New app lives in `apps/gravecast` | Proposed |
+| New app lives in `apps/gravecast` | Agreed |
+| One site: the Groove UI docs live in the app under `/docs`, sharing the top bar; `apps/web` is retired | Agreed |
+| Link scan starts with checks the browser can run on the device (address form, http, bare IP, `@` disguise, punycode, unusual port). Server checks are added with the backend, and the result always lists what was not checked. | Agreed |
+| The security headers check (from §3.2 Site health) joins the link scan now: the server opens the link once, passively, and each missing header becomes a grave. Missing headers are labelled "Missing protection", not as signs of a harmful link. | Agreed |
+| Developer mode is built now: the repo graveyard reads TODO, FIXME, HACK and XXX comments from the existing GitHub ingestion and shows them as a 3D graveyard with a plain list alongside | Agreed |
+| Sound is on from the start; there is no sound switch | Agreed |
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
 
 ## 10. Open questions

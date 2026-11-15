@@ -6,7 +6,8 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { playSound } from '../../../audio';
 
-export type RuneElement = 'fire' | 'frost' | 'blood' | 'spectral';
+/** The rune's color. `bone` is the quiet one: pale runes and no glow, for calm screens. */
+export type RuneElement = 'fire' | 'frost' | 'blood' | 'spectral' | 'bone';
 
 export interface RunicButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Magical element type */
@@ -35,6 +36,7 @@ export const RunicButton = forwardRef<HTMLButtonElement, RunicButtonProps>(
       fire: 'text-amber-400 group-hover:text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] border-amber-900/60 hover:border-amber-500/80',
       blood: 'text-red-400 group-hover:text-red-300 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)] border-red-900/60 hover:border-red-500/80',
       frost: 'text-cyan-400 group-hover:text-cyan-300 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)] border-cyan-900/60 hover:border-cyan-500/80',
+      bone: 'text-grave-mist-400 group-hover:text-grave-bone-300 border-grave-dark-600 hover:border-grave-mist-500',
     };
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -48,7 +50,7 @@ export const RunicButton = forwardRef<HTMLButtonElement, RunicButtonProps>(
       <button
         ref={ref}
         onClick={handleClick}
-        className={`group relative inline-flex items-center justify-between gap-3 px-5 py-2.5 rounded-lg bg-grave-dark-850 hover:bg-grave-dark-800 border transition-all duration-300 cursor-pointer shadow-lg active:scale-[0.98] ${elementGlow[element]} ${className}`}
+        className={`group relative inline-flex items-center justify-between gap-3 px-5 py-2.5 rounded-lg bg-grave-dark-850 hover:bg-grave-dark-800 border transition-all duration-300 cursor-pointer shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 ${elementGlow[element]} ${className}`}
         {...props}
       >
         {/* Left sigils */}

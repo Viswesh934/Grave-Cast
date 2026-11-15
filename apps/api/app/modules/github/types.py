@@ -86,3 +86,37 @@ class SnapshotManifest(BaseModel):
     tree_sha: str
     files: list[ManifestFileEntry]
     stats: dict
+
+
+class GraveyardRequest(BaseModel):
+    url: str = Field(
+        ..., min_length=1, max_length=300, description="Public GitHub repository URL"
+    )
+
+
+class RepoGrave(BaseModel):
+    """One marker comment, with where it is and what it says."""
+
+    id: str
+    kind: Literal["FIXME", "XXX", "HACK", "TODO"]
+    path: str
+    line: int
+    note: str
+
+
+class GraveyardStats(BaseModel):
+    files_read: int = Field(serialization_alias="filesRead")
+    files_discovered: int = Field(serialization_alias="filesDiscovered")
+    marker_count: int = Field(serialization_alias="markerCount")
+    languages: list[str]
+
+    model_config = {"populate_by_name": True}
+
+
+class GraveyardResponse(BaseModel):
+    repository: RepositoryInfo
+    graves: list[RepoGrave]
+    stats: GraveyardStats
+    truncated: bool = Field(
+        description="True when there were more markers than the graves returned."
+    )

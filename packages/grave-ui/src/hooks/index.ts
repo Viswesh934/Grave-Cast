@@ -53,3 +53,5 @@ export * from './useApparition';
 export * from './useAutopsy';
 export * from './useScribble';
 export * from './useFadingTrail';
+export * from './useDiary';
+export * from './useHauntedTyping';

@@ -5,7 +5,9 @@ fileMatchPattern: 'apps/gravecast/**'
 
 # Gravecast app conventions
 
-The Gravecast app is a React + Vite + TypeScript website in `apps/gravecast`. It is separate from `apps/web`, which is the Groove UI docs site.
+The Gravecast app is a React + Vite + TypeScript website in `apps/gravecast`. The Groove UI docs live inside it, under `/docs` (`src/docs`), with their routes in `src/docs/routes/DocsRoutes.tsx`.
+
+Routes are defined in `src/App.tsx`. Every page sits under `SiteLayout`, so they all share one top bar (`src/site/SiteHeader.tsx`). A section joins the top bar only once it works.
 
 The app has two parts:
 
