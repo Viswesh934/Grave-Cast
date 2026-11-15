@@ -18,7 +18,7 @@ export default function HeroScene({ focus, getScroll, still }: HeroSceneProps) {
   const start = GRAVEYARD_POSES[0].position
   return (
     <Canvas camera={{ position: [start[0], start[1], start[2]], fov: 45, near: 0.1, far: 80 }} dpr={[1, 1.75]}>
-      <GraveyardScene3D theme="grove" poses={POSES} focus={focus} getScroll={getScroll} still={still} />
+      <GraveyardScene3D theme="grove" creature="vampire" creatureScale={0.6} poses={POSES} focus={focus} getScroll={getScroll} still={still} />
     </Canvas>
   )
 }

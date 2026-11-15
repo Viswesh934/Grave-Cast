@@ -326,16 +326,24 @@ const ERROR_COLOR: Record<RiteErrorTone, string> = {
   quiet: surface.text,
 };
 
-const fieldStyle = (invalid: boolean, tone: RiteErrorTone): CSSProperties => ({
+/** How big a field is: `md` for forms, `lg` for the one field a screen is about. */
+export type RiteFieldSize = 'md' | 'lg';
+
+/** How strongly the large field's text color rings its border, in percent. */
+const LARGE_RING_STRENGTH = 35;
+
+const fieldStyle = (invalid: boolean, tone: RiteErrorTone, size: RiteFieldSize = 'md'): CSSProperties => ({
   width: '100%',
   boxSizing: 'border-box',
-  padding: `${space.sm} ${space.md}`,
+  padding: size === 'lg' ? `${space.md} ${space.lg}` : `${space.sm} ${space.md}`,
   background: surface.page,
   color: surface.text,
-  border: `${line.hairline} solid ${invalid ? ERROR_COLOR[tone] : surface.border}`,
+  border: `${size === 'lg' ? line.focus : line.hairline} solid ${
+    invalid ? ERROR_COLOR[tone] : size === 'lg' ? withAlpha(surface.text, LARGE_RING_STRENGTH) : surface.border
+  }`,
   borderRadius: radius.md,
   fontFamily: font.body,
-  fontSize: font.base,
+  fontSize: size === 'lg' ? font.large : font.base,
   lineHeight: font.lineHeight,
 });
 
@@ -365,6 +373,8 @@ export interface RiteInputProps {
   onEnter?: () => void;
   /** How loudly the error shows: `alert` in red, `quiet` in the text color for calm screens. @default 'alert' */
   errorTone?: RiteErrorTone;
+  /** `lg` makes the field larger and easier to spot, for the main field on a screen. @default 'md' */
+  size?: RiteFieldSize;
 }
 
 /**
@@ -390,6 +400,7 @@ export const RiteInput = ({
   autoComplete,
   onEnter,
   errorTone = 'alert',
+  size = 'md',
 }: RiteInputProps) => {
   const id = useId();
   const hintId = `${id}-hint`;
@@ -404,12 +415,12 @@ export const RiteInput = ({
     'aria-invalid': error ? true : undefined,
     'aria-describedby': describedBy,
     className: RITE_CLASS.field,
-    style: fieldStyle(Boolean(error), errorTone),
+    style: fieldStyle(Boolean(error), errorTone, size),
   };
 
   return (
     <div style={{ display: 'grid', gap: space.xs, minWidth: 0 }}>
-      <label htmlFor={id} style={{ fontSize: font.small, color: surface.muted }}>
+      <label htmlFor={id} style={{ fontSize: size === 'lg' ? font.base : font.small, color: size === 'lg' ? surface.text : surface.muted }}>
         {label}
       </label>
       {multiline ? (

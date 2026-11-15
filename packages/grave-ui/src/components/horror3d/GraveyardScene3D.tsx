@@ -98,8 +98,12 @@ export interface GraveyardScene3DProps {
   stones?: number;
   /** Lanterns left burning among the graves. @default 4 */
   lanterns?: number;
-  /** A wisp drifting over the far graves. @default true */
+  /** A creature drifting over the far graves. @default true */
   wisp?: boolean;
+  /** Which bestiary creature drifts there, by its 3D character id. @default 'wisp' */
+  creature?: string;
+  /** How big the drifting creature is. @default 0.45 */
+  creatureScale?: number;
   /** Stop the camera drifting and the mist moving, for reduced motion. */
   still?: boolean;
   /** Extra things to place in the yard. */
@@ -312,6 +316,8 @@ export function GraveyardScene3D({
   stones = 28,
   lanterns = 4,
   wisp = true,
+  creature = 'wisp',
+  creatureScale = 0.45,
   still = false,
   children,
 }: GraveyardScene3DProps) {
@@ -373,7 +379,7 @@ export function GraveyardScene3D({
 
       {wisp && (
         <group ref={wispGroup} position={[4.5, 1.8, -8]}>
-          <BestiaryCharacter3D characterId="wisp" hauntMode="whisper" accentColor={colors.wisp} scale={0.45} ownLights={false} />
+          <BestiaryCharacter3D characterId={creature} hauntMode="whisper" accentColor={colors.wisp} scale={creatureScale} ownLights={false} />
         </group>
       )}
       {children}

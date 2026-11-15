@@ -6,6 +6,7 @@ import {
   HorrorBackground,
   RiteInput,
   RunicButton,
+  ScribbleCannon,
   useAriaAnnounce,
   useHauntedTyping,
   useHorrorFallback,
@@ -232,7 +233,7 @@ export function HomePage() {
         >
           <div ref={panelContent} className="space-y-8 px-6 pt-8 pb-16 sm:px-10">
             <div className="gc-reveal" style={delay(0.4)}>
-              <BloodVialProgress value={vial.value} label={vial.label} liquid="ectoplasm" showPercentage={false} />
+              <BloodVialProgress value={vial.value} label={vial.label} liquid="blood" showPercentage={false} />
             </div>
 
             <p className="gc-reveal m-0 flex flex-wrap items-center gap-3 text-xs tracking-[0.3em] text-grave-mist-300 uppercase" style={delay(0.6)}>
@@ -269,12 +270,12 @@ export function HomePage() {
                   aria-checked={mode === 'dev'}
                   disabled={busy}
                   onClick={() => changeMode(mode === 'dev' ? 'link' : 'dev')}
-                  className="relative h-6 w-11 cursor-pointer rounded-full border border-grave-mist-500 bg-grave-dark-900 transition-colors disabled:cursor-not-allowed disabled:opacity-50 aria-checked:border-grave-grove-glow"
+                  className="relative h-7 w-12 shrink-0 cursor-pointer rounded-full border border-grave-mist-500 bg-grave-dark-700 transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 aria-checked:border-grave-grove-glow aria-checked:bg-grave-grove-glow"
                 >
                   <span
                     aria-hidden="true"
-                    className={`absolute top-0.5 left-0.5 size-[18px] rounded-full transition-transform duration-300 ${
-                      mode === 'dev' ? 'translate-x-5 bg-grave-grove-glow' : 'bg-grave-mist-400'
+                    className={`absolute top-0.5 left-0.5 size-[22px] rounded-full shadow transition-transform duration-300 ${
+                      mode === 'dev' ? 'translate-x-5 bg-grave-dark-950' : 'bg-grave-mist-300'
                     }`}
                   />
                 </button>
@@ -283,7 +284,11 @@ export function HomePage() {
                 </label>
               </div>
 
-              <form noValidate onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-start">
+              <form
+                noValidate
+                onSubmit={onSubmit}
+                className="grid gap-4 rounded-2xl border-2 border-grave-grove-glow/60 bg-grave-dark-900/90 p-5 sm:grid-cols-[1fr_auto] sm:items-end"
+              >
                 <div onFocusCapture={() => setTyping(true)} onBlurCapture={() => setTyping(false)}>
                   <RiteInput
                     key={mode}
@@ -298,9 +303,10 @@ export function HomePage() {
                     error={error}
                     errorTone="quiet"
                     autoComplete="off"
+                    size="lg"
                   />
                 </div>
-                <RunicButton type="submit" element="bone" className="sm:mt-5" disabled={busy}>
+                <RunicButton type="submit" element="bone" className="min-h-[3.4rem]" disabled={busy}>
                   {copy.action}
                 </RunicButton>
               </form>
@@ -370,6 +376,9 @@ export function HomePage() {
       />
 
       {storiesOpen && summary && <GraveStories summary={summary} onClose={closeStories} />}
+
+      {/* A pen fired across the screen: catch it to draw on the page. */}
+      <ScribbleCannon paused={diary.open || storiesOpen} scribbleProps={{ storageKey: 'gravecast-scribble' }} />
     </div>
   )
 }

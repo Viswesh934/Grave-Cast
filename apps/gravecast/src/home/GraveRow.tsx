@@ -1,7 +1,7 @@
 import {
   BestiaryCharacter,
   frankensteinSpec,
-  ghostSpec,
+  mummySpec,
   goblinSpec,
   vampireSpec,
   type CharacterSpec,
@@ -14,7 +14,7 @@ const GUARDIAN: Record<TombstoneWeathering, CharacterSpec> = {
   crumbling: vampireSpec,
   cracked: frankensteinSpec,
   aged: goblinSpec,
-  pristine: ghostSpec,
+  pristine: mummySpec,
 }
 
 const SERIOUS: ReadonlySet<TombstoneWeathering> = new Set(['crumbling', 'cracked'])

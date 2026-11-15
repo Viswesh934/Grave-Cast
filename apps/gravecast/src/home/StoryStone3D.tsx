@@ -38,7 +38,7 @@ function RisingStone({ grave, still }: { grave: StoryGrave; still: boolean }) {
       </group>
       {serious && (
         <group position={[1.9, 2.1, -0.6]}>
-          <BestiaryCharacter3D characterId="ghost" hauntMode="whisper" accentColor={palette.grove.glow} scale={0.42} ownLights={false} />
+          <BestiaryCharacter3D characterId="vampire" hauntMode="whisper" accentColor={palette.grove.glow} scale={0.42} ownLights={false} />
         </group>
       )}
     </group>

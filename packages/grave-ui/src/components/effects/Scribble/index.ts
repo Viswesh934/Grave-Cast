@@ -1,4 +1,5 @@
 export { Scribble, SCRIBBLE_TOOL_INFO, type ScribbleProps } from './Scribble';
+export { ScribbleCannon, SCRIBBLE_CANNON, type ScribbleCannonProps } from './ScribbleCannon';
 export {
   SCRIBBLE_TOOLS,
   SCRIBBLE_SHAPE_KINDS,

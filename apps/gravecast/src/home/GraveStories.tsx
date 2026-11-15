@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { lazy, Suspense, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import {
   BroomProgress,
@@ -116,7 +117,8 @@ export function GraveStories({ summary, onClose }: GraveStoriesProps) {
     go(event.clientX - box.left < box.width / 3 ? index - 1 : index + 1)
   }
 
-  return (
+  // Rendered at the end of the page, so the site's top bar can't sit above it.
+  return createPortal(
     <div
       ref={dialog}
       role="dialog"
@@ -124,7 +126,7 @@ export function GraveStories({ summary, onClose }: GraveStoriesProps) {
       aria-label={`The graveyard of ${summary.subject}`}
       tabIndex={-1}
       onKeyDown={onKeyDown}
-      className="fixed inset-0 flex flex-col bg-grave-dark-950 outline-none"
+      className="grave-grove fixed inset-0 flex flex-col bg-grave-dark-950 outline-none"
       style={{ zIndex: zLayers.modal }}
     >
       <div className="px-4 pt-4 sm:px-10">
@@ -135,8 +137,17 @@ export function GraveStories({ summary, onClose }: GraveStoriesProps) {
             <span className="text-grave-grove-glow">{pad(index + 1)}</span> / {pad(frames.length)}
           </span>
           {!last && (
-            <button type="button" onClick={() => setPaused((p) => !p)} className="cursor-pointer bg-transparent p-1 uppercase hover:text-grave-bone-100">
-              {paused ? 'Play' : 'Pause'}
+            <button
+              type="button"
+              onClick={() => setPaused((p) => !p)}
+              aria-pressed={paused}
+              aria-label={paused ? 'Play the graves' : 'Pause the graves'}
+              title={paused ? 'Play' : 'Pause'}
+              className="grid size-8 cursor-pointer place-items-center rounded-full border border-grave-dark-600 bg-transparent text-grave-bone-200 hover:border-grave-mist-400 aria-pressed:border-grave-grove-glow aria-pressed:text-grave-grove-glow"
+            >
+              <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden="true" fill="currentColor">
+                {paused ? <path d="M4 2.5v11l9-5.5z" /> : <path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" />}
+              </svg>
             </button>
           )}
           <button
@@ -221,6 +232,7 @@ export function GraveStories({ summary, onClose }: GraveStoriesProps) {
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
