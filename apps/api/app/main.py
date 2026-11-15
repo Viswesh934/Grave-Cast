@@ -10,9 +10,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from app.common.rate_limit import RateLimiter
 from app.config import get_settings
 from app.modules.github import router as github_router
 from app.modules.github.service import GitHubIngestionService
+from app.modules.linkscan import router as linkscan_router
+from app.modules.linkscan.service import LinkScanService
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +25,7 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     service = GitHubIngestionService(settings=settings)
     app.state.ingestion_service = service
+    app.state.link_scan_service = LinkScanService(settings=settings)
     # Fallback cleanup for abandoned snapshot workspaces.
     try:
         deleted = service.cleanup_abandoned()
@@ -54,6 +58,12 @@ app.add_middleware(
 )
 
 app.include_router(github_router)
+app.include_router(linkscan_router)
+
+# Rate limits exist before any request, so they also hold when lifespan is skipped.
+_settings = get_settings()
+app.state.repo_rate_limiter = RateLimiter(_settings.repo_scans_per_minute)
+app.state.link_rate_limiter = RateLimiter(_settings.link_scans_per_minute)
 
 
 class HealthResponse(BaseModel):

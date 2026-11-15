@@ -317,13 +317,22 @@ export const RiteSegmented = <T extends string>({ label, value, options, onChang
   </div>
 );
 
-const fieldStyle = (invalid: boolean): CSSProperties => ({
+/** How loudly a field shows its error. Both tones keep the message, `aria-invalid`, and the screen reader link. */
+export type RiteErrorTone = 'alert' | 'quiet';
+
+/** The error color for each tone: red, or the calm text color for quiet screens. */
+const ERROR_COLOR: Record<RiteErrorTone, string> = {
+  alert: riteTones.bad,
+  quiet: surface.text,
+};
+
+const fieldStyle = (invalid: boolean, tone: RiteErrorTone): CSSProperties => ({
   width: '100%',
   boxSizing: 'border-box',
   padding: `${space.sm} ${space.md}`,
   background: surface.page,
   color: surface.text,
-  border: `${line.hairline} solid ${invalid ? riteTones.bad : surface.border}`,
+  border: `${line.hairline} solid ${invalid ? ERROR_COLOR[tone] : surface.border}`,
   borderRadius: radius.md,
   fontFamily: font.body,
   fontSize: font.base,
@@ -343,7 +352,7 @@ export interface RiteInputProps {
   placeholder?: string;
   /** A short tip shown below the field. */
   hint?: string;
-  /** What is wrong with the value, shown in red below the field. */
+  /** What is wrong with the value, shown below the field. See `errorTone`. */
   error?: string | null;
   /** A multi-line field. @default false */
   multiline?: boolean;
@@ -354,6 +363,8 @@ export interface RiteInputProps {
   autoComplete?: string;
   /** Called when Enter is pressed in a single-line field. */
   onEnter?: () => void;
+  /** How loudly the error shows: `alert` in red, `quiet` in the text color for calm screens. @default 'alert' */
+  errorTone?: RiteErrorTone;
 }
 
 /**
@@ -378,6 +389,7 @@ export const RiteInput = ({
   disabled,
   autoComplete,
   onEnter,
+  errorTone = 'alert',
 }: RiteInputProps) => {
   const id = useId();
   const hintId = `${id}-hint`;
@@ -392,7 +404,7 @@ export const RiteInput = ({
     'aria-invalid': error ? true : undefined,
     'aria-describedby': describedBy,
     className: RITE_CLASS.field,
-    style: fieldStyle(Boolean(error)),
+    style: fieldStyle(Boolean(error), errorTone),
   };
 
   return (
@@ -421,7 +433,7 @@ export const RiteInput = ({
         </span>
       )}
       {error && (
-        <span id={errorId} style={{ fontSize: font.small, color: riteTones.bad }}>
+        <span id={errorId} style={{ fontSize: font.small, color: ERROR_COLOR[errorTone] }}>
           {error}
         </span>
       )}

@@ -19,6 +19,7 @@ const ELEMENT_COLORS: Record<RuneElement, { glow: string; rune: string; rim: str
   spectral: { glow: '#00ff88', rune: '#4ade80', rim: '#047857', light: '#10b981' },
   fire: { glow: '#f97316', rune: '#fdba74', rim: '#c2410c', light: '#ea580c' },
   frost: { glow: '#38bdf8', rune: '#bae6fd', rim: '#0284c7', light: '#0ea5e9' },
+  bone: { glow: '#a8a090', rune: '#d8d0bf', rim: '#5c5547', light: '#8f887a' },
 };
 
 /**

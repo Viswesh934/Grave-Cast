@@ -58,13 +58,13 @@ API is now running at **http://localhost:8000**
 Open a second terminal:
 
 ```bash
-cd apps/web
+cd apps/gravecast
 
 npm install
 npm run dev
 ```
 
-Frontend is now running at **http://localhost:5173**
+The site is now running at **http://localhost:5173**: the link check at `/`, and the Groove UI docs at `/docs`.
 
 The Vite dev server proxies `/health` and `/api/*` to the backend automatically — no CORS issues during development.
 

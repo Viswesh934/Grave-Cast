@@ -163,3 +163,42 @@ class ArchiveError(AppError):
             message=message,
             status_code=422,
         )
+
+
+class ScanRateLimitedError(AppError):
+    def __init__(
+        self, message: str = "Too many checks in a short time. Wait a minute and try again."
+    ) -> None:
+        super().__init__(code="SCAN_RATE_LIMITED", message=message, status_code=429)
+
+
+class InvalidLinkError(AppError):
+    def __init__(self, message: str = "That doesn't read as a web address.") -> None:
+        super().__init__(code="INVALID_LINK", message=message, status_code=400)
+
+
+class BlockedAddressError(AppError):
+    def __init__(
+        self,
+        message: str = (
+            "This link points to a private or local address, so it was not opened."
+        ),
+    ) -> None:
+        super().__init__(code="BLOCKED_ADDRESS", message=message, status_code=400)
+
+
+class TooManyRedirectsError(AppError):
+    def __init__(
+        self, message: str = "The link forwards too many times, so it was not followed to the end."
+    ) -> None:
+        super().__init__(code="TOO_MANY_REDIRECTS", message=message, status_code=422)
+
+
+class LinkUnreachableError(AppError):
+    def __init__(self, message: str = "The site could not be reached.") -> None:
+        super().__init__(code="LINK_UNREACHABLE", message=message, status_code=502)
+
+
+class LinkTimeoutError(AppError):
+    def __init__(self, message: str = "The site took too long to answer.") -> None:
+        super().__init__(code="LINK_TIMEOUT", message=message, status_code=504)

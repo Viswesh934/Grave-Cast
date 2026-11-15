@@ -778,19 +778,50 @@
   margin: 1.5rem 0;
 }
 
-.grave-ossuary__container {
+/* The bones, between the rules and the label. */
+.grave-ossuary__bones {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
   color: var(--grave-bone-decayed);
 }
 
-.grave-ossuary--crossed .grave-ossuary__bone:nth-child(1) {
+/* Row and scattered: bones side by side. */
+.grave-ossuary__row-bones,
+.grave-ossuary__scattered-bones {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Scattered: each bone tipped a little, alternating. */
+.grave-ossuary__scattered-bones .grave-ossuary__bone:nth-child(odd) {
+  transform: rotate(-16deg);
+}
+.grave-ossuary__scattered-bones .grave-ossuary__bone:nth-child(even) {
+  transform: rotate(12deg) translateY(0.15rem);
+}
+
+/* Stacked: bones piled one above another. */
+.grave-ossuary__stacked-bones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+/* Crossed: two bones laid over each other in an X. */
+.grave-ossuary__crossed-bones {
+  display: grid;
+  place-items: center;
+}
+.grave-ossuary__crossed-bones > .grave-ossuary__bone {
+  grid-area: 1 / 1;
+}
+.grave-ossuary__crossed-bones > .grave-ossuary__bone--1 {
   transform: rotate(-45deg);
 }
-.grave-ossuary--crossed .grave-ossuary__bone:nth-child(2) {
+.grave-ossuary__crossed-bones > .grave-ossuary__bone--2 {
   transform: rotate(45deg);
-  margin-left: -18px;
 }
 
 .grave-ossuary__rule {

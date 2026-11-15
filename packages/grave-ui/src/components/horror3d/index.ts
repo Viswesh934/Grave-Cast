@@ -18,6 +18,6 @@ export * from './BestiaryCharacter3D';
 export * from './ChickenLegStepper3D';
 export * from './horror3d.config';
 
-// Re-export core 3D helpers so apps/web has a single unified Three.js instance
+// Re-export core 3D helpers so apps have a single unified Three.js instance
 export { Canvas, useFrame, useThree } from '@react-three/fiber';
 export { OrbitControls, Text, Center, Float, View } from '@react-three/drei';

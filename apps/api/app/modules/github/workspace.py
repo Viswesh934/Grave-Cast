@@ -64,6 +64,18 @@ class WorkspaceManager:
             encoding="utf-8",
         )
 
+    def read_source_text(self, snapshot_id: str, relative_path: str) -> str:
+        """Read one ingested file as text. Rejects paths that leave the snapshot."""
+        root = self._root / snapshot_id
+        workspace = WorkspacePaths(
+            snapshot_id=snapshot_id,
+            root=root,
+            source_root=root / "source",
+            manifest_path=root / "metadata.json",
+        )
+        target = self._resolve_under_source(workspace, relative_path)
+        return target.read_text(encoding="utf-8")
+
     def delete(self, snapshot_id: str) -> None:
         path = self._root / snapshot_id
         if path.exists():
