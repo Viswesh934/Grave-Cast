@@ -7,6 +7,7 @@ import { SearchIcon } from '../docs/components/docs/DocsIcons'
 /** The sections in the top bar. Each one appears here only once it works. */
 const SECTIONS: readonly { label: string; to: string; matches: (path: string) => boolean }[] = [
   { label: 'Graveyard', to: '/', matches: (path) => path === '/' },
+  { label: 'Our story', to: '/story', matches: (path) => path.startsWith('/story') },
   { label: 'Docs', to: '/docs/introduction', matches: (path) => path.startsWith('/docs') },
 ]
 

@@ -28,6 +28,10 @@ The app has two parts:
   - Large text, generous spacing, one main action per screen.
   - Soft, short motion and no flashing (except the SOS light tool).
   - If a Groove UI piece is too loud, add a quieter option to Groove UI rather than restyling it in the app.
+- **Plain and fast (Emergency section).** It is used in real emergencies, so:
+  - No animation, transitions, 3D, horror effects, or decorative sound. Only sounds that do a job play (the CPR beat, SOS).
+  - Plain Groove UI pieces only (text, buttons, inputs, lists). Nothing that loads three.js or the 3D components.
+  - The website (link scan, developer mode, "Our story") may still show off.
 - **Little internet first (Emergency section).**
   - Open from the cache and never block startup on the network.
   - Keep requests small.

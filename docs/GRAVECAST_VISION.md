@@ -6,6 +6,12 @@ This is the baseline for all Gravecast work. If a change would contradict it, up
 
 Status: prototype. We build in small iterations and the concept matters more than completeness.
 
+## Why we built it
+
+One of us was stuck in a power cut for about two days, with no electricity, no internet, and no phone signal. With the survival skills of a mosquito, there was nothing much to do, and nothing to look up. A power cut isn't the worst that can happen, either: one day it could be a war.
+
+So we built something that keeps working on limited internet and holds the common emergency know-how for when there is none. That is the Emergency section (§3.4). The website tells this story first, on the "Our story" page, before it introduces the Emergency section.
+
 ---
 
 ## 1. The idea in three layers
@@ -306,6 +312,8 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | In dev mode the drone gains a voice for each tenfold of the repo's open issues and pull requests | Agreed |
 | The home page has a Scribble cannon: once, a pen is fired from the bottom left into the right end of the top bar, where it stays with a red glow. Clicking it turns on drawing; its small × turns it off, and that is remembered. The status vial is red; Lord Alucard (the bestiary vampire) is the creature in the 3D yard. Teeth bite down on the form while a scan runs | Agreed |
 | The home page uses the docs' green grove palette (Groove UI `.grave-grove` and `palette.grove`), with one emerald accent. This relaxes "muted colors, no bright accents" for the website only | Agreed |
+| The website tells the backstory (a two-day power cut with no electricity, internet or signal) on an "Our story" page before it introduces the Emergency section | Agreed |
+| The installed Emergency section is plain and fast: no animation, no 3D, no decorative sound, no horror effects. Only sounds that do a job (the CPR beat, SOS) play. The website may still show off | Agreed |
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
 
 ## 10. Open questions
