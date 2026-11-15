@@ -93,6 +93,7 @@ class GitHubIngestionService:
                 default_branch=metadata.default_branch,
                 commit_sha=resolution.commit_sha,
                 tree_sha=resolution.tree_sha,
+                open_issues=metadata.open_issues,
             )
 
             self._write_manifest(

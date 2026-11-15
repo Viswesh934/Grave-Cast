@@ -10,12 +10,27 @@ import { palette } from '../../../tokens';
  * Blood liquid gradients and glow, composed from the sanguine palette tokens
  * so the fill color stays consistent with the rest of the design system.
  */
-const bloodFill = {
-  vertical: `linear-gradient(180deg, ${palette.sanguine.plasma} 0%, ${palette.sanguine.crimson} 40%, ${palette.sanguine.coagulated} 100%)`,
-  horizontal: `linear-gradient(90deg, ${palette.sanguine.coagulated} 0%, ${palette.sanguine.blood} 50%, ${palette.sanguine.crimson} 90%, ${palette.sanguine.plasma} 100%)`,
-  glowStrong: `0 0 16px ${palette.sanguine.crimson}`,
-  glowSoft: `0 0 12px ${palette.sanguine.crimson}`,
-} as const;
+/** What fills the vial: blood, or green ectoplasm for the grove theme. */
+export type VialLiquid = 'blood' | 'ectoplasm';
+
+const liquidFill: Record<VialLiquid, { vertical: string; horizontal: string; glowStrong: string; glowSoft: string; meniscus: string; text: string }> = {
+  blood: {
+    vertical: `linear-gradient(180deg, ${palette.sanguine.plasma} 0%, ${palette.sanguine.crimson} 40%, ${palette.sanguine.coagulated} 100%)`,
+    horizontal: `linear-gradient(90deg, ${palette.sanguine.coagulated} 0%, ${palette.sanguine.blood} 50%, ${palette.sanguine.crimson} 90%, ${palette.sanguine.plasma} 100%)`,
+    glowStrong: `0 0 16px ${palette.sanguine.crimson}`,
+    glowSoft: `0 0 12px ${palette.sanguine.crimson}`,
+    meniscus: palette.sanguine.plasma,
+    text: palette.sanguine.plasma,
+  },
+  ectoplasm: {
+    vertical: `linear-gradient(180deg, ${palette.grove.glow} 0%, ${palette.witch.emerald} 40%, ${palette.crypt.moss} 100%)`,
+    horizontal: `linear-gradient(90deg, ${palette.crypt.moss} 0%, ${palette.crypt.lichen} 50%, ${palette.witch.emerald} 90%, ${palette.grove.glow} 100%)`,
+    glowStrong: `0 0 16px ${palette.witch.emerald}`,
+    glowSoft: `0 0 10px ${palette.witch.emerald}`,
+    meniscus: palette.grove.glow,
+    text: palette.grove.glow,
+  },
+};
 
 export interface BloodVialProgressProps extends HTMLAttributes<HTMLDivElement> {
   /** Progress percentage (0 - 100) */
@@ -28,6 +43,8 @@ export interface BloodVialProgressProps extends HTMLAttributes<HTMLDivElement> {
   showPercentage?: boolean;
   /** Glass vial orientation */
   orientation?: 'horizontal' | 'vertical';
+  /** What fills the vial. @default 'blood' */
+  liquid?: VialLiquid;
 }
 
 export const BloodVialProgress = forwardRef<HTMLDivElement, BloodVialProgressProps>(
@@ -38,11 +55,13 @@ export const BloodVialProgress = forwardRef<HTMLDivElement, BloodVialProgressPro
       label = 'Sanguine Essence',
       showPercentage = true,
       orientation = 'horizontal',
+      liquid = 'blood',
       className = '',
       ...props
     },
     ref
   ) => {
+    const bloodFill = liquidFill[liquid];
     const percentage = Math.min(100, Math.max(0, Math.round((value / max) * 100)));
 
     if (orientation === 'vertical') {
@@ -82,7 +101,7 @@ export const BloodVialProgress = forwardRef<HTMLDivElement, BloodVialProgressPro
               }}
             >
               {/* Liquid Meniscus Curve */}
-              <div className="absolute top-0 inset-x-0 h-2 bg-grave-sanguine-plasma rounded-full opacity-80" />
+              <div className="absolute top-0 inset-x-0 h-2 rounded-full opacity-80" style={{ background: bloodFill.meniscus }} />
 
               {/* Bubbles floating inside blood */}
               <div className="absolute bottom-2 left-1.5 w-1.5 h-1.5 rounded-full bg-white/40 animate-ping" style={{ animationDuration: '2s' }} />
@@ -91,7 +110,7 @@ export const BloodVialProgress = forwardRef<HTMLDivElement, BloodVialProgressPro
           </div>
 
           {showPercentage && (
-            <span className="text-xs font-mono font-bold text-red-400">
+            <span className="text-xs font-mono font-bold" style={{ color: bloodFill.text }}>
               {percentage}%
             </span>
           )}
@@ -108,12 +127,12 @@ export const BloodVialProgress = forwardRef<HTMLDivElement, BloodVialProgressPro
         <div className="flex justify-between items-center text-xs">
           {label && (
             <span className="font-mono uppercase tracking-widest text-grave-mist-300 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: bloodFill.meniscus }} />
               {label}
             </span>
           )}
           {showPercentage && (
-            <span className="font-mono font-bold text-red-400">
+            <span className="font-mono font-bold" style={{ color: bloodFill.text }}>
               {percentage}%
             </span>
           )}

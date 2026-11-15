@@ -300,7 +300,11 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Link scan starts with checks the browser can run on the device (address form, http, bare IP, `@` disguise, punycode, unusual port). Server checks are added with the backend, and the result always lists what was not checked. | Agreed |
 | The security headers check (from §3.2 Site health) joins the link scan now: the server opens the link once, passively, and each missing header becomes a grave. Missing headers are labelled "Missing protection", not as signs of a harmful link. | Agreed |
 | Developer mode is built now: the repo graveyard reads TODO, FIXME, HACK and XXX comments from the existing GitHub ingestion and shows them as a 3D graveyard with a plain list alongside | Agreed |
-| Sound is on from the start; there is no sound switch | Agreed |
+| Sound is on from the start. A small control shows Sound ready, on or off, and a quiet ambient drone starts after the first click or key (replaces "no sound switch") | Agreed |
+| One page for both checks: a Dev mode switch turns the link check into the repo graveyard (`/dev` redirects to it). The page fits one screen: the form, a vial showing how far the scan has come, and the graveyard sit in the left column, with the 3D yard behind | Agreed |
+| Graves play as stories, one after another, with the witch on a broom riding the progress bar; each grave in the list has a bestiary creature beside it, chosen by how serious it is | Agreed |
+| In dev mode the drone gains a voice for each tenfold of the repo's open issues and pull requests | Agreed |
+| The home page uses the docs' green grove palette (Groove UI `.grave-grove` and `palette.grove`), with one emerald accent. This relaxes "muted colors, no bright accents" for the website only | Agreed |
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
 
 ## 10. Open questions

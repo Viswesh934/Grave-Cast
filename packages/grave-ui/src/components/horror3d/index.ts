@@ -15,9 +15,12 @@ export * from './MausoleumVault3D';
 export * from './CoffinAccordion3D';
 export * from './CobwebCorner3D';
 export * from './BestiaryCharacter3D';
+export * from './GraveyardScene3D';
 export * from './ChickenLegStepper3D';
 export * from './horror3d.config';
 
 // Re-export core 3D helpers so apps have a single unified Three.js instance
 export { Canvas, useFrame, useThree } from '@react-three/fiber';
 export { OrbitControls, Text, Center, Float, View } from '@react-three/drei';
+/** The Three.js group type, for refs to groups placed in a scene. */
+export type { Group as ThreeGroup } from 'three';

@@ -68,6 +68,7 @@ class GitHubClient:
             default_branch=data["default_branch"],
             size=int(data.get("size") or 0),
             language=data.get("language"),
+            open_issues=int(data.get("open_issues_count") or 0),
         )
 
     async def resolve_commit(

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @source "../../../packages/grave-ui/src";
 @import "../../../packages/grave-ui/src/styles/grave-ui.css";
+@import "lenis/dist/lenis.css";
 @import "./docs/docs.css";
 
 /* Tailwind colors read Groove UI's palette variables, so the app has no colors of its own. Plain @theme (not inline) lets a section, such as the docs, swap them. */
@@ -35,8 +36,29 @@
   --color-grave-mist-300: var(--grave-mist-300);
   --color-grave-mist-400: var(--grave-mist-400);
   --color-grave-mist-500: var(--grave-mist-500);
+  --color-grave-grove-glow: var(--grave-grove-glow);
 }
 
+/* Groove UI's grove theme swaps the --grave-* values; the colour variables are
+   declared again here so Tailwind's utilities pick the swapped values up. */
+.grave-grove {
+  --color-grave-dark-950: var(--grave-dark-950);
+  --color-grave-dark-900: var(--grave-dark-900);
+  --color-grave-dark-850: var(--grave-dark-850);
+  --color-grave-dark-800: var(--grave-dark-800);
+  --color-grave-dark-750: var(--grave-dark-750);
+  --color-grave-dark-700: var(--grave-dark-700);
+  --color-grave-dark-600: var(--grave-dark-600);
+  --color-grave-mist-100: var(--grave-mist-100);
+  --color-grave-mist-200: var(--grave-mist-200);
+  --color-grave-mist-300: var(--grave-mist-300);
+  --color-grave-mist-400: var(--grave-mist-400);
+  --color-grave-mist-500: var(--grave-mist-500);
+  --color-grave-bone-100: var(--grave-bone-100);
+  --color-grave-bone-200: var(--grave-bone-200);
+  --color-grave-bone-300: var(--grave-bone-300);
+  --color-grave-grove-glow: var(--grave-grove-glow);
+}
 html {
   color-scheme: dark;
 }
@@ -51,4 +73,37 @@ body {
 ::selection {
   background: var(--grave-crypt-moss);
   color: var(--grave-bone-100);
+}
+
+/* Home page entrance: the yard fades in, then the badges, then the headline
+   rises out of a blur. Each element sets --gc-delay. */
+@keyframes gc-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes gc-rise {
+  from { opacity: 0; transform: translateY(1.5rem); filter: blur(12px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes gc-sound {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+.gc-fade-in {
+  animation: gc-fade 2.2s ease-out both;
+}
+.gc-reveal {
+  animation: gc-rise 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--gc-delay, 0s);
+}
+.gc-sound-bar {
+  transform-origin: bottom;
+  animation: gc-sound 1.4s ease-in-out infinite;
+}
+/* The stone in a story rises a little each time it changes. */
+.gc-story-in {
+  animation: gc-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gc-fade-in, .gc-reveal, .gc-sound-bar, .gc-story-in { animation: none; }
 }

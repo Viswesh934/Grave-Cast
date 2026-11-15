@@ -1013,3 +1013,25 @@
 .hover-grave-tremble:hover {
   animation: grave-tremble 0.15s ease-in-out infinite;
 }
+
+/* Grove theme: the docs' green night. Inside .grave-grove the dark, mist and
+   bone scales take the palette.grove values, so every grave-* utility turns
+   green without changing a class. --grave-grove-glow is the one bright accent. */
+.grave-grove {
+  --grave-dark-950: #060c09;
+  --grave-dark-900: #08120e;
+  --grave-dark-850: #0c1813;
+  --grave-dark-800: #10211a;
+  --grave-dark-750: #152b22;
+  --grave-dark-700: #1b382b;
+  --grave-dark-600: #264a3a;
+  --grave-mist-100: #e2ece7;
+  --grave-mist-200: #c1d5cb;
+  --grave-mist-300: #9cb8a9;
+  --grave-mist-400: #6d887a;
+  --grave-mist-500: #496356;
+  --grave-bone-100: #f4f7f4;
+  --grave-bone-200: #e2ede6;
+  --grave-bone-300: #cbdcd1;
+  --grave-grove-glow: #34d399;
+}

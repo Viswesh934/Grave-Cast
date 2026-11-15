@@ -18,6 +18,8 @@ export interface RepoGrave {
 export interface RepoGraveyard {
   fullName: string
   commitSha: string
+  /** Open issues and pull requests on GitHub (GitHub counts both together). */
+  openIssues: number
   graves: RepoGrave[]
   filesRead: number
   filesDiscovered: number
@@ -32,14 +34,26 @@ export type RepoScanResult = { ok: true; graveyard: RepoGraveyard } | { ok: fals
 const KINDS: readonly MarkerKind[] = ['FIXME', 'XXX', 'HACK', 'TODO']
 const OWNER_REPO = /^[A-Za-z0-9_.-]{1,100}\/[A-Za-z0-9_.-]{1,100}$/
 
+export type RepoInput = { ok: true; url: string } | { ok: false; reason: string }
+
 /**
- * Turns `owner/name` into a github.com link and leaves links as they are; the
- * server does the full check. Returns null for an empty field.
+ * Reads `owner/name` or a github.com link. Catches the plain mistakes here, so
+ * the diary only opens for a scan that can start; the server checks the rest.
  */
-export const toRepoUrl = (input: string): string | null => {
+export const checkRepoInput = (input: string): RepoInput => {
   const text = input.trim().replace(/\/+$/, '')
-  if (text === '') return null
-  return OWNER_REPO.test(text) ? `https://github.com/${text}` : text
+  if (text === '') return { ok: false, reason: 'Type a repo, such as owner/name.' }
+  if (OWNER_REPO.test(text)) return { ok: true, url: `https://github.com/${text}` }
+  let url: URL
+  try {
+    url = new URL(/^https?:\/\//i.test(text) ? text : `https://${text}`)
+  } catch {
+    return { ok: false, reason: 'Type the repo as owner/name, or paste its github.com link.' }
+  }
+  if (url.hostname !== 'github.com' && url.hostname !== 'www.github.com') {
+    return { ok: false, reason: 'Only public repos on github.com can be read here.' }
+  }
+  return { ok: true, url: url.href }
 }
 
 const isString = (v: unknown): v is string => typeof v === 'string'
@@ -64,6 +78,7 @@ const readGraveyard = (body: unknown): RepoGraveyard | null => {
   return {
     fullName: repo.fullName,
     commitSha: repo.commitSha,
+    openIssues: isNumber(repo.openIssues) ? repo.openIssues : 0,
     graves: b.graves.map(readGrave).filter((g): g is RepoGrave => g !== null),
     filesRead: stats.filesRead,
     filesDiscovered: stats.filesDiscovered,
