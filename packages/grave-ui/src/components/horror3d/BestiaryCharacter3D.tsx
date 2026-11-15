@@ -16,6 +16,12 @@ export interface BestiaryCharacter3DProps {
   scale?: number;
   /** Callback triggered when clicking the creature to unleash its shockwave */
   onTriggerCurse?: () => void;
+  /**
+   * Whether the creature brings its own lights. Turn off when it joins a
+   * scene that is already lit, so it doesn't flood the scene with colour.
+   * @default true
+   */
+  ownLights?: boolean;
 }
 
 const HAUNT_SPEEDS: Record<HauntMode, { speed: number; wobble: number }> = {
@@ -735,6 +741,7 @@ export function BestiaryCharacter3D({
   accentColor,
   scale = 1.25,
   onTriggerCurse,
+  ownLights = true,
 }: BestiaryCharacter3DProps) {
   const actorGroupRef = useRef<Group>(null);
   const [shockwave, setShockwave] = useState(false);
@@ -785,7 +792,7 @@ export function BestiaryCharacter3D({
   return (
     <group scale={[scale, scale, scale]} position={[0, 0, 0]}>
       {/* 1. VISCERAL LORE-ACCURATE HORROR LIGHTING */}
-      {isFrost ? (
+      {ownLights && (isFrost ? (
         <>
           {/* Cold Arctic Daylight Blizzard Fill */}
           <ambientLight intensity={1.1} color="#bae6fd" />
@@ -799,7 +806,7 @@ export function BestiaryCharacter3D({
           <directionalLight position={[4, 5, 4]} intensity={1.3} color="#e2e8f0" />
           <directionalLight position={[0, 3, -4]} intensity={2.2} color={resolvedAccent} />
         </>
-      )}
+      ))}
 
       {/* 2. DEDICATED BESPOKE 3D MONSTER MODELS (Zero background planes on character) */}
 

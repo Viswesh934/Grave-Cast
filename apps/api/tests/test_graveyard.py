@@ -91,6 +91,7 @@ async def test_graveyard_endpoint_returns_graves_and_deletes_snapshot(tmp_path: 
     assert response.status_code == 200
     body = response.json()
     assert body["repository"]["fullName"] == "acme/demo"
+    assert body["repository"]["openIssues"] == 42
     assert body["graves"] == [
         {"id": "app/main.py:2", "kind": "FIXME", "path": "app/main.py", "line": 2, "note": "wrong on empty lists"},
         {"id": "src/index.ts:1", "kind": "TODO", "path": "src/index.ts", "line": 1, "note": "cache this"},

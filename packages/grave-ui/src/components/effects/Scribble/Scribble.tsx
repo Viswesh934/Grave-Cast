@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { useAriaAnnounce } from '../../../hooks/useAriaAnnounce';
 import { useFadingTrail, type TrailPoint } from '../../../hooks/useFadingTrail';
 import { useLatest } from '../../../hooks/useLatest';
@@ -471,7 +472,7 @@ export const Scribble = ({
   const trailStyle = tool === 'eraser' ? scribbleTrail.eraser : scribbleTrail.laser;
   const shapeCount = scribble.shapes.length;
 
-  return (
+  const layer = (
     <div className={`${CLASS.root} ${className}`.trim()} style={{ position, inset: 0, zIndex: zLayers.annotation, pointerEvents: 'none', ...style }}>
       <style>{scribbleStyles}</style>
 
@@ -698,4 +699,8 @@ export const Scribble = ({
       )}
     </div>
   );
+  // Over the whole screen it renders at the end of the page, so a parent that
+  // starts its own stacking (isolation, transforms, filters) can't hide it
+  // under other parts of the page. Inline, it stays where it is placed.
+  return inline || typeof document === 'undefined' ? layer : createPortal(layer, document.body);
 };

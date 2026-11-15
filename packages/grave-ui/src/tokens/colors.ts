@@ -194,6 +194,30 @@ export const palette = {
     400: '#6d7186',
     500: '#4a4d60',
   },
+  /**
+   * Grove - the green-tinted night of the docs: darks, mist and bone with a
+   * touch of moss, and one emerald for the living light. Use it through the
+   * `.grave-grove` class, which swaps the dark, mist and bone scales.
+   */
+  grove: {
+    950: '#060c09',
+    900: '#08120e',
+    850: '#0c1813',
+    800: '#10211a',
+    750: '#152b22',
+    700: '#1b382b',
+    600: '#264a3a',
+    mist100: '#e2ece7',
+    mist200: '#c1d5cb',
+    mist300: '#9cb8a9',
+    mist400: '#6d887a',
+    mist500: '#496356',
+    bone100: '#f4f7f4',
+    bone200: '#e2ede6',
+    bone300: '#cbdcd1',
+    /** The living light: lanterns, the vial, the active step. */
+    glow: '#34d399',
+  },
 } as const;
 
 /**

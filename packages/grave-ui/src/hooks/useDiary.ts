@@ -29,6 +29,12 @@ export interface DiaryOptions {
   wrongReplies?: readonly string[];
   /** Keep the diary's memory for this browser session under this key. */
   storageKey?: string;
+  /**
+   * Once every entry has been asked, start a new round instead of falling
+   * silent. What it remembers is kept, so entries that use memory stay personal.
+   * @default true
+   */
+  cycle?: boolean;
 }
 
 export interface DiaryReturn {
@@ -93,7 +99,7 @@ const read = (storageKey: string | undefined): Saved => {
  * useEffect(() => { if (open) diary.awaken(); }, [open]);
  * ```
  */
-export const useDiary = ({ entries, wrongReplies = [], storageKey }: DiaryOptions): DiaryReturn => {
+export const useDiary = ({ entries, wrongReplies = [], storageKey, cycle = true }: DiaryOptions): DiaryReturn => {
   const [saved, setSaved] = useState<Saved>(() => read(storageKey));
   const savedRef = useRef(saved);
   savedRef.current = saved;
@@ -113,17 +119,25 @@ export const useDiary = ({ entries, wrongReplies = [], storageKey }: DiaryOption
 
   const awaken = useCallback(() => {
     const current = savedRef.current;
-    const next = nextDiaryEntry(entries, current.seen, current.memory);
+    let seen = current.seen;
+    let next = nextDiaryEntry(entries, seen, current.memory);
+    if (!next && cycle && seen.length > 0) {
+      // A new round: ask again, but not the entry it just asked.
+      const last = seen[seen.length - 1];
+      seen = [last];
+      next = nextDiaryEntry(entries, seen, current.memory) ?? nextDiaryEntry(entries, [], current.memory);
+      seen = [];
+    }
     setEntry(next);
     setReply(null);
     setWrong(false);
     setStage(next ? 'asking' : 'silent');
     if (next) {
-      const updated = { ...current, seen: [...current.seen, next.id] };
+      const updated = { ...current, seen: [...seen, next.id] };
       savedRef.current = updated;
       setSaved(updated);
     }
-  }, [entries]);
+  }, [entries, cycle]);
 
   const answer = useCallback(
     (value: string) => {

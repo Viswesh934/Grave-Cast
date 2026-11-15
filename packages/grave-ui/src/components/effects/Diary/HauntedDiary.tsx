@@ -7,6 +7,7 @@ import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, ty
 import { useSpookyAudio, type SpookySound } from '../../../audio';
 import { useDiary } from '../../../hooks/useDiary';
 import { useHauntedTyping } from '../../../hooks/useHauntedTyping';
+import { useLatest } from '../../../hooks/useLatest';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useTypewriter } from '../../../hooks/useTypewriter';
 import { srOnlyStyle } from '../../../tokens';
@@ -85,6 +86,12 @@ export interface HauntedDiaryProps {
   closeLabel?: string;
   /** Play eerie notes while the person writes (only once sound is on). @default true */
   hauntedTyping?: boolean;
+  /**
+   * Keep the conversation going while the book stays open: a moment after each
+   * exchange, the next entry replaces the last. Turn off to ask one entry per opening.
+   * @default true
+   */
+  continuous?: boolean;
   sounds?: DiarySounds;
   className?: string;
   style?: CSSProperties;
@@ -102,6 +109,9 @@ const css = {
   },
   cover: {
     width: `min(100%, ${t.width})`,
+    maxHeight: t.maxHeight,
+    display: 'flex',
+    flexDirection: 'column',
     padding: t.coverPadding,
     background: t.cover,
     border: `${t.borderWidth} solid ${t.coverEdge}`,
@@ -109,6 +119,9 @@ const css = {
   },
   page: {
     display: 'grid',
+    alignContent: 'start',
+    minHeight: 0,
+    overflowY: 'auto',
     gap: t.gap,
     padding: t.padding,
     background: `repeating-linear-gradient(to bottom, transparent 0, transparent calc(${t.ruleGap} - ${t.borderWidth}), ${t.rule} calc(${t.ruleGap} - ${t.borderWidth}), ${t.rule} ${t.ruleGap}), ${t.page}`,
@@ -164,8 +177,8 @@ const Ink = ({ text, count }: { text: string; count: number }) => (
 );
 
 /**
- * A diary that writes back, like an old cursed book. It asks one entry each
- * time it opens: a riddle, a choice, an open question, or a message that needs
+ * A diary that writes back, like an old cursed book. While it is open it keeps
+ * asking, one entry after another: a riddle, a choice, an open question, or a message that needs
  * no answer. It replies as if it knows something you don't, remembers what you
  * write, and later entries can use it.
  *
@@ -193,6 +206,7 @@ export const HauntedDiary = ({
   submitLabel = 'Whisper',
   closeLabel = 'Close the diary',
   hauntedTyping = true,
+  continuous = true,
   sounds,
   className,
   style,
@@ -216,6 +230,8 @@ export const HauntedDiary = ({
   const settledRef = useRef<string | null>(null);
   const awakeRef = useRef(false);
   const lingerRef = useRef<number | null>(null);
+  const nextRef = useRef<number | null>(null);
+  const openNow = useLatest(open);
   const callbacks = useRef({ onSettled, onVanished, onRequestClose });
   callbacks.current = { onSettled, onVanished, onRequestClose };
 
@@ -237,6 +253,7 @@ export const HauntedDiary = ({
   // Close: let the book vanish, then step aside.
   useEffect(() => {
     if (open || !mounted) return undefined;
+    if (nextRef.current !== null) window.clearTimeout(nextRef.current);
     setVanishing(true);
     if (sound.vanish) playSound(sound.vanish);
     const timer = window.setTimeout(() => {
@@ -252,6 +269,7 @@ export const HauntedDiary = ({
   useEffect(
     () => () => {
       if (lingerRef.current !== null) window.clearTimeout(lingerRef.current);
+      if (nextRef.current !== null) window.clearTimeout(nextRef.current);
     },
     []
   );
@@ -260,8 +278,21 @@ export const HauntedDiary = ({
   const settle = useCallback(() => {
     if (settledRef.current === exchangeKey) return;
     settledRef.current = exchangeKey;
-    lingerRef.current = window.setTimeout(() => callbacks.current.onSettled?.(), animate ? t.lingerMs : 0);
-  }, [exchangeKey, animate]);
+    const silentNow = diary.stage === 'silent';
+    const { awaken } = diary;
+    lingerRef.current = window.setTimeout(() => {
+      callbacks.current.onSettled?.();
+      // Still open (the work isn't done): write the next entry over this one.
+      if (!continuous || silentNow) return;
+      nextRef.current = window.setTimeout(() => {
+        if (!openNow.current) return;
+        setDraft('');
+        setGiven('');
+        settledRef.current = null;
+        awaken();
+      }, animate ? t.nextMs : 0);
+    }, animate ? t.lingerMs : 0);
+  }, [exchangeKey, animate, continuous, diary.stage, diary.awaken, openNow]);
 
   const silent = diary.stage === 'silent';
   const asked = silent ? silentText : diary.text;

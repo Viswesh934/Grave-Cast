@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, Float } from '@react-three/drei';
-import { ShaderMaterial, type Mesh, Vector3, type Group, Shape } from 'three';
+import { Color, ShaderMaterial, type Mesh, Vector3, type Group, Shape } from 'three';
 import type { HorrorIntensity } from '../../tokens/types';
 import type { TombstoneWeathering } from '../crypt/TombstoneCard/TombstoneCard';
 import { stoneVertexShader, stoneFragmentShader } from './shaders/StoneShader';
@@ -19,6 +19,9 @@ export type GothicRelief =
 /** How far the stone's rounded edge sticks out from its body, in scene units. */
 const STONE_BEVEL = 0.08;
 
+/** The default torchlight: a warm flame (linear RGB 1.0, 0.65, 0.35). */
+const TORCH_FLAME = new Color(1.0, 0.65, 0.35).getStyle();
+
 export interface TombstoneCard3DProps {
   title: string;
   subtitle?: string;
@@ -30,6 +33,11 @@ export interface TombstoneCard3DProps {
   width?: number;
   height?: number;
   depth?: number;
+  /**
+   * Colour of the torchlight that follows the pointer across the stone.
+   * A pale colour keeps the stone grey; the default is a warm flame.
+   */
+  torchColor?: string;
 }
 
 /**
@@ -205,6 +213,7 @@ export function TombstoneCard3D({
   width = 3,
   height = 4.2,
   depth = 0.45,
+  torchColor = TORCH_FLAME,
 }: TombstoneCard3DProps) {
   const meshRef = useRef<Mesh>(null);
   const groupRef = useRef<Group>(null);
@@ -221,6 +230,8 @@ export function TombstoneCard3D({
     return weatheringMap[weathering];
   }, [weathering]);
 
+  const torch = useMemo(() => new Color(torchColor), [torchColor]);
+
   const stoneMaterial = useMemo(() => {
     const lightConfig = TORCHLIGHT_CONFIG[intensity];
     
@@ -232,11 +243,11 @@ export function TombstoneCard3D({
         uWeathering: { value: weatheringValue },
         uHalfHeight: { value: height / 2 },
         uLightPosition: { value: new Vector3(0, 0, 5) },
-        uLightColor: { value: new Vector3(1.0, 0.65, 0.35) },
+        uLightColor: { value: new Vector3(torch.r, torch.g, torch.b) },
         uLightIntensity: { value: lightConfig.baseIntensity * 1.2 },
       },
     });
-  }, [weatheringValue, intensity, height]);
+  }, [weatheringValue, intensity, height, torch]);
 
   // Free the old shader when weathering or lighting changes.
   useEffect(() => () => stoneMaterial.dispose(), [stoneMaterial]);

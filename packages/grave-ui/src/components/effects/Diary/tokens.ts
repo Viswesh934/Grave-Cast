@@ -33,6 +33,8 @@ export const diaryTokens = {
   ruleGap: '2.38rem',
 
   width: '36rem',
+  /** The book never grows past the screen; the page scrolls inside it instead. */
+  maxHeight: 'calc(100svh - 2.5rem)',
   padding: '2.5rem 2.75rem',
   coverPadding: '0.85rem',
   radius: '0.35rem',
@@ -63,6 +65,8 @@ export const diaryTokens = {
   vanishMs: 1100,
   /** The pause after a reply is written before the exchange counts as over. */
   lingerMs: 900,
+  /** While the book stays open, the pause after an exchange before the next entry is written. */
+  nextMs: 1600,
   /** How the book rises in: from slightly low, small, and blurred. */
   awakenRise: '0.75rem',
   awakenScale: 0.98,

@@ -19,3 +19,5 @@ export * from './VoiceStudio';
 export * from './Scribble';
 export * from './Doodle';
 export * from './Diary';
+export * from './BroomProgress';
+export * from './BitingFrame';

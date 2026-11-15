@@ -23,6 +23,7 @@ class RepositoryInfo(BaseModel):
     default_branch: str = Field(serialization_alias="defaultBranch")
     commit_sha: str = Field(serialization_alias="commitSha")
     tree_sha: str = Field(serialization_alias="treeSha")
+    open_issues: int = Field(default=0, serialization_alias="openIssues")
 
     model_config = {"populate_by_name": True}
 
@@ -64,6 +65,8 @@ class RepoMetadata(BaseModel):
     default_branch: str
     size: int  # kilobytes
     language: str | None = None
+    # GitHub counts open pull requests as issues here.
+    open_issues: int = 0
 
 
 class CommitResolution(BaseModel):

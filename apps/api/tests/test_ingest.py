@@ -34,6 +34,7 @@ def _repo_payload(*, private: bool = False, size: int = 10) -> dict:
         "default_branch": "main",
         "size": size,
         "language": "TypeScript",
+        "open_issues_count": 42,
     }
 
 

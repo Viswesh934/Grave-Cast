@@ -126,6 +126,12 @@ export interface WitchOnBroomProps extends Omit<HTMLAttributes<HTMLButtonElement
   size?: WitchSize | number;
   /** What screen readers hear. @default 'A witch flying across the moon. Activate to cast a spell.' */
   label?: string;
+  /**
+   * Draw the moon and stars behind her. Turn off when she flies over other
+   * content, such as a progress bar, and only the witch should show.
+   * @default true
+   */
+  scenery?: boolean;
 }
 
 /**
@@ -152,6 +158,7 @@ export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
       soundOnCast = true,
       size = 'md',
       label = 'A witch flying across the moon. Activate to cast a spell.',
+      scenery = true,
       className = '',
       style,
       onPointerMove,
@@ -223,6 +230,8 @@ export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
           height={(width * WITCH_VIEWBOX.height) / WITCH_VIEWBOX.width}
           viewBox={`0 0 ${WITCH_VIEWBOX.width} ${WITCH_VIEWBOX.height}`}
         >
+          {scenery && (
+            <>
           {/* The moon */}
           <circle cx="178" cy="46" r="30" fill={witchLine.moon} fillOpacity={witchLine.moonFill} stroke={witchLine.moon} strokeWidth={witchLine.stroke} />
           {/* Craters, placed unevenly so they never read as a face */}
@@ -243,6 +252,8 @@ export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
               />
             ))}
           </g>
+            </>
+          )}
 
           {/* The flight: leans toward the pointer, and bobs on its own */}
           <g
