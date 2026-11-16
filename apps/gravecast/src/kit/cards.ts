@@ -8,7 +8,7 @@ import { recoveryPosition } from './recoveryPosition'
 export type KitGroup = 'First aid' | 'Survival' | 'Disasters'
 
 export interface KitCard {
-  /** The card's address: /emergency/kit/<slug>. */
+  /** The card's address: /lantern/kit/<slug>. */
   slug: string
   group: KitGroup
   strip: DoodleStripSpec

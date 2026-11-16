@@ -6,13 +6,14 @@ interface InstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
-const isInstalled = (): boolean =>
+/** Whether this page is running as the installed app, not in a browser tab. */
+export const isInstalledApp = (): boolean =>
   window.matchMedia('(display-mode: standalone)').matches || (navigator as Navigator & { standalone?: boolean }).standalone === true
 
 /** Whether this is already the installed app, and a way to start installing where the browser allows it. */
 export function useInstall() {
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null)
-  const [installed, setInstalled] = useState(isInstalled)
+  const [installed, setInstalled] = useState(isInstalledApp)
 
   useEffect(() => {
     const onPrompt = (event: Event) => {

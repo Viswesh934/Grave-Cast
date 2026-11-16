@@ -25,7 +25,7 @@ const byNewest = (a: ShownMessage, b: ShownMessage) => order(b) - order(a) || (a
 /** Asks the browser to send the outbox when the connection returns, even if the app is closed. */
 async function askForBackgroundSend(): Promise<void> {
   try {
-    const registration = await navigator.serviceWorker?.getRegistration('/emergency/')
+    const registration = await navigator.serviceWorker?.getRegistration('/lantern/')
     await (registration as (ServiceWorkerRegistration & { sync?: { register: (tag: string) => Promise<void> } }) | undefined)?.sync?.register(SYNC_TAG)
   } catch {
     // Not supported here: the outbox is sent the next time Chat opens or the connection returns.

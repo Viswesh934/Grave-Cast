@@ -11,6 +11,7 @@ import {
   useAriaAnnounce,
   useHauntedTyping,
   useHorrorFallback,
+  useMediaQuery,
   useReducedMotion,
   useSpookyAudio,
   zLayers,
@@ -113,6 +114,8 @@ export function HomePage() {
 
   const reduced = useReducedMotion()
   const flat = useHorrorFallback()
+  // Two columns with the panel scrolling on its own only on wide screens. Phones get a normal page.
+  const wide = useMediaQuery('(min-width: 1024px)')
   const { announce } = useAriaAnnounce()
   const { playSound } = useSpookyAudio()
   const switchId = useId()
@@ -144,7 +147,7 @@ export function HomePage() {
     playSound(done.graves.length > 0 ? 'shovelScrape' : 'wispBlip')
   })
   // Scrolling the panel walks the camera into the yard.
-  const { scrollTo } = useSmoothScroll(panel, panelContent, diary.open || storiesOpen, (p) => {
+  const { scrollTo } = useSmoothScroll(panel, panelContent, wide, diary.open || storiesOpen, (p) => {
     scroll.current = p
   })
 
@@ -213,7 +216,7 @@ export function HomePage() {
     <div className="grave-grove relative isolate flex-1">
       {/* The yard, behind everything, darker on the left where the words are. */}
       <div aria-hidden="true" className="gc-fade-in pointer-events-none fixed inset-0" style={{ zIndex: zLayers.behind }}>
-        {flat ? (
+        {flat || !wide ? (
           <HorrorBackground variant="fog" intensity="ghastly" />
         ) : (
           <Suspense fallback={null}>
@@ -223,11 +226,11 @@ export function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,transparent_35%,var(--color-grave-dark-950)_100%)]" />
       </div>
 
-      <div className="relative grid h-[calc(100svh-3.5rem)] lg:grid-cols-[minmax(0,46rem)_1fr]">
+      <div className="relative grid lg:h-[calc(100svh-3.5rem)] lg:grid-cols-[minmax(0,46rem)_1fr]">
         <section
           ref={panel}
           aria-label={mode === 'dev' ? 'Read a repo' : 'Check a link'}
-          className="h-full overflow-y-auto border-grave-dark-700/70 bg-gradient-to-r from-grave-dark-950/95 via-grave-dark-950/85 to-grave-dark-950/60 backdrop-blur-[2px] lg:border-r"
+          className="border-grave-dark-700/70 lg:h-full lg:overflow-y-auto bg-gradient-to-r from-grave-dark-950/95 via-grave-dark-950/85 to-grave-dark-950/60 backdrop-blur-[2px] lg:border-r"
         >
           <div ref={panelContent} className="space-y-10 px-6 pt-10 pb-16 sm:px-12">
             <div className="gc-reveal" style={delay(0.4)}>

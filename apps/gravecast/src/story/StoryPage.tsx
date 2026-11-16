@@ -14,7 +14,7 @@ const STORY: readonly string[] = [
   'So we built something that keeps working on limited internet, and holds the common emergency know-how for when there is none at all.',
 ]
 
-/** What the Emergency section will hold, from the vision doc. It is being built now. */
+/** What Lantern will hold, from the vision doc. It is being built now. */
 const PARTS: readonly { name: string; what: string }[] = [
   { name: 'Board', what: 'Plain-text updates, such as shelters and helplines, kept on your phone so they open offline.' },
   { name: 'Chat', what: 'Messages wait in an outbox and send in one small burst when the line comes back.' },
@@ -22,7 +22,7 @@ const PARTS: readonly { name: string; what: string }[] = [
   { name: 'Survival kit', what: 'First aid and survival guides that work with no internet at all, each drawn as a short comic and taken from a recognised source.' },
 ]
 
-/** Why Gravecast has an Emergency section: the story first, then what it holds. */
+/** Why Gravecast has an Lantern: the story first, then what it holds. */
 export function StoryPage() {
   return (
     <div className="relative isolate flex-1">
@@ -44,7 +44,7 @@ export function StoryPage() {
         </div>
 
         <div className="gc-reveal mt-16" style={delay(1.1 + STORY.length * 0.9)}>
-          <BoneOssuaryDivider label="The Emergency section" pattern="row" size="md" />
+          <BoneOssuaryDivider label="Lantern" pattern="row" size="md" />
           <p className="mt-8 mb-0 text-lg leading-relaxed text-grave-mist-300">
             It installs on your phone like an app, so it is already there when the lights go out. It is being built step by step. The survival kit is open now; the rest is on its way:
           </p>
@@ -75,8 +75,8 @@ export function StoryPage() {
         <div className="gc-reveal mt-16" style={delay(2 + STORY.length * 0.9)}>
           <p className="m-0 text-grave-mist-400">Install it before you need it. In an emergency, there may be no internet to download it.</p>
           <p className="mt-6 mb-0">
-            <a href="/emergency/" className="text-lg text-grave-bone-100 underline decoration-grave-mist-500 underline-offset-4 hover:decoration-grave-bone-100">
-              Open the Emergency section {'\u2192'}
+            <a href="/lantern/" className="text-lg text-grave-bone-100 underline decoration-grave-mist-500 underline-offset-4 hover:decoration-grave-bone-100">
+              Open Lantern {'\u2192'}
             </a>
           </p>
         </div>

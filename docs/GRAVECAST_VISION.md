@@ -10,7 +10,7 @@ Status: prototype. We build in small iterations and the concept matters more tha
 
 Our team lives where emergencies are never far away. One of us lives in a cyclone region: in one cyclone, trees started flying through the air, and then came about two days of power cut, with no electricity, no internet, and no phone signal. With the survival skills of a mosquito, there wasn't much to do, and nothing to look up. Another of us is from Lebanon, where war can cut a place off, and another is from Florida, where hurricanes come often.
 
-So we built something that keeps working on limited internet and holds the common emergency know-how for when there is none. That is the Emergency section (§3.4). The website tells this story first, on the "Our story" page, before it introduces the Emergency section.
+So we built something that keeps working on limited internet and holds the common emergency know-how for when there is none. That is Lantern (§3.4). The website tells this story first, on the "Our story" page, before it introduces Lantern.
 
 ---
 
@@ -19,12 +19,12 @@ So we built something that keeps working on limited internet and holds the commo
 | Layer | Works with | What it does |
 | --- | --- | --- |
 | **Gravecast website** | Normal internet | Scans links, sites, and repos for danger and shows the graveyard. Web only. |
-| **Emergency section** | Little or no internet | The installable part of the app: the Emergency Channel (Board, Chat, Radio) for little internet, and the survival kit, which works with none. |
+| **Lantern** | Little or no internet | The installable part of the app: the channel (Board, Chat, Radio) for little internet, and the survival kit, which works with none. |
 | **Groove UI** | n/a | The horror-themed library that makes it all look and sound alive (`packages/grave-ui`). |
 
-"Little internet" means a slow, patchy connection (2G, a weak signal, frequent drops). The Emergency Channel is built for that. When there is no internet at all, the survival kit still works.
+"Little internet" means a slow, patchy connection (2G, a weak signal, frequent drops). The channel is built for that. When there is no internet at all, the survival kit still works.
 
-There is one app. It is a website, and its Emergency section can be installed on the phone as a PWA. People install the Emergency section ahead of time, like an emergency kit. They are not expected to download it during an emergency, so app size is not a hard limit. A survival kit of 5–20 MB is fine.
+There is one app. It is a website, and its Lantern section can be installed on the phone as a PWA. People install Lantern ahead of time, like an emergency kit. They are not expected to download it during an emergency, so app size is not a hard limit. A survival kit of 5–20 MB is fine.
 
 ## 2. Who it's for
 
@@ -58,9 +58,9 @@ For site owners: security headers, HTTPS setup, third-party scripts, outdated fr
 
 Paste a public GitHub repo and see its dead code, old TODOs, vulnerable dependencies, and leaked secrets as a graveyard. Ingestion already exists in `apps/api/app/modules/github`. The full design is in [BUILD_SPEC.md](./BUILD_SPEC.md).
 
-### 3.4 Emergency section (installable)
+### 3.4 Lantern (installable)
 
-The part of the app that installs as a PWA. It has four tabs. Board, Chat, and Radio form the Emergency Channel, built for little internet. The survival kit (§3.7) works with no internet at all. The link scan and developer mode are not in the installed app.
+The part of the app that installs as a PWA. It has four tabs. Board, Chat, and Radio form the channel, built for little internet. The survival kit (§3.7) works with no internet at all. The link scan and developer mode are not in the installed app.
 
 - **Board:** plain-text updates (shelters, helplines, news), written as real Gopher menu files (RFC 1436 format) and served as static files over HTTPS from Vercel. They are not on port 70, so the app says "Gopher menus over HTTPS". Small, fast, and cached so they open offline.
 - **Chat:** FidoNet-style **echomail**, the store-and-forward messaging that BBSes used over slow, on-and-off dial-up. Nobody stays connected. The phone makes a short **mail run**: one small HTTP request to Lambda that sends its queued messages and receives everything new since its last run. Public areas are **echoes**, such as `EMERGENCY`. Messages carry FidoNet-style headers (area, from, MSGID, origin line), which the Wire view shows. Pick a nickname with no sign-up form. The phone joins `EMERGENCY` by default. While the Chat tab is open, it runs every few seconds; in the background, much less often.
@@ -68,7 +68,7 @@ The part of the app that installs as a PWA. It has four tabs. Board, Chat, and R
 
 ### 3.5 Sharing: the grave card
 
-Any scan result or channel message can become a **grave card**. Cards are made on the website from scan results, or in the Emergency section from a note. The Emergency section can receive cards (QR scan, haunted radio) and keeps them offline. A card is: a small, versioned message of about 200 bytes. For example:
+Any scan result or channel message can become a **grave card**. Cards are made on the website from scan results, or in Lantern from a note. Lantern can receive cards (QR scan, haunted radio) and keeps them offline. A card is: a small, versioned message of about 200 bytes. For example:
 
 > ⚠ cyclone-relief-donate.xyz: 3 days old, flagged for phishing.
 
@@ -88,7 +88,7 @@ The outbox is the mail run. When the connection returns, the service worker make
 
 ### 3.7 Survival kit
 
-The fourth tab of the Emergency section. It works fully offline, with no network at all.
+The fourth tab of Lantern. It works fully offline, with no network at all.
 
 **Base pack first.** It holds guidance that is valid anywhere in the world, from international sources. It ships to everyone and is English first. Location packs come later (see §8).
 
@@ -128,7 +128,7 @@ Drawings only show what the caption says and never add a step. If something can'
 | Emergency call | Tap to call | The kit says to use the local emergency number. It doesn't promise one number works everywhere. |
 
 **How it ships.**
-1. The base pack downloads when the Emergency section is installed and is cached by its service worker.
+1. The base pack downloads when Lantern is installed and is cached by its service worker.
 2. The app asks for persistent storage, so the browser keeps the kit.
 3. Packs are versioned with a `manifest.json` (version, size, languages, checksum), so an update replaces a pack cleanly.
 
@@ -173,7 +173,7 @@ The list of doodles needed comes from the kit card content. Each doodle illustra
 1. **Evidence before style.** Every grave traces back to a real finding. Atmosphere never invents facts.
 2. **Honest verdicts.** Say what was found and what wasn't checked. Never promise "safe".
 3. **Passive only.** No port scans, probing, or exploits against sites the user doesn't own.
-4. **Little internet first (Emergency section).** Small requests, cache-first, never block startup on the network. The website can assume a normal connection, but still keeps pages light.
+4. **Little internet first (Lantern).** Small requests, cache-first, never block startup on the network. The website can assume a normal connection, but still keeps pages light.
 5. **Prototype first.** Build the smallest version that proves the idea, then iterate.
 6. **No mandatory AI.** Deterministic checks and templates. See BUILD_SPEC.
 7. **No made-up information. Life-safety content is sourced, never written by us.** First aid and survival steps come from recognized international guidance, such as the IFRC International First Aid, Resuscitation and Education Guidelines, ILCOR resuscitation guidance, and WHO. Every kit card names its source and review date. Wrong steps can kill.
@@ -194,7 +194,7 @@ The list of doodles needed comes from the kit card content. Each doodle illustra
 | Repo scan | Existing module | `apps/api/app/modules/github` |
 | Link scan | New module | `apps/api/app/modules/linkscan` |
 | Channel (mail runs, echoes) | New module | `apps/api/app/modules/channel` |
-| App | React + Vite + TypeScript website; the Emergency section is the installable PWA | `apps/gravecast` (new) |
+| App | React + Vite + TypeScript website; Lantern is the installable PWA | `apps/gravecast` (new) |
 | Look and sound | Groove UI | `packages/grave-ui` |
 | Echo storage | DynamoDB, provisioned mode at 25 read / 25 write units (the free tier) | Behind Lambda |
 | Board content | Gopher menu files | Static files on Vercel |
@@ -203,12 +203,12 @@ The list of doodles needed comes from the kit card content. Each doodle illustra
 **One app: a website with an installable section.** There is one codebase and one build:
 
 - **The website** holds the link scan and developer mode. It needs the internet and is not installed.
-- **The Emergency section** lives under its own path, `/emergency`. Its web manifest and service worker are scoped to that path, so "Add to Home Screen" from there installs only the Emergency section, and only that section is cached for offline use. Installed, it opens straight into the Emergency section, including in flight mode.
+- **Lantern** lives under its own path, `/lantern`. Its web manifest and service worker are scoped to that path, so "Add to Home Screen" from there installs only Lantern, and only that section is cached for offline use. Installed, it opens straight into Lantern, including in flight mode.
 - **Demo mode:** for showing the app, a demo mode runs on built-in sample data: pre-scanned links, a sample Board, and sample Chat messages. Every screen can then be shown even when the API is asleep or there is no network. Demo data is clearly labelled as a sample, so it is never mistaken for a real finding.
 
 Hosting for the prototype:
 
-- **Vercel:** the website, the Emergency section, and the Board's Gopher menu files.
+- **Vercel:** the website, Lantern, and the Board's Gopher menu files.
 - **AWS Lambda:** the API: scans, and mail runs for Chat.
 - **Storage:** DynamoDB for echoes.
 
@@ -234,9 +234,9 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 3. Grave card and QR.
 4. Demo mode with labelled sample data.
 
-### Iteration 2: Emergency section and survival kit (base pack)
+### Iteration 2: Lantern and survival kit (base pack)
 
-5. Emergency section shell at `/emergency`: installable, scoped manifest and service worker, opens offline.
+5. Lantern shell at `/lantern`: installable, scoped manifest and service worker, opens offline.
 6. Kit cards for first aid, survival, and general disasters, sourced from international guidance.
 7. The doodle system in Groove UI (skeleton, poses, props, panel player), then the doodles from the list.
 8. Tools: CPR metronome, SOS light, SOS sound, compass and level, help message, emergency call.
@@ -266,7 +266,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
   - verified broadcasters
 - Location packs (opt-in, one per place): local disaster pages, an offline map built from OpenStreetMap data (a vector extract per city, not bulk tile downloads), verified local contacts, local hazards, and local languages.
 - More languages for the base pack.
-- An Android APK wrapping the Emergency section (for example with PWABuilder), for the Play Store or sharing as a file.
+- An Android APK wrapping Lantern (for example with PWABuilder), for the Play Store or sharing as a file.
 - Updating packs quietly in the background.
 - 3D graveyard.
 
@@ -276,7 +276,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | --- | --- |
 | Link safety scan is the main feature; repo scan is developer mode | Agreed |
 | Target is little internet for the channel; the survival kit works with no internet | Agreed |
-| The survival kit is part of the app, as the fourth tab of the Emergency section (replaces "the kit is separate") | Agreed |
+| The survival kit is part of the app, as the fourth tab of Lantern (replaces "the kit is separate") | Agreed |
 | Base pack first: content valid worldwide; location packs later | Agreed |
 | Life-safety content comes from recognized sources and names its source | Agreed |
 | Hackathon: all kit cards ship with one prototype notice; the per-card `review: verified` gate applies only to a production release | Agreed |
@@ -297,9 +297,9 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Doodles are built in iterations: foundations first, then batches from doodle scripts | Agreed |
 | A second developer builds the website (link scan, graveyard, grave card); see §13 | Agreed |
 | Groove UI provides the look; missing pieces are built there | Agreed |
-| One app: a website (link scan, developer mode) with an installable Emergency section (channel and survival kit). No separate apps. | Agreed |
+| One app: a website (link scan, developer mode) with an installable Lantern (channel and survival kit). No separate apps. | Agreed |
 | Clean, calm UI with muted colors and no bright accents (§4) | Agreed |
-| Only the Emergency section is a PWA, scoped to `/emergency`; the link scan and developer mode are web only (§7) | Agreed |
+| Only Lantern is a PWA, scoped to `/lantern`; the link scan and developer mode are web only (§7) | Agreed |
 | Demo mode on labelled sample data for showing the app (§7) | Agreed |
 | New app lives in `apps/gravecast` | Agreed |
 | One site: the Groove UI docs live in the app under `/docs`, sharing the top bar; `apps/web` is retired | Agreed |
@@ -313,20 +313,22 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | The home page has a Scribble cannon: once, a pen is fired from the bottom left into the right end of the top bar, where it stays with a red glow. Clicking it turns on drawing; its small × turns it off, and that is remembered. The status vial is red; Lord Alucard (the bestiary vampire) is the creature in the 3D yard. Teeth bite down on the form while a scan runs | Agreed |
 | The home page uses the docs' green grove palette (Groove UI `.grave-grove` and `palette.grove`), with one emerald accent. This relaxes "muted colors, no bright accents" for the website only | Agreed |
 | The website tells the team's backstory on an "Our story" page: one of us in a cyclone region (flying trees, then about two days with no electricity, internet or signal), one from Lebanon (war), one from Florida (frequent hurricanes) | Agreed |
-| Top bar order: Graveyard, Emergency, Docs, Our story. Emergency is the second tab once the section works; Our story is always last | Agreed |
-| The installed Emergency section is plain and fast: no animation, no 3D, no decorative sound, no horror effects. Only sounds that do a job (the CPR beat, SOS) play. The website may still show off | Agreed |
-| The Emergency section is its own page (`emergency/index.html`) with its own bundle, so no website code is cached on the phone. Moving between it and the website is a full page load | Agreed |
-| Its service worker is written by us and generated at build time from exactly the Emergency page's files; pages open from the cache first, and a new version takes over once every Emergency tab has closed | Agreed |
+| Top bar order: Graveyard, Lantern, Docs, Our story. Lantern is the second tab once the section works; Our story is always last | Agreed |
+| The installed Lantern is plain and fast: no animation, no 3D, no decorative sound, no horror effects. Only sounds that do a job (the CPR beat, SOS) play. The website may still show off | Agreed |
+| Lantern is its own page (`lantern/index.html`) with its own bundle, so no website code is cached on the phone. Moving between it and the website is a full page load | Agreed |
+| Its service worker is written by us and generated at build time from exactly the Lantern page's files; pages open from the cache first, and a new version takes over at once and the page reloads itself once, so an update never needs tabs closed | Agreed |
 | Its manifest and icons are generated at build time from Groove UI's palette | Agreed |
-| Groove UI has narrow entry points so a page loads only what it uses. The Emergency page imports `groove-ui/doodle` (the comic system), never the whole library, so no 3D code is downloaded or cached on the phone | Agreed |
-| The Emergency section opens on the Survival kit, which works with no internet at all; the tab bar is Survival kit, then Chat. Board and Radio join as each one works | Agreed |
-| Chat is live in the Emergency section on two echoes, EMERGENCY (the default) and DEMO (for testing). A message goes into an outbox on the phone first, and is sent in a mail run: at once when online, when the connection returns, every 5 seconds while Chat is open, and by Background Sync from the service worker even with the app closed. Messages stay readable offline. It is public: the page says not to post personal details | Agreed |
+| Groove UI has narrow entry points so a page loads only what it uses. The Lantern page imports `groove-ui/doodle` (the comic system), never the whole library, so no 3D code is downloaded or cached on the phone | Agreed |
+| Lantern opens on the Survival kit, which works with no internet at all; the tab bar is Survival kit, then Chat. Board and Radio join as each one works | Agreed |
+| Chat is live in Lantern on two echoes, EMERGENCY (the default) and DEMO (for testing). A message goes into an outbox on the phone first, and is sent in a mail run: at once when online, when the connection returns, every 5 seconds while Chat is open, and by Background Sync from the service worker even with the app closed. Messages stay readable offline. It is public: the page says not to post personal details | Agreed |
 | Chat's limits: nicknames of up to 24 characters, messages of up to 500, 20 messages per mail run, and the newest 500 kept per echo. A message the server refuses is dropped from the outbox and shown to the sender with the reason, so one bad message never blocks the rest | Agreed |
 | A live demo page at `/demo` is for judges: what Gravecast is, a QR code that opens Chat on the DEMO echo, and the DEMO echo live, with an option to show each message's FidoNet-style headers. It only reads, through `GET /api/channel/echoes/{area}` | Agreed |
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
 | Chat storage sits behind one interface: SQLite for local development, DynamoDB when deployed. A GitHub Action deploys, and its secrets hold the AWS credentials | Agreed |
 | The remaining kit card strips are built around Chat (before or after), in batches from the doodle scripts | Agreed |
-| Accessibility is the driving factor for the Emergency section: when a choice trades accessibility against looks or features, accessibility wins | Agreed |
+| Accessibility is the driving factor for Lantern: when a choice trades accessibility against looks or features, accessibility wins | Agreed |
+| The installable part is called **Lantern** (replaces “Emergency section”, since it will hold more than emergency tools). It lives at `/lantern/`, installs as “Gravecast Lantern”, and old `/emergency/` links redirect there. The Chat echo `EMERGENCY` keeps its name | Agreed |
+| Lantern has a left side menu built like the docs sidebar (Survival kit, Help near you, Chat), with larger text and tap targets; on a phone the places sit in a row on top. No home screen and no back links | Agreed |
 
 ## 10. Open questions
 
@@ -349,12 +351,12 @@ Use these terms everywhere: code, UI, and docs.
 | **Weathering** | How serious a grave looks: pristine, aged, cracked, crumbling |
 | **Grave card** | A small shareable message (finding or note), about 200 bytes |
 | **Haunted radio** | Sending a grave card as sound |
-| **Emergency section** | The installable part of the app (PWA) |
-| **Emergency Channel** | Board, Chat, and Radio |
+| **Lantern** | The installable part of the app (PWA), at `/lantern/`. It holds the survival kit, Help near you, and the channel |
+| **Channel** | Board, Chat, and Radio, inside Lantern |
 | **Echo** | A public message area in Chat, such as `EMERGENCY` (FidoNet's word) |
 | **Mail run** | One short request that sends queued messages and fetches new ones |
 | **Tester** | A real person in the demo group who uses the `DEMO` echo |
-| **Board / Chat / Radio / Survival kit** | The four tabs of the Emergency section |
+| **Board / Chat / Radio / Survival kit** | The four tabs of Lantern |
 | **Kit card** | One offline guide, drawn as a comic strip: panels for the steps, Do / Don't, and its source |
 | **Panel** | One step of a kit card: a stick-figure drawing and its caption |
 | **Doodle** | The drawing in one panel, generated from a data file |
@@ -369,7 +371,7 @@ Use these terms everywhere: code, UI, and docs.
 
 The demo uses real people and real messages. Nothing is staged with invented content.
 
-**A tester group.** Before the demo, a small set of real testers (the team, friends, and family) installs the Emergency section and uses the `DEMO` echo for a few days. Each tester picks a nickname. The echo then holds genuine messages and shows real mail runs on real phones and networks. Testers are told that the echo is for testing, so nobody posts real emergencies there. The `EMERGENCY` echo stays clean.
+**A tester group.** Before the demo, a small set of real testers (the team, friends, and family) installs Lantern and uses the `DEMO` echo for a few days. Each tester picks a nickname. The echo then holds genuine messages and shows real mail runs on real phones and networks. Testers are told that the echo is for testing, so nobody posts real emergencies there. The `EMERGENCY` echo stays clean.
 
 **On stage, about 3 minutes:**
 
@@ -378,7 +380,7 @@ The demo uses real people and real messages. Nothing is staged with invented con
 3. **Flight mode.** Open the survival kit. A CPR comic draws itself and the metronome beats.
 4. **The outbox.** Still in flight mode, post to `DEMO`. The message shows as waiting for the next mail run.
 5. **The line comes back.** Turn flight mode off. The phone makes a mail run, and the message appears on the big screen with its FidoNet headers in the Wire view.
-6. **Audience joins.** A QR on screen opens the Emergency section. Judges pick a nickname and post to `DEMO`, and their messages arrive on the next mail run.
+6. **Audience joins.** A QR on screen opens Lantern. Judges pick a nickname and post to `DEMO`, and their messages arrive on the next mail run.
 7. **Haunted radio.** The laptop plays a grave card as modem tones, and a phone decodes it with no network.
 
 **Fallbacks:** run both devices on a phone hotspot. Use demo mode (labelled sample data) for the link scan if an outside service fails. Keep a recorded clip of haunted radio in case the room is noisy.
@@ -388,7 +390,7 @@ The demo uses real people and real messages. Nothing is staged with invented con
 | Workstream | Owner | Covers |
 | --- | --- | --- |
 | **Website** | Second developer | Iteration 1: link scan (`apps/api/app/modules/linkscan`), graveyard view, grave card and QR, demo mode |
-| **Emergency section** | Core team | Iterations 2–4: installable shell, survival kit and doodle system, Board, Chat (mail runs), outbox, Radio, haunted radio |
+| **Lantern** | Core team | Iterations 2–4: installable shell, survival kit and doodle system, Board, Chat (mail runs), outbox, Radio, haunted radio |
 | **Kit content** | Core team | Sourcing kit cards from IFRC, ILCOR, and WHO guidance, checking licences, and the list of doodles needed |
 
 **The shared contract is the grave card.** Both sides use the same versioned format, so a card made on the website can be scanned, played over haunted radio, or posted to an echo. Agree on the format first, as one TypeScript module with tests, before either side builds on it. The second developer follows the same steering files and this doc.

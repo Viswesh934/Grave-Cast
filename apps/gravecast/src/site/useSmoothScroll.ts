@@ -3,13 +3,18 @@ import Lenis from 'lenis'
 import { useLatest, useReducedMotion } from 'groove-ui'
 
 /**
- * Momentum scrolling inside one scrolling panel. Off for people who ask for
- * less motion. `paused` stops it while a dialog is open. `onProgress` gets how
- * far the panel has scrolled, 0 to 1.
+ * Scroll for the home page. Two modes:
+ * - `panelMode` (wide screens): momentum scrolling inside one scrolling panel.
+ * - otherwise (phones and narrow windows): the page scrolls as normal, with nothing
+ *   inside it to get stuck on. Only the progress is read.
+ *
+ * Momentum scrolling is off for people who ask for less motion. `paused` stops it
+ * while a dialog is open. `onProgress` gets how far along the scroll is, 0 to 1.
  */
 export function useSmoothScroll(
   wrapper: RefObject<HTMLElement | null>,
   content: RefObject<HTMLElement | null>,
+  panelMode: boolean,
   paused: boolean,
   onProgress?: (progress: number) => void,
 ) {
@@ -18,6 +23,15 @@ export function useSmoothScroll(
   const report = useLatest(onProgress)
 
   useEffect(() => {
+    if (!panelMode) {
+      const onScroll = () => {
+        const room = document.documentElement.scrollHeight - window.innerHeight
+        report.current?.(room > 0 ? window.scrollY / room : 0)
+      }
+      window.addEventListener('scroll', onScroll, { passive: true })
+      onScroll()
+      return () => window.removeEventListener('scroll', onScroll)
+    }
     const element = wrapper.current
     if (!element) return
     const onScroll = () => {
@@ -34,7 +48,7 @@ export function useSmoothScroll(
       instance.destroy()
       lenis.current = null
     }
-  }, [reduced, wrapper, content, report])
+  }, [panelMode, reduced, wrapper, content, report])
 
   useEffect(() => {
     if (paused) lenis.current?.stop()

@@ -92,9 +92,9 @@ export function DocsLayout() {
     <div className="grave-docs flex-1 bg-[#08120e] text-[#e2ede6] flex flex-col font-sans selection:bg-emerald-900 selection:text-emerald-100">
 
       {/* Main Layout Body: Left Sidebar + Centered Spacious Content */}
-      <div className="max-w-[1600px] mx-auto w-full flex flex-1 px-4 sm:px-8">
+      <div className="w-full flex flex-1 pr-4 pl-3 sm:pr-8 sm:pl-6">
         {/* Left Sidebar */}
-        <aside className="w-64 shrink-0 border-r border-[#162a1f] p-5 hidden md:block overflow-y-auto max-h-[calc(100vh-3.5rem)] sticky top-14 space-y-6 select-none">
+        <aside className="w-60 shrink-0 border-r border-[#162a1f] py-5 pr-3 pl-2 hidden md:block overflow-y-auto max-h-[calc(100vh-3.5rem)] sticky top-14 space-y-6 select-none">
           {NAV_GROUPS.map((group, gIdx) => (
             <div key={gIdx} className="space-y-1.5">
               <h3 className="text-[11px] font-mono font-bold tracking-wider text-emerald-500/70 px-3 uppercase">
@@ -188,7 +188,7 @@ export function DocsLayout() {
         </aside>
 
         {/* Center Main Content Page (Unobstructed, full breathing room) */}
-        <main className="flex-1 min-w-0 py-8 px-4 sm:px-10 max-w-5xl">
+        <main className="flex-1 min-w-0 py-8 px-4 sm:px-10">
           <Outlet />
         </main>
       </div>

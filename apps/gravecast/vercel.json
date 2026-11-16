@@ -1,10 +1,15 @@
 {
   "headers": [
-    { "source": "/emergency/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-    { "source": "/emergency/manifest.webmanifest", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+    { "source": "/lantern/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/lantern/manifest.webmanifest", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+    { "source": "/emergency/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+  ],
+  "redirects": [
+    { "source": "/emergency", "destination": "/lantern/", "permanent": false },
+    { "source": "/emergency/:path((?!sw\\.js$).*)", "destination": "/lantern/:path", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/emergency/:path*", "destination": "/emergency/index.html" },
+    { "source": "/lantern/:path*", "destination": "/lantern/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

@@ -3,7 +3,7 @@ import { CobwebCorner, Badge } from 'groove-ui';
 
 export function IntroductionPage() {
   return (
-    <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-10 space-y-12">
+    <div className="relative w-full px-2 lg:px-4 py-10 space-y-12">
       <CobwebCorner position="top-right" size="md" hasSpider={true} />
 
       {/* Header Banner */}

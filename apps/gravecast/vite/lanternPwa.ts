@@ -1,7 +1,7 @@
 /**
- * Makes the Emergency section installable and offline: its web manifest, its
+ * Makes Lantern installable and offline: its web manifest, its
  * icons, and a service worker that precaches exactly the files its page uses.
- * Nothing from the website is cached. Colours come from Groove UI's palette.
+ * Nothing from the website is cached. Colours come from Groove UI's grove palette, the same green night as the site.
  */
 import { createHash } from 'node:crypto'
 import { deflateSync } from 'node:zlib'
@@ -10,13 +10,13 @@ import type { Plugin } from 'vite'
 import { palette } from '../../../packages/grave-ui/src/tokens/colors.ts'
 import { CHANNEL_DB, MAIL_RUN_PATH, MAX_RUN_MESSAGES, MAX_RUN_ROUNDS, SYNC_TAG } from '../src/shared/channelContract.ts'
 
-/** Where the Emergency section lives. Its manifest and service worker are scoped here. */
-export const EMERGENCY_BASE = '/emergency/'
+/** Where Lantern lives. Its manifest and service worker are scoped here. */
+export const LANTERN_BASE = '/lantern/'
 
-const HTML_FILE = 'emergency/index.html'
-const SW_FILE = 'emergency/sw.js'
-const MANIFEST_FILE = 'emergency/manifest.webmanifest'
-const CACHE_PREFIX = 'gravecast-emergency-'
+const HTML_FILE = 'lantern/index.html'
+const SW_FILE = 'lantern/sw.js'
+const MANIFEST_FILE = 'lantern/manifest.webmanifest'
+const CACHE_PREFIX = 'gravecast-lantern-'
 
 interface IconSpec {
   file: string
@@ -26,9 +26,9 @@ interface IconSpec {
 }
 
 const ICONS: readonly IconSpec[] = [
-  { file: 'emergency/icon-192.png', size: 192, maskable: false },
-  { file: 'emergency/icon-512.png', size: 512, maskable: false },
-  { file: 'emergency/icon-maskable-512.png', size: 512, maskable: true },
+  { file: 'lantern/icon-192.png', size: 192, maskable: false },
+  { file: 'lantern/icon-512.png', size: 512, maskable: false },
+  { file: 'lantern/icon-maskable-512.png', size: 512, maskable: true },
 ]
 
 /** Share of the icon the drawing fills: the whole canvas, or the maskable safe zone. */
@@ -37,15 +37,15 @@ const ICON_FILL = { any: 0.82, maskable: 0.62 } as const
 const ICON_SUPERSAMPLE = 4
 
 const manifest = () => ({
-  id: EMERGENCY_BASE,
-  name: 'Gravecast Emergency',
-  short_name: 'Emergency',
+  id: LANTERN_BASE,
+  name: 'Gravecast Lantern',
+  short_name: 'Lantern',
   description: 'Survival guides that work with no internet.',
-  start_url: EMERGENCY_BASE,
-  scope: EMERGENCY_BASE,
+  start_url: LANTERN_BASE,
+  scope: LANTERN_BASE,
   display: 'standalone',
-  background_color: palette.dark[950],
-  theme_color: palette.dark[950],
+  background_color: palette.grove[950],
+  theme_color: palette.grove[950],
   icons: ICONS.map((icon) => ({
     src: `/${icon.file}`,
     sizes: `${icon.size}x${icon.size}`,
@@ -95,8 +95,8 @@ const pngChunk = (type: string, data: Buffer) => {
 }
 
 export const drawIcon = (size: number, maskable: boolean): Buffer => {
-  const ground = rgb(palette.dark[900])
-  const stone = rgb(palette.bone[200])
+  const ground = rgb(palette.grove[900])
+  const stone = rgb(palette.grove.bone200)
   const fill = maskable ? ICON_FILL.maskable : ICON_FILL.any
   const samples = ICON_SUPERSAMPLE * ICON_SUPERSAMPLE
   const raw = Buffer.alloc((size * 3 + 1) * size)
@@ -134,7 +134,7 @@ export const drawIcon = (size: number, maskable: boolean): Buffer => {
 /**
  * The background mail run: when the browser says the connection is back, send the
  * outbox from the same offline database the page uses. It does what
- * src/emergency/chat/mailRun.ts does; keep the two in step. Plain JavaScript,
+ * src/lantern/chat/mailRun.ts does; keep the two in step. Plain JavaScript,
  * written without template strings so it can sit inside the one below.
  */
 const mailRunScript = (apiBase: string) => `
@@ -215,16 +215,15 @@ self.addEventListener('sync', function (event) {
   if (event.tag === SYNC_TAG) event.waitUntil(mailRun());
 });
 `
-const serviceWorker = (cacheName: string, files: readonly string[], apiBase: string) => `/* Gravecast Emergency service worker. Generated at build time; do not edit. */
+const serviceWorker = (cacheName: string, files: readonly string[], apiBase: string) => `/* Gravecast Lantern service worker. Generated at build time; do not edit. */
 const CACHE = ${JSON.stringify(cacheName)};
 const FILES = ${JSON.stringify(files)};
 const SHELL = ${JSON.stringify(`/${HTML_FILE}`)};
-const SCOPE = ${JSON.stringify(EMERGENCY_BASE)};
+const SCOPE = ${JSON.stringify(LANTERN_BASE)};
 
 self.addEventListener('install', (event) => {
-  // Waits for the old version's tabs to close before taking over (no skipWaiting),
-  // so an open page never loads files from a different version.
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(FILES)));
+  // Takes over at once. The page reloads when that happens (see useAppStatus), so it never mixes versions.
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(FILES)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
@@ -255,19 +254,54 @@ ${mailRunScript(apiBase)}`
 
 // ---- Dev and preview: serve the section's pages, manifest and icons ----
 
+/** Where this section used to live, before it was called Lantern. */
+const OLD_BASE = '/emergency/'
+const OLD_SW_FILE = 'emergency/sw.js'
+
+/**
+ * Served at the old address, so a phone that installed the old version lets it go:
+ * it deletes the old cache, removes itself, and sends any open window to Lantern.
+ * Chat's outbox lives in IndexedDB, which the whole site shares, so nothing is lost.
+ */
+const retiredWorker = () => `/* Gravecast: the old Emergency worker, retired. Generated at build time; do not edit. */
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((key) => key.startsWith('gravecast-emergency-')).map((key) => caches.delete(key)));
+    await self.registration.unregister();
+    const windows = await self.clients.matchAll({ type: 'window' });
+    windows.forEach((client) => client.navigate(${JSON.stringify(LANTERN_BASE)}));
+  })());
+});
+`
+
 const hasExtension = (path: string) => /\.[a-z0-9]+$/i.test(path.slice(path.lastIndexOf('/') + 1))
 
-const routeEmergency =
+const routeLantern =
   (serveGenerated: boolean) =>
   (req: IncomingMessage, res: ServerResponse, next: () => void): void => {
-    const path = (req.url ?? '').split('?')[0]
-    if (path === EMERGENCY_BASE.slice(0, -1)) {
-      res.statusCode = 301
-      res.setHeader('Location', EMERGENCY_BASE)
+    const [path, query] = (req.url ?? '').split('?')
+    if (path === `/${OLD_SW_FILE}`) {
+      res.setHeader('Content-Type', 'text/javascript')
+      res.setHeader('Cache-Control', 'no-cache')
+      res.end(retiredWorker())
+      return
+    }
+    // Old links still work.
+    if (path === OLD_BASE.slice(0, -1) || path.startsWith(OLD_BASE)) {
+      res.statusCode = 302
+      res.setHeader('Location', LANTERN_BASE + path.slice(OLD_BASE.length) + (query ? `?${query}` : ''))
       res.end()
       return
     }
-    if (!path.startsWith(EMERGENCY_BASE)) return next()
+    if (path === LANTERN_BASE.slice(0, -1)) {
+      res.statusCode = 301
+      res.setHeader('Location', LANTERN_BASE)
+      res.end()
+      return
+    }
+    if (!path.startsWith(LANTERN_BASE)) return next()
     if (serveGenerated && path === `/${MANIFEST_FILE}`) {
       res.setHeader('Content-Type', 'application/manifest+json')
       res.end(JSON.stringify(manifest(), null, 2))
@@ -292,11 +326,11 @@ interface ChunkLike {
   viteMetadata?: { importedCss: Set<string>; importedAssets: Set<string> }
 }
 
-export function emergencyPwa(): Plugin {
+export function lanternPwa(): Plugin {
   // Where the API lives, so the service worker can reach it. Empty means the same site.
   let apiBase = ''
   return {
-    name: 'gravecast-emergency-pwa',
+    name: 'gravecast-lantern-pwa',
     enforce: 'post',
 
     configResolved(config) {
@@ -304,23 +338,23 @@ export function emergencyPwa(): Plugin {
     },
 
     configureServer(server) {
-      server.middlewares.use(routeEmergency(true))
+      server.middlewares.use(routeLantern(true))
     },
 
     configurePreviewServer(server) {
-      server.middlewares.use(routeEmergency(false))
+      server.middlewares.use(routeLantern(false))
     },
 
     transformIndexHtml: {
       order: 'pre',
       handler(html, ctx) {
-        if (!ctx.path.startsWith(EMERGENCY_BASE)) return html
+        if (!ctx.path.startsWith(LANTERN_BASE)) return html
         return {
           html,
           tags: [
-            { tag: 'meta', attrs: { name: 'theme-color', content: palette.dark[950] }, injectTo: 'head' },
+            { tag: 'meta', attrs: { name: 'theme-color', content: palette.grove[950] }, injectTo: 'head' },
             // The page's own colours before its stylesheet arrives, so it never flashes white.
-            { tag: 'style', children: `html{background:${palette.dark[950]};color:${palette.bone[100]};color-scheme:dark}`, injectTo: 'head' },
+            { tag: 'style', children: `html{background:${palette.grove[950]};color:${palette.grove.bone100};color-scheme:dark}`, injectTo: 'head' },
           ],
         }
       },
@@ -354,6 +388,7 @@ export function emergencyPwa(): Plugin {
 
       const list = [...files].sort().map((file) => `/${file}`)
       const version = createHash('sha256').update(list.join('\n')).update(htmlSource).digest('hex').slice(0, 12)
+      this.emitFile({ type: 'asset', fileName: OLD_SW_FILE, source: retiredWorker() })
       this.emitFile({ type: 'asset', fileName: SW_FILE, source: serviceWorker(`${CACHE_PREFIX}${version}`, list, apiBase) })
     },
   }

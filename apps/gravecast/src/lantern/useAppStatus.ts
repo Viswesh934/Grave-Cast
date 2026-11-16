@@ -24,8 +24,8 @@ export const useOnline = (): boolean =>
  */
 export type OfflineState = 'unsupported' | 'dev' | 'saving' | 'ready' | 'failed'
 
-const SERVICE_WORKER_URL = '/emergency/sw.js'
-const SERVICE_WORKER_SCOPE = '/emergency/'
+const SERVICE_WORKER_URL = '/lantern/sw.js'
+const SERVICE_WORKER_SCOPE = '/lantern/'
 
 const initialOfflineState = (): OfflineState => {
   if (!('serviceWorker' in navigator)) return 'unsupported'
@@ -39,6 +39,12 @@ export function useOfflineReady(): OfflineState {
   useEffect(() => {
     if (state !== 'saving') return
     let live = true
+    // A new version takes over by itself; reload once so the page and its files match.
+    const hadWorker = !!navigator.serviceWorker.controller
+    const reload = () => {
+      if (hadWorker) window.location.reload()
+    }
+    navigator.serviceWorker.addEventListener('controllerchange', reload)
     navigator.serviceWorker
       .register(SERVICE_WORKER_URL, { scope: SERVICE_WORKER_SCOPE })
       // `ready` waits for the worker to finish saving the files.
@@ -49,6 +55,7 @@ export function useOfflineReady(): OfflineState {
     void navigator.storage?.persist?.()
     return () => {
       live = false
+      navigator.serviceWorker.removeEventListener('controllerchange', reload)
     }
   }, [state])
 
