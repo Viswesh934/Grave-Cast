@@ -1,10 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './emergency.css'
-import { EmergencyApp } from './EmergencyApp'
+import './lantern.css'
+import { LanternApp } from './LanternApp'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <EmergencyApp />
+    <LanternApp />
   </StrictMode>,
 )

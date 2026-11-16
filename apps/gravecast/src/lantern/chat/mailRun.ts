@@ -1,7 +1,7 @@
 /**
  * One mail run, from the page: send the outbox, fetch what is new, and save
  * both in a single step. The service worker has its own copy of this for
- * sending in the background; keep the two in step (vite/emergencyPwa.ts).
+ * sending in the background; keep the two in step (vite/lanternPwa.ts).
  */
 import { MAIL_LOCK, MAX_RUN_MESSAGES, MAX_RUN_ROUNDS } from '../../shared/channelContract'
 import { postMailRun } from '../../shared/channel'

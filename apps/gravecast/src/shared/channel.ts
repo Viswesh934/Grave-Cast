@@ -1,6 +1,5 @@
 /**
- * Chat's messages and the calls that move them, shared by the Emergency
- * section (which sends) and the website's demo screen (which only watches).
+ * Chat's messages and the calls that move them, shared by Lantern (which sends) and the website's demo screen (which only watches).
  */
 import { apiUrl, getJson, postJson } from './api'
 import { ECHO_PATH, MAIL_RUN_PATH } from './channelContract'
@@ -132,5 +131,5 @@ export const wireText = (m: OutboxMessage): string =>
     m.body,
     '',
     '--- Gravecast',
-    ` * Origin: Gravecast Emergency (${deviceOf(m.msgid)})`,
+    ` * Origin: Gravecast Lantern (${deviceOf(m.msgid)})`,
   ].join('\n')

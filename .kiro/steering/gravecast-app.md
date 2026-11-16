@@ -12,7 +12,7 @@ Routes are defined in `src/App.tsx`. Every page sits under `SiteLayout`, so they
 The app has two parts:
 
 - **Website:** the link scan and developer mode. Online only and never cached for offline use.
-- **Emergency section:** the survival kit, Board, Chat, and Radio, under `/emergency`. This is the only installable part. Its manifest `scope` and `start_url` and its service worker scope are `/emergency/`. Code for the website must not be imported into the Emergency section's bundle.
+- **Lantern:** the survival kit, Board, Chat, and Radio, under `/lantern`. This is the only installable part. Its manifest `scope` and `start_url` and its service worker scope are `/lantern/`. Code for the website must not be imported into Lantern's bundle.
 
 ## Rules
 
@@ -28,18 +28,18 @@ The app has two parts:
   - Large text, generous spacing, one main action per screen.
   - Soft, short motion and no flashing (except the SOS light tool).
   - If a Groove UI piece is too loud, add a quieter option to Groove UI rather than restyling it in the app.
-- **Plain and fast (Emergency section).** It is used in real emergencies, so:
+- **Plain and fast (Lantern).** It is used in real emergencies, so:
   - No animation, transitions, 3D, horror effects, or decorative sound. Only sounds that do a job play (the CPR beat, SOS).
   - Plain Groove UI pieces only (text, buttons, inputs, lists). Nothing that loads three.js or the 3D components.
   - The website (link scan, developer mode, "Our story") may still show off.
-- **Little internet first (Emergency section).**
+- **Little internet first (Lantern).**
   - Open from the cache and never block startup on the network.
   - Keep requests small.
   - Every network action needs three states: loading, offline/failed (with a retry), and stale data with a "last updated" time.
 - **Outbox for anything sent.** Messages go to the IndexedDB outbox first, then send through Background Sync, or on the next open where it isn't supported. Each message gets an ID made on the device.
 - **The grave card is one shared format.** QR, haunted radio, and the channel all use the same versioned encoder and decoder. Never add a separate format per channel.
 - **Accessibility (the driving factor, above looks or extra features):**
-  - In the Emergency section, accessibility wins every trade-off.
+  - In Lantern, accessibility wins every trade-off.
   - Large tap targets, readable text at 200% zoom, and AA contrast at least (AAA for kit cards and tools).
   - Every control works from the keyboard and has a label.
   - Respect reduced motion.

@@ -74,7 +74,7 @@ class Settings:
     link_scans_per_minute: int = 20
     repo_scans_per_minute: int = 4
 
-    # Chat (the Emergency Channel): public echoes, small messages, mail runs.
+    # Chat (the channel, in Lantern): public echoes, small messages, mail runs.
     channel_db_path: Path = Path("storage/channel.sqlite3")
     channel_echoes: tuple[str, ...] = ("EMERGENCY", "DEMO")
     channel_max_nick_chars: int = 24

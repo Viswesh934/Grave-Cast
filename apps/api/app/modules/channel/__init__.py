@@ -1,4 +1,4 @@
-"""Channel module: the Emergency Channel's Chat, as FidoNet-style echomail."""
+"""Channel module: Lantern's Chat, as FidoNet-style echomail."""
 
 from app.modules.channel.router import router
 

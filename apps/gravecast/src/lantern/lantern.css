@@ -1,6 +1,7 @@
-/* The Emergency section's stylesheet: only what it uses. No website styles, no animation. */
+/* Lantern's stylesheet: only what it uses. No website styles, no animation. */
 @import "tailwindcss" source(none);
-@source "../emergency";
+@source "../lantern";
+@source "../shared";
 @import "../../../../packages/grave-ui/src/styles/grave-ui.css";
 @import "../theme.css";
 
@@ -11,6 +12,7 @@ html {
 }
 body {
   margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   background: var(--grave-dark-950);
   color: var(--grave-bone-200);
   line-height: 1.6;
@@ -26,4 +28,8 @@ body {
   animation: none !important;
   transition: none !important;
   scroll-behavior: auto !important;
+}
+/* The screen takes focus when you move to it, so a reader starts at its top. It needs no ring. */
+main:focus-visible {
+  outline: none;
 }

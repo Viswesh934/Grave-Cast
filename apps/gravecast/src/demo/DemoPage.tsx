@@ -9,15 +9,15 @@ const delay = (seconds: number) => ({ ['--gc-delay' as string]: `${seconds}s` })
 
 const ECHO = 'DEMO'
 /** The page phones open from the code: Chat in the installed app, already on the DEMO echo. */
-const CHAT_PATH = `/emergency/chat?echo=${ECHO}`
+const CHAT_PATH = `/lantern/chat?echo=${ECHO}`
 
 /** What Gravecast is, in three parts. From the vision doc. */
 const PARTS: readonly { name: string; what: string; to: string; label: string; page?: boolean }[] = [
   { name: 'Check a link', what: 'Paste a link someone sent you. Every problem it hides rises as a grave.', to: '/', label: 'Try it' },
   {
-    name: 'Emergency section',
+    name: 'Lantern',
     what: 'Installs on a phone. Survival guides that work with no internet, and a chat that waits for the line to come back.',
-    to: '/emergency/',
+    to: '/lantern/',
     label: 'Open it',
     page: true,
   },

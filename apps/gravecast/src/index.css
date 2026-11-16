@@ -6,26 +6,6 @@
 
 @import "./theme.css";
 
-/* Groove UI's grove theme swaps the --grave-* values; the colour variables are
-   declared again here so Tailwind's utilities pick the swapped values up. */
-.grave-grove {
-  --color-grave-dark-950: var(--grave-dark-950);
-  --color-grave-dark-900: var(--grave-dark-900);
-  --color-grave-dark-850: var(--grave-dark-850);
-  --color-grave-dark-800: var(--grave-dark-800);
-  --color-grave-dark-750: var(--grave-dark-750);
-  --color-grave-dark-700: var(--grave-dark-700);
-  --color-grave-dark-600: var(--grave-dark-600);
-  --color-grave-mist-100: var(--grave-mist-100);
-  --color-grave-mist-200: var(--grave-mist-200);
-  --color-grave-mist-300: var(--grave-mist-300);
-  --color-grave-mist-400: var(--grave-mist-400);
-  --color-grave-mist-500: var(--grave-mist-500);
-  --color-grave-bone-100: var(--grave-bone-100);
-  --color-grave-bone-200: var(--grave-bone-200);
-  --color-grave-bone-300: var(--grave-bone-300);
-  --color-grave-grove-glow: var(--grave-grove-glow);
-}
 html {
   color-scheme: dark;
 }

@@ -1,5 +1,5 @@
 /**
- * Calls to Gravecast's own API, shared by the website and the Emergency section.
+ * Calls to Gravecast's own API, shared by the website and Lantern.
  * In development Vite forwards `/api` to the local server; a deployed site sets
  * `VITE_API_URL` to the API's address. Written without newer browser features,
  * because the installed app may run on an older phone.
