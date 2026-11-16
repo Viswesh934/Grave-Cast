@@ -460,3 +460,10 @@ To move a draft card to `verified`, replace its `source` with the exact document
 - **Panel 3 (Light clothing and vehicle check):** Wear loose, lightweight, light-colored clothing and a wide-brimmed hat outdoors. Never leave children or pets inside parked cars, and check on elderly neighbours.
   - Poses: `victim: standing_sun_hat`
   - Props: `box_car_no_icon`, `hot_sun`
+
+## Build notes
+
+- Close-up and scene names in the scripts (forearm_*, hand_under_tap, phone_settings_* and similar) are built as props, not poses. They have no joints.
+- B6.4 Fire: stop, drop and roll is panel 3, taken from the script's note.
+- Seated poses sit on the `seat_simple` prop.
+- B1.3 Recovery position is hand-written; the others are generated from these scripts.
