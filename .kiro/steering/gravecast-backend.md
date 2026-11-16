@@ -9,7 +9,7 @@ Follow the patterns already in `apps/api`. New features copy the shape of `app/m
 
 ## Module layout
 
-Each feature is a package at `app/modules/<name>/`. The current ones are `github`, plus `linkscan` and `channel` as planned.
+Each feature is a package at `app/modules/<name>/`. The current ones are `github`, `linkscan` and `channel` (Chat; its storage sits behind one interface, SQLite for development and DynamoDB when deployed).
 
 | File | Holds |
 | --- | --- |

@@ -13,6 +13,8 @@ export default defineConfig({
     'components/bestiary/index': 'src/components/bestiary/index.ts',
     'components/horror3d/index': 'src/components/horror3d/index.ts',
     'components/effects/index': 'src/components/effects/index.ts',
+    // The doodle system on its own, so a page that only draws comics loads no 3D code.
+    'components/effects/Doodle/index': 'src/components/effects/Doodle/index.ts',
     'audio/index': 'src/audio/index.ts',
     'ascii/index': 'src/ascii/index.ts',
     'video/index': 'src/video/index.ts',

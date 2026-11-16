@@ -202,3 +202,18 @@ class LinkUnreachableError(AppError):
 class LinkTimeoutError(AppError):
     def __init__(self, message: str = "The site took too long to answer.") -> None:
         super().__init__(code="LINK_TIMEOUT", message=message, status_code=504)
+
+
+class ChannelRateLimitedError(AppError):
+    def __init__(self, message: str = "Too many requests. Wait a few seconds and try again.") -> None:
+        super().__init__(code="CHANNEL_RATE_LIMITED", message=message, status_code=429)
+
+
+class UnknownEchoError(AppError):
+    def __init__(self, message: str = "That echo doesn't exist.") -> None:
+        super().__init__(code="UNKNOWN_ECHO", message=message, status_code=404)
+
+
+class TooManyMessagesError(AppError):
+    def __init__(self, message: str = "Too many messages in one mail run.") -> None:
+        super().__init__(code="TOO_MANY_MESSAGES", message=message, status_code=422)

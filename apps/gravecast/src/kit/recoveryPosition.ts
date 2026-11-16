@@ -3,7 +3,7 @@
  * Captions are the script's, word for word, from the cited IFRC guideline.
  * The script's angle, arc and airway arrows aren't drawn yet; a highlight marks the same spot.
  */
-import type { DoodleStripSpec } from 'groove-ui'
+import type { DoodleStripSpec } from 'groove-ui/doodle'
 
 /** The prototype notice every kit card carries (docs/KIT_SCRIPTS.md, Review status). */
 export const KIT_PROTOTYPE_NOTICE = 'Prototype. Always follow official guidance and your local emergency services.'

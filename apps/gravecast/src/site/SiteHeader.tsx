@@ -4,11 +4,17 @@ import { zLayers } from 'groove-ui'
 import { CommandPalette } from '../docs/components/docs/CommandPalette'
 import { SearchIcon } from '../docs/components/docs/DocsIcons'
 
-/** The sections in the top bar. Each one appears here only once it works. */
-const SECTIONS: readonly { label: string; to: string; matches: (path: string) => boolean }[] = [
+/**
+ * The sections in the top bar. Each one appears here only once it works.
+ * Order: Graveyard, Emergency, Live demo, Docs, and Our story last.
+ */
+const SECTIONS: readonly { label: string; to: string; matches: (path: string) => boolean; page?: boolean }[] = [
   { label: 'Graveyard', to: '/', matches: (path) => path === '/' },
-  { label: 'Our story', to: '/story', matches: (path) => path.startsWith('/story') },
+  // Its own page with its own bundle, so it opens with a full page load, not the router.
+  { label: 'Emergency', to: '/emergency/', matches: () => false, page: true },
+  { label: 'Live demo', to: '/demo', matches: (path) => path.startsWith('/demo') },
   { label: 'Docs', to: '/docs/introduction', matches: (path) => path.startsWith('/docs') },
+  { label: 'Our story', to: '/story', matches: (path) => path.startsWith('/story') },
 ]
 
 const linkClass = (active: boolean) =>
@@ -36,6 +42,13 @@ export function SiteHeader() {
         <nav aria-label="Sections" className="flex min-w-0 items-center gap-1 overflow-x-auto">
           {SECTIONS.map((section) => {
             const active = section.matches(pathname)
+            if (section.page) {
+              return (
+                <a key={section.to} href={section.to} className={linkClass(false)}>
+                  {section.label}
+                </a>
+              )
+            }
             return (
               <Link key={section.to} to={section.to} aria-current={active ? 'page' : undefined} className={linkClass(active)}>
                 {section.label}

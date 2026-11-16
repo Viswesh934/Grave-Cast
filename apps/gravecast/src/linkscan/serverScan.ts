@@ -2,7 +2,7 @@
  * Asks Gravecast's server to open a link once, passively, and report where it
  * leads and which protections the site sets. The server never runs the page.
  */
-import { apiUrl, postJson } from '../site/api';
+import { apiUrl, postJson } from '../shared/api';
 import type { Grave, GraveSeverity } from './deviceChecks';
 
 export interface LinkHop {

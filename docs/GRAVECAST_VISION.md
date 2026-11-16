@@ -8,7 +8,7 @@ Status: prototype. We build in small iterations and the concept matters more tha
 
 ## Why we built it
 
-One of us was stuck in a power cut for about two days, with no electricity, no internet, and no phone signal. With the survival skills of a mosquito, there was nothing much to do, and nothing to look up. A power cut isn't the worst that can happen, either: one day it could be a war.
+Our team lives where emergencies are never far away. One of us lives in a cyclone region: in one cyclone, trees started flying through the air, and then came about two days of power cut, with no electricity, no internet, and no phone signal. With the survival skills of a mosquito, there wasn't much to do, and nothing to look up. Another of us is from Lebanon, where war can cut a place off, and another is from Florida, where hurricanes come often.
 
 So we built something that keeps working on limited internet and holds the common emergency know-how for when there is none. That is the Emergency section (§3.4). The website tells this story first, on the "Our story" page, before it introduces the Emergency section.
 
@@ -312,9 +312,21 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | In dev mode the drone gains a voice for each tenfold of the repo's open issues and pull requests | Agreed |
 | The home page has a Scribble cannon: once, a pen is fired from the bottom left into the right end of the top bar, where it stays with a red glow. Clicking it turns on drawing; its small × turns it off, and that is remembered. The status vial is red; Lord Alucard (the bestiary vampire) is the creature in the 3D yard. Teeth bite down on the form while a scan runs | Agreed |
 | The home page uses the docs' green grove palette (Groove UI `.grave-grove` and `palette.grove`), with one emerald accent. This relaxes "muted colors, no bright accents" for the website only | Agreed |
-| The website tells the backstory (a two-day power cut with no electricity, internet or signal) on an "Our story" page before it introduces the Emergency section | Agreed |
+| The website tells the team's backstory on an "Our story" page: one of us in a cyclone region (flying trees, then about two days with no electricity, internet or signal), one from Lebanon (war), one from Florida (frequent hurricanes) | Agreed |
+| Top bar order: Graveyard, Emergency, Docs, Our story. Emergency is the second tab once the section works; Our story is always last | Agreed |
 | The installed Emergency section is plain and fast: no animation, no 3D, no decorative sound, no horror effects. Only sounds that do a job (the CPR beat, SOS) play. The website may still show off | Agreed |
+| The Emergency section is its own page (`emergency/index.html`) with its own bundle, so no website code is cached on the phone. Moving between it and the website is a full page load | Agreed |
+| Its service worker is written by us and generated at build time from exactly the Emergency page's files; pages open from the cache first, and a new version takes over once every Emergency tab has closed | Agreed |
+| Its manifest and icons are generated at build time from Groove UI's palette | Agreed |
+| Groove UI has narrow entry points so a page loads only what it uses. The Emergency page imports `groove-ui/doodle` (the comic system), never the whole library, so no 3D code is downloaded or cached on the phone | Agreed |
+| The Emergency section opens on the Survival kit, which works with no internet at all; the tab bar is Survival kit, then Chat. Board and Radio join as each one works | Agreed |
+| Chat is live in the Emergency section on two echoes, EMERGENCY (the default) and DEMO (for testing). A message goes into an outbox on the phone first, and is sent in a mail run: at once when online, when the connection returns, every 5 seconds while Chat is open, and by Background Sync from the service worker even with the app closed. Messages stay readable offline. It is public: the page says not to post personal details | Agreed |
+| Chat's limits: nicknames of up to 24 characters, messages of up to 500, 20 messages per mail run, and the newest 500 kept per echo. A message the server refuses is dropped from the outbox and shown to the sender with the reason, so one bad message never blocks the rest | Agreed |
+| A live demo page at `/demo` is for judges: what Gravecast is, a QR code that opens Chat on the DEMO echo, and the DEMO echo live, with an option to show each message's FidoNet-style headers. It only reads, through `GET /api/channel/echoes/{area}` | Agreed |
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
+| Chat storage sits behind one interface: SQLite for local development, DynamoDB when deployed. A GitHub Action deploys, and its secrets hold the AWS credentials | Agreed |
+| The remaining kit card strips are built around Chat (before or after), in batches from the doodle scripts | Agreed |
+| Accessibility is the driving factor for the Emergency section: when a choice trades accessibility against looks or features, accessibility wins | Agreed |
 
 ## 10. Open questions
 

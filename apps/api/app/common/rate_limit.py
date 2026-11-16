@@ -8,7 +8,7 @@ from collections.abc import Callable
 
 from fastapi import Request
 
-from app.common.errors import ScanRateLimitedError
+from app.common.errors import AppError, ScanRateLimitedError
 
 _WINDOW_SECONDS = 60.0
 _MAX_TRACKED_CLIENTS = 10_000
@@ -22,9 +22,15 @@ class RateLimiter:
     the limit stricter.
     """
 
-    def __init__(self, per_minute: int, clock: Callable[[], float] = time.monotonic) -> None:
+    def __init__(
+        self,
+        per_minute: int,
+        clock: Callable[[], float] = time.monotonic,
+        error: Callable[[], AppError] = ScanRateLimitedError,
+    ) -> None:
         self._per_minute = per_minute
         self._clock = clock
+        self._error = error
         self._calls: dict[str, deque[float]] = {}
 
     def check(self, key: str) -> None:
@@ -34,7 +40,7 @@ class RateLimiter:
         while calls and now - calls[0] >= _WINDOW_SECONDS:
             calls.popleft()
         if len(calls) >= self._per_minute:
-            raise ScanRateLimitedError()
+            raise self._error()
         calls.append(now)
         # Forget clients that have gone quiet, so the table stays small.
         if len(self._calls) > _MAX_TRACKED_CLIENTS:
