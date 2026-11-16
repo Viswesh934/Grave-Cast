@@ -16,21 +16,24 @@ export function KitPage() {
     <>
       <h1 className={ui.h1}>Survival kit</h1>
       <p className={ui.lead}>Step-by-step guides, drawn as short comics and written out in words. They work with no internet.</p>
-      <p className={`${ui.muted} mt-3 mb-0`}>{KIT_PROTOTYPE_NOTICE}</p>
+      <p className={`${ui.muted} mt-2 mb-0`}>{KIT_PROTOTYPE_NOTICE}</p>
 
       {GROUPS.map((group) => {
         const cards = KIT_CARDS.filter((card) => card.group === group)
         if (cards.length === 0) return null
         return (
-          <section key={group} aria-labelledby={`group-${group}`} className="mt-8">
+          <section key={group} aria-labelledby={`group-${group}`} className="mt-6">
             <h2 id={`group-${group}`} className={ui.h2}>
               {group}
             </h2>
-            <ul className="mt-3 mb-0 grid list-none gap-3 p-0">
+            <ul className="mt-2 mb-0 grid list-none gap-2 p-0 sm:grid-cols-2 xl:grid-cols-3">
               {cards.map((card) => (
                 <li key={card.slug}>
-                  <Link to={`/kit/${card.slug}`} className={`${ui.cardLink} text-xl font-semibold text-grave-bone-100`}>
-                    {card.strip.title}
+                  <Link to={`/kit/${card.slug}`} className={ui.cardLink}>
+                    <span className="text-base font-semibold">{card.strip.title}</span>
+                    <span aria-hidden className={ui.arrow}>
+                      {'\u203a'}
+                    </span>
                   </Link>
                 </li>
               ))}

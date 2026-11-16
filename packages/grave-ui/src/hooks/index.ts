@@ -28,6 +28,8 @@ export * from './useNow';
 export * from './useVideoSource';
 export * from './useIsomorphicLayoutEffect';
 export * from './useLatest';
+export * from './useWakeLock';
+export * from './useOrientation';
 export * from './useEventListener';
 export * from './useRafLoop';
 export * from './useInterval';

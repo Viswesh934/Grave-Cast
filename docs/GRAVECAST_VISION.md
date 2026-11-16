@@ -124,7 +124,8 @@ Drawings only show what the caption says and never add a step. If something can'
 | SOS light | Blinks SOS in Morse with the torch | The torch works only in Chrome on Android. Everywhere else, the full-brightness screen flashes. |
 | SOS sound / whistle | A loud tone, or SOS in Morse | None |
 | Compass and level | Reads the phone's motion sensors | iPhone needs a permission tap, and accuracy varies |
-| Help message | Opens the SMS app with "I need help, I am at …" and GPS coordinates when the phone has a fix | The person still taps Send |
+| Help message and last seen note | Writes "I need help. I am at …" with GPS coordinates when the phone has a fix, saves it on the phone with the time, and opens the SMS app ready to send | The person still picks who to send it to and taps Send |
+| Lightning distance | Tap at the flash, then at the thunder: shows the rough distance (about 5 seconds per mile, 3 per km) and the advice that hearing thunder means you are within reach of lightning | Rough only |
 | Emergency call | Tap to call | The kit says to use the local emergency number. It doesn't promise one number works everywhere. |
 
 **How it ships.**
@@ -268,6 +269,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 - More languages for the base pack.
 - An Android APK wrapping Lantern (for example with PWABuilder), for the Play Store or sharing as a file.
 - Updating packs quietly in the background.
+- Native app only: a barometer "storm glass" (pressure trend warnings). Browsers do not expose the barometer, a web app cannot read it in the background, many phones lack one, and any warning thresholds must come from a weather service.
 - 3D graveyard.
 
 ## 9. Decisions
@@ -329,6 +331,12 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Accessibility is the driving factor for Lantern: when a choice trades accessibility against looks or features, accessibility wins | Agreed |
 | The installable part is called **Lantern** (replaces “Emergency section”, since it will hold more than emergency tools). It lives at `/lantern/`, installs as “Gravecast Lantern”, and old `/emergency/` links redirect there. The Chat echo `EMERGENCY` keeps its name | Agreed |
 | Lantern has a left side menu built like the docs sidebar (Survival kit, Help near you, Chat), with larger text and tap targets; on a phone the places sit in a row on top. No home screen and no back links | Agreed |
+| Lantern has a **Tools** place in its side menu, after Survival kit: SOS light, SOS sound, CPR metronome, compass and level, lightning distance, and the help message. Each tool is one screen with one big Start/Stop button | Agreed |
+| The help message and the "last seen" note are one tool: a position plus a short message, saved on the phone and ready to send by SMS. Sharing it as a grave card waits for the grave card format | Agreed |
+| The SOS light on screen flashes at most 2 times a second (WCAG 2.3.1 allows 3), and warns before it starts. The tools' light and beat are the only motion in Lantern | Agreed |
+| Shared signal pieces (Morse timing, a clean tone player, a steady beat, torch, compass, screen wake lock) live in Groove UI as `groove-ui/signal`, so Lantern loads no 3D code | Agreed |
+| Hackathon: the tools ship as drafts under the prototype notice; their numbers are checked against sources before a production release | Agreed |
+| Breathing guide and the Buys Ballot storm arrow are left out. The arrow would tell people which way to walk in a storm, which official guidance does not support | Agreed |
 
 ## 10. Open questions
 

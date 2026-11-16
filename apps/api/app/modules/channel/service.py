@@ -5,17 +5,32 @@ from __future__ import annotations
 from collections.abc import Callable
 from datetime import datetime, timezone
 
-from app.common.errors import TooManyMessagesError, UnknownEchoError
+from app.common.errors import (
+    EchoExistsError,
+    InvalidEchoNameError,
+    TooManyEchoesError,
+    TooManyMessagesError,
+    UnknownEchoError,
+)
 from app.config import Settings, get_settings
-from app.modules.channel.rules import clean_body, problem_with
-from app.modules.channel.store import ChannelStore, NewMessage, StoredMessage
+from app.modules.channel.rules import clean_about, clean_body, echo_name_problem, problem_with
+from app.modules.channel.store import ChannelStore, NewMessage, StoredEcho, StoredMessage
 from app.modules.channel.types import (
     ChannelMessage,
+    EchoInfo,
+    EchoListResponse,
     EchoResponse,
     MailRunRequest,
     MailRunResponse,
     RejectedMessage,
 )
+
+
+# What the built-in echoes are for, shown in the channel list.
+_BUILTIN_ABOUT = {
+    "EMERGENCY": "For real warnings and help.",
+    "DEMO": "For testing. Say hello here.",
+}
 
 
 def _now() -> datetime:
@@ -48,13 +63,20 @@ class ChannelService:
                 f"A mail run can carry at most {settings.channel_max_run_messages} messages. Send fewer at a time."
             )
 
+        known = await self._known()
         accepted: list[str] = []
         rejected: list[RejectedMessage] = []
         for incoming in request.messages:
             sender = incoming.sender.strip()
             body = clean_body(incoming.body)
             problem = problem_with(
-                msgid=incoming.msgid, area=incoming.area, sender=sender, body=body, sent_at=incoming.sent_at, settings=settings
+                msgid=incoming.msgid,
+                area=incoming.area,
+                sender=sender,
+                body=body,
+                sent_at=incoming.sent_at,
+                settings=settings,
+                echoes=known,
             )
             if problem is not None:
                 rejected.append(RejectedMessage(msgid=incoming.msgid, reason=problem))
@@ -77,7 +99,7 @@ class ChannelService:
         messages: list[ChannelMessage] = []
         cursors: dict[str, int] = {}
         more = False
-        for area in settings.channel_echoes:
+        for area in self._followed(request.cursors, known):
             since = request.cursors.get(area, 0)
             # A place marker beyond everything stored means the server's memory was reset: start over.
             if since < 0 or since > newest:
@@ -98,7 +120,7 @@ class ChannelService:
 
     async def read_echo(self, area: str, since: int) -> EchoResponse:
         """Messages in one echo after `since`, for a screen that only watches."""
-        if area not in self._settings.channel_echoes:
+        if area not in await self._known():
             raise UnknownEchoError()
         newest = await self._store.newest_seq()
         if since > newest:
@@ -111,6 +133,45 @@ class ChannelService:
             more=more,
             server_time=self._clock().isoformat(),
         )
+
+    async def list_echoes(self) -> EchoListResponse:
+        """The built-in echoes first, then every created channel, oldest first."""
+        settings = self._settings
+        created = await self._store.echoes()
+        echoes = [EchoInfo(name=name, about=_BUILTIN_ABOUT.get(name, ""), builtin=True) for name in settings.channel_echoes]
+        echoes += [EchoInfo(name=e.name, about=e.about, builtin=False, created_at=e.created_at) for e in created]
+        return EchoListResponse(echoes=echoes, room=max(0, settings.channel_max_echoes - len(created)))
+
+    async def create_echo(self, name: str, about: str) -> EchoInfo:
+        """Creates a public channel anyone can read and post to."""
+        settings = self._settings
+        clean_name = name.strip().upper()
+        problem = echo_name_problem(clean_name)
+        if problem is not None:
+            raise InvalidEchoNameError(problem)
+        if clean_name in settings.channel_echoes:
+            raise EchoExistsError()
+        echo = StoredEcho(
+            name=clean_name,
+            about=clean_about(about, settings.channel_max_echo_about_chars),
+            created_at=self._clock().isoformat(),
+        )
+        outcome = await self._store.add_echo(echo, settings.channel_max_echoes)
+        if outcome == "exists":
+            raise EchoExistsError()
+        if outcome == "full":
+            raise TooManyEchoesError()
+        return EchoInfo(name=echo.name, about=echo.about, builtin=False, created_at=echo.created_at)
+
+    async def _known(self) -> set[str]:
+        """Every echo that exists: the built-in ones and the created ones."""
+        return set(self._settings.channel_echoes) | {e.name for e in await self._store.echoes()}
+
+    def _followed(self, cursors: dict[str, int], known: set[str]) -> list[str]:
+        """The echoes a mail run reads: the built-in ones, then the ones the phone follows, up to the cap."""
+        builtin = list(self._settings.channel_echoes)
+        joined = sorted(area for area in cursors if area in known and area not in builtin)
+        return (builtin + joined)[: max(len(builtin), self._settings.channel_max_followed_echoes)]
 
     async def _read(self, area: str, since: int) -> tuple[list[StoredMessage], bool]:
         limit = self._settings.channel_page_size

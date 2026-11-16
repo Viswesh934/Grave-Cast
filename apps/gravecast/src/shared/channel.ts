@@ -97,6 +97,44 @@ export async function fetchEcho(area: string, since: number, signal?: AbortSigna
   return { ok: true, value: { messages: readMessages(b.messages), cursor: b.cursor, more: b.more === true, serverTime: b.serverTime } }
 }
 
+/** One channel in the server's list. */
+export interface EchoInfo {
+  name: string
+  about: string
+  builtin: boolean
+  createdAt: string | null
+}
+
+export interface EchoList {
+  echoes: EchoInfo[]
+  /** How many more channels can be created. */
+  room: number
+}
+
+const readEcho = (value: unknown): EchoInfo | null => {
+  if (typeof value !== 'object' || value === null) return null
+  const e = value as Record<string, unknown>
+  if (!isString(e.name) || !isString(e.about) || typeof e.builtin !== 'boolean') return null
+  return { name: e.name, about: e.about, builtin: e.builtin, createdAt: isString(e.createdAt) ? e.createdAt : null }
+}
+
+/** Every channel: the built-in echoes, then the ones people created. */
+export async function fetchEchoList(signal?: AbortSignal): Promise<Result<EchoList>> {
+  const result = await getJson(apiUrl(ECHO_PATH), signal)
+  if (!result.ok) return result
+  const b = result.body as Record<string, unknown> | null
+  if (!b || !Array.isArray(b.echoes) || !isNumber(b.room)) return { ok: false, reason: 'The server sent an answer that could not be read.' }
+  return { ok: true, value: { echoes: b.echoes.map(readEcho).filter((e): e is EchoInfo => e !== null), room: b.room } }
+}
+
+/** Creates a public channel. The server checks the name and may refuse it. */
+export async function createEcho(name: string, about: string, signal?: AbortSignal): Promise<Result<EchoInfo>> {
+  const result = await postJson(apiUrl(ECHO_PATH), { name, about }, signal)
+  if (!result.ok) return result
+  const echo = readEcho(result.body)
+  return echo ? { ok: true, value: echo } : { ok: false, reason: 'The server sent an answer that could not be read.' }
+}
+
 const HEX = '0123456789abcdef'
 
 /** `n` random hex digits. */

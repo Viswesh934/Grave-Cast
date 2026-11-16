@@ -86,6 +86,12 @@ class Settings:
     channel_keep_per_echo: int = 500
     channel_runs_per_minute: int = 60
     channel_reads_per_minute: int = 90
+    # Channels anyone can create, on top of the built-in echoes. Capped, so storage stays small.
+    channel_max_echoes: int = 100
+    channel_max_echo_about_chars: int = 80
+    # The most echoes one mail run reads, so a run stays one small request.
+    channel_max_followed_echoes: int = 30
+    channel_creates_per_minute: int = 3
 
     # Which websites may call the API from a browser.
     cors_origins: tuple[str, ...] = ("http://localhost:5173", "http://127.0.0.1:5173")
@@ -153,6 +159,10 @@ class Settings:
             channel_keep_per_echo=_env_int("GRAVECAST_CHANNEL_KEEP_PER_ECHO", 500),
             channel_runs_per_minute=_env_int("GRAVECAST_CHANNEL_RUNS_PER_MINUTE", 60),
             channel_reads_per_minute=_env_int("GRAVECAST_CHANNEL_READS_PER_MINUTE", 90),
+            channel_max_echoes=_env_int("GRAVECAST_CHANNEL_MAX_ECHOES", 100),
+            channel_max_echo_about_chars=_env_int("GRAVECAST_CHANNEL_MAX_ECHO_ABOUT_CHARS", 80),
+            channel_max_followed_echoes=_env_int("GRAVECAST_CHANNEL_MAX_FOLLOWED_ECHOES", 30),
+            channel_creates_per_minute=_env_int("GRAVECAST_CHANNEL_CREATES_PER_MINUTE", 3),
             cors_origins=_env_list(
                 "GRAVECAST_CORS_ORIGINS", ("http://localhost:5173", "http://127.0.0.1:5173")
             ),

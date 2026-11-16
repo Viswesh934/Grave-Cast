@@ -14,6 +14,7 @@ export default defineConfig({
   resolve: {
     // The specific path comes first, or 'groove-ui' would swallow it.
     alias: [
+      { find: 'groove-ui/signal', replacement: path.resolve(__dirname, '../../packages/grave-ui/src/signal/index.ts') },
       { find: 'groove-ui/doodle', replacement: path.resolve(__dirname, '../../packages/grave-ui/src/components/effects/Doodle/index.ts') },
       { find: /^groove-ui$/, replacement: path.resolve(__dirname, '../../packages/grave-ui/src/index.ts') },
     ],

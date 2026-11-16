@@ -61,6 +61,29 @@ class MailRunResponse(BaseModel):
     model_config = {"populate_by_name": True}
 
 
+class CreateEchoRequest(BaseModel):
+    """A new channel: its name, and an optional line about what it is for."""
+
+    name: str = Field(max_length=64)
+    about: str = Field(default="", max_length=_WIRE_TEXT_MAX)
+
+
+class EchoInfo(BaseModel):
+    """One channel in the list. Built-in echoes have no creation time."""
+
+    name: str
+    about: str
+    builtin: bool
+    created_at: str | None = Field(default=None, alias="createdAt")
+    model_config = {"populate_by_name": True}
+
+
+class EchoListResponse(BaseModel):
+    echoes: list[EchoInfo]
+    # How many more channels can be created before the server is full.
+    room: int
+
+
 class EchoResponse(BaseModel):
     area: str
     messages: list[ChannelMessage]

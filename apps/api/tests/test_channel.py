@@ -8,11 +8,25 @@ from pathlib import Path
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.common.errors import ChannelRateLimitedError, TooManyMessagesError
+from app.common.errors import (
+    ChannelRateLimitedError,
+    EchoExistsError,
+    InvalidEchoNameError,
+    TooManyEchoesError,
+    TooManyMessagesError,
+)
 from app.common.rate_limit import RateLimiter
 from app.config import Settings
 from app.main import app
-from app.modules.channel.rules import MSGID_RE, clean_body, nick_pattern, parses_as_time, problem_with
+from app.modules.channel.rules import (
+    MSGID_RE,
+    clean_about,
+    clean_body,
+    echo_name_problem,
+    nick_pattern,
+    parses_as_time,
+    problem_with,
+)
 from app.modules.channel.service import ChannelService
 from app.modules.channel.store import NewMessage, SqliteChannelStore
 from app.modules.channel.types import IncomingMessage, MailRunRequest
@@ -262,3 +276,110 @@ def test_incoming_message_accepts_the_json_names() -> None:
     message = IncomingMessage.model_validate(_wire(1))
     assert message.sender == "Ravi"
     assert message.sent_at == "2026-11-15T12:00:00.000Z"
+
+
+# Channels people create
+
+
+@pytest.mark.parametrize("name", ["NEWS", "CHENNAI-FLOOD", "AB", "Z9_X", "A" * 20])
+def test_good_echo_names(name: str) -> None:
+    assert echo_name_problem(name) is None
+
+
+@pytest.mark.parametrize("name", ["", "A", "9LIVES", "-X", "news", "A" * 21, "TWO WORDS", "<B>", "CAF\u00c9"])
+def test_bad_echo_names(name: str) -> None:
+    assert "capital letters" in echo_name_problem(name)
+
+
+def test_clean_about_keeps_one_short_line() -> None:
+    assert clean_about("  Water\tand\nfood\x00 drops  ", 80) == "Water and food drops"
+    assert clean_about("x" * 100, 10) == "x" * 10
+
+
+async def test_a_created_channel_is_listed_after_the_built_in_ones(tmp_path: Path) -> None:
+    service, _ = _service(tmp_path)
+    made = await service.create_echo(" chennai-flood ", "Updates for the flood")
+    listed = await service.list_echoes()
+    assert made.name == "CHENNAI-FLOOD"
+    assert [e.name for e in listed.echoes] == ["EMERGENCY", "DEMO", "CHENNAI-FLOOD"]
+    assert [e.builtin for e in listed.echoes] == [True, True, False]
+    assert listed.echoes[2].about == "Updates for the flood"
+    assert listed.room == 99
+
+
+async def test_names_must_be_new_and_well_formed(tmp_path: Path) -> None:
+    service, _ = _service(tmp_path)
+    await service.create_echo("NEWS", "")
+    with pytest.raises(EchoExistsError):
+        await service.create_echo("news", "")
+    with pytest.raises(EchoExistsError):
+        await service.create_echo("DEMO", "")
+    with pytest.raises(InvalidEchoNameError):
+        await service.create_echo("no spaces", "")
+
+
+async def test_the_number_of_channels_is_capped(tmp_path: Path) -> None:
+    service, _ = _service(tmp_path, channel_max_echoes=2)
+    await service.create_echo("ONE", "")
+    await service.create_echo("TWO", "")
+    with pytest.raises(TooManyEchoesError):
+        await service.create_echo("THREE", "")
+    assert (await service.list_echoes()).room == 0
+
+
+async def test_messages_go_to_a_created_channel_and_come_back_to_followers(tmp_path: Path) -> None:
+    service, _ = _service(tmp_path)
+    await service.create_echo("NEWS", "")
+    sent = await service.mail_run(_run([_wire(1, area="NEWS", body="road closed")]))
+    assert sent.accepted == [_msgid(1)]
+    # A phone that doesn't follow NEWS doesn't get its messages; one that does, does.
+    stranger = await service.mail_run(_run())
+    follower = await service.mail_run(_run(cursors={"NEWS": 0}))
+    assert "NEWS" not in stranger.cursors and stranger.messages == []
+    assert [m.body for m in follower.messages] == ["road closed"]
+    assert follower.cursors["NEWS"] == follower.messages[0].seq
+    assert {"EMERGENCY", "DEMO"} <= set(follower.cursors)
+
+
+async def test_unknown_echoes_are_refused_and_not_followed(tmp_path: Path) -> None:
+    service, _ = _service(tmp_path)
+    run = await service.mail_run(_run([_wire(1, area="NOPE")], cursors={"NOPE": 0}))
+    assert run.rejected[0].reason == "That echo doesn't exist."
+    assert "NOPE" not in run.cursors
+
+
+async def test_a_mail_run_reads_at_most_the_followed_cap(tmp_path: Path) -> None:
+    service, _ = _service(tmp_path, channel_max_followed_echoes=3)
+    for name in ("AAA", "BBB", "CCC"):
+        await service.create_echo(name, "")
+    run = await service.mail_run(_run(cursors={"AAA": 0, "BBB": 0, "CCC": 0}))
+    assert set(run.cursors) == {"EMERGENCY", "DEMO", "AAA"}
+
+
+async def test_channel_endpoints_create_list_and_read(tmp_path: Path) -> None:
+    _install(tmp_path)
+    app.state.channel_create_limiter = RateLimiter(3, error=ChannelRateLimitedError)
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        made = await client.post("/api/channel/echoes", json={"name": "news", "about": "Local news"})
+        again = await client.post("/api/channel/echoes", json={"name": "NEWS"})
+        bad = await client.post("/api/channel/echoes", json={"name": "x"})
+        listed = await client.get("/api/channel/echoes")
+        read = await client.get("/api/channel/echoes/news")
+    assert made.status_code == 201
+    assert made.json() == {"name": "NEWS", "about": "Local news", "builtin": False, "createdAt": made.json()["createdAt"]}
+    assert again.status_code == 409 and again.json()["error"]["code"] == "ECHO_EXISTS"
+    assert bad.status_code == 422 and bad.json()["error"]["code"] == "INVALID_ECHO"
+    assert listed.status_code == 200
+    assert [e["name"] for e in listed.json()["echoes"]] == ["EMERGENCY", "DEMO", "NEWS"]
+    assert set(listed.json()) == {"echoes", "room"}
+    assert read.status_code == 200 and read.json()["area"] == "NEWS"
+
+
+async def test_creating_channels_is_rate_limited(tmp_path: Path) -> None:
+    _install(tmp_path)
+    app.state.channel_create_limiter = RateLimiter(1, error=ChannelRateLimitedError)
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        first = await client.post("/api/channel/echoes", json={"name": "ONE"})
+        second = await client.post("/api/channel/echoes", json={"name": "TWO"})
+    assert first.status_code == 201
+    assert second.status_code == 429 and second.json()["error"]["code"] == "CHANNEL_RATE_LIMITED"

@@ -31,6 +31,8 @@
   --color-grave-mist-400: var(--grave-mist-400);
   --color-grave-mist-500: var(--grave-mist-500);
   --color-grave-grove-glow: var(--grave-grove-glow);
+  --color-grave-grove-sage: var(--grave-grove-sage);
+  --color-grave-grove-brass: var(--grave-grove-brass);
 }
 
 /* Groove UI's grove theme swaps the --grave-* values; the colour variables are
@@ -52,4 +54,6 @@
   --color-grave-bone-200: var(--grave-bone-200);
   --color-grave-bone-300: var(--grave-bone-300);
   --color-grave-grove-glow: var(--grave-grove-glow);
+  --color-grave-grove-sage: var(--grave-grove-sage);
+  --color-grave-grove-brass: var(--grave-grove-brass);
 }
