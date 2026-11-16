@@ -4,6 +4,10 @@
  * their doodle scripts need them.
  * @module components/effects/Doodle/props
  */
+import { ICON_SHAPES } from './propsIcons';
+import { ITEM_SHAPES } from './propsItems';
+import { SCENE_SHAPES } from './propsScenes';
+import { shapeProp } from './shapes';
 import { doodleInk, doodleText } from './tokens';
 import type { DoodleDrawable, DoodleLabel, DoodlePropContext, DoodlePropDraw } from './types';
 
@@ -45,8 +49,9 @@ const badge = (context: DoodlePropContext, text: string, icon = 0): { drawables:
   };
 };
 
-/** A badge with a small clock face on the left. */
-const timerBadge = (text: string): DoodlePropDraw => (context) => {
+/** A badge with a small clock face on the left. A placement's `label` replaces the time, for ranges such as "15\u201320 min". */
+const timerBadge = (fallback: string): DoodlePropDraw => (context) => {
+  const text = context.label ?? fallback;
   const iconRoom = doodleText.badgeHeight;
   const base = badge(context, text, iconRoom);
   const clockX = -badgeWidth(text, iconRoom) / 2 + iconRoom / 2 + 1;
@@ -61,8 +66,13 @@ const timerBadge = (text: string): DoodlePropDraw => (context) => {
   };
 };
 
-/** A plain badge with fixed text. */
-const textBadge = (text: string): DoodlePropDraw => (context) => badge(context, text);
+/** A plain badge with fixed text. A placement's `label` replaces it. */
+const textBadge = (text: string): DoodlePropDraw => (context) => badge(context, context.label ?? text);
+
+/** Every prop drawn from shapes: the icons, the objects, and the close-ups and scenes. */
+const SHAPE_PROPS: Readonly<Record<string, DoodlePropDraw>> = Object.freeze(
+  Object.fromEntries(Object.entries({ ...ICON_SHAPES, ...ITEM_SHAPES, ...SCENE_SHAPES }).map(([id, shapes]) => [id, shapeProp(shapes)]))
+);
 
 /** Every built-in prop, by id. Ids match the doodle scripts in docs/KIT_SCRIPTS.md. */
 export const DOODLE_PROPS: Readonly<Record<string, DoodlePropDraw>> = Object.freeze({
@@ -128,4 +138,15 @@ export const DOODLE_PROPS: Readonly<Record<string, DoodlePropDraw>> = Object.fre
       context.gen.circle(5, -3, 14, context.options({ stroke: 'none', fill: doodleInk.halo, fillStyle: 'solid' })),
     ],
   }),
+
+  // Timers and badges, as the scripts name them.
+  timer_1_3m_badge: timerBadge('at least 1 min'),
+  timer_5m_badge: timerBadge('5 min'),
+  timer_5_15m_badge: timerBadge('5\u201315 min'),
+  timer_20m_badge: timerBadge('20 min'),
+  timer_30m_badge: timerBadge('30 min'),
+  badge_5_breaths: textBadge('5 breaths'),
+  stop_shake_badge: textBadge('until it stops'),
+  // Icons, objects, close-ups and scenes, drawn from shapes (see shapes.ts).
+  ...SHAPE_PROPS,
 });

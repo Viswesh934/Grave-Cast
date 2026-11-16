@@ -328,6 +328,12 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
 | Chat storage sits behind one interface: SQLite for local development, DynamoDB when deployed. A GitHub Action deploys, and its secrets hold the AWS credentials | Agreed |
 | The remaining kit card strips are built around Chat (before or after), in batches from the doodle scripts | Agreed |
+| All 31 kit cards are drawn as drafts from the doodle scripts, with captions word for word. Close-ups and scenes in the scripts are Groove UI props (shape data), not poses; a placement label can override a badge's text | Agreed |
+| Cut for the hackathon: grave card (QR and sharing), the `/demo` page, haunted radio with ggwave, and the streams-based Radio dial. The vision's other sections stay as the plan for later | Agreed |
+| Lantern's dead tech on top is **Radio**: a replica of a shortwave radio-teletype net. A message written in Radio goes through the same outbox and mail run as Chat, to a built-in `RADIO` echo, and each listening phone plays it as RTTY (Baudot at 45.45 baud, two tones 170 Hz apart), generated on the phone with Web Audio and no library | Agreed |
+| Radio is its own place in Lantern's side menu, after Chat. The `RADIO` echo is hidden from Chat's channel list. Radio says plainly that it is a replica: the message travels as text over the internet and is turned into sound on the phone | Agreed |
+| Radio plays messages from others while the user is listening (started by a tap, as browsers require). Every message is also shown as text with a Play button, and sound is never the only way to read it. Baudot has capitals, digits and a few marks only; other characters are skipped in the sound, and the text shows in full | Agreed |
+| Next, in order: Radio, then the Board (Gopher menu files over HTTPS, app how-tos and community notes only) | Agreed |
 | Accessibility is the driving factor for Lantern: when a choice trades accessibility against looks or features, accessibility wins | Agreed |
 | The installable part is called **Lantern** (replaces “Emergency section”, since it will hold more than emergency tools). It lives at `/lantern/`, installs as “Gravecast Lantern”, and old `/emergency/` links redirect there. The Chat echo `EMERGENCY` keeps its name | Agreed |
 | Lantern has a left side menu built like the docs sidebar (Survival kit, Help near you, Chat), with larger text and tap targets; on a phone the places sit in a row on top. No home screen and no back links | Agreed |
