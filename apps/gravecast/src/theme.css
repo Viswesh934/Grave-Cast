@@ -1,0 +1,34 @@
+/* Tailwind colors read Groove UI's palette variables, so the app has no colors of its own. Plain @theme (not inline) lets a section, such as the docs, swap them. */
+@theme {
+  --color-grave-crypt-stone: var(--grave-crypt-stone);
+  --color-grave-crypt-slate: var(--grave-crypt-slate);
+  --color-grave-crypt-granite: var(--grave-crypt-granite);
+  --color-grave-crypt-moss: var(--grave-crypt-moss);
+  --color-grave-crypt-lichen: var(--grave-crypt-lichen);
+  --color-grave-sanguine-blood: var(--grave-sanguine-blood);
+  --color-grave-sanguine-crimson: var(--grave-sanguine-crimson);
+  --color-grave-sanguine-coagulated: var(--grave-sanguine-coagulated);
+  --color-grave-sanguine-plasma: var(--grave-sanguine-plasma);
+  --color-grave-witch-void: var(--grave-witch-void);
+  --color-grave-witch-fire: var(--grave-witch-fire);
+  --color-grave-witch-emerald: var(--grave-witch-emerald);
+  --color-grave-witch-gold: var(--grave-witch-gold);
+  --color-grave-bone-100: var(--grave-bone-100);
+  --color-grave-bone-200: var(--grave-bone-200);
+  --color-grave-bone-300: var(--grave-bone-300);
+  --color-grave-bone-decayed: var(--grave-bone-decayed);
+  --color-grave-bone-ash: var(--grave-bone-ash);
+  --color-grave-dark-950: var(--grave-dark-950);
+  --color-grave-dark-900: var(--grave-dark-900);
+  --color-grave-dark-850: var(--grave-dark-850);
+  --color-grave-dark-800: var(--grave-dark-800);
+  --color-grave-dark-750: var(--grave-dark-750);
+  --color-grave-dark-700: var(--grave-dark-700);
+  --color-grave-dark-600: var(--grave-dark-600);
+  --color-grave-mist-100: var(--grave-mist-100);
+  --color-grave-mist-200: var(--grave-mist-200);
+  --color-grave-mist-300: var(--grave-mist-300);
+  --color-grave-mist-400: var(--grave-mist-400);
+  --color-grave-mist-500: var(--grave-mist-500);
+  --color-grave-grove-glow: var(--grave-grove-glow);
+}

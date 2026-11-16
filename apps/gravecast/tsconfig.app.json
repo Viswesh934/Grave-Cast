@@ -13,6 +13,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
+      "groove-ui/doodle": ["../../packages/grave-ui/src/components/effects/Doodle/index.ts"],
       "groove-ui": ["../../packages/grave-ui/src/index.ts"]
     },
     "strict": true,

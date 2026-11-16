@@ -10,8 +10,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from app.common.errors import ChannelRateLimitedError
 from app.common.rate_limit import RateLimiter
 from app.config import get_settings
+from app.modules.channel import router as channel_router
+from app.modules.channel.service import ChannelService
+from app.modules.channel.store import SqliteChannelStore
 from app.modules.github import router as github_router
 from app.modules.github.service import GitHubIngestionService
 from app.modules.linkscan import router as linkscan_router
@@ -26,6 +30,7 @@ async def lifespan(app: FastAPI):
     service = GitHubIngestionService(settings=settings)
     app.state.ingestion_service = service
     app.state.link_scan_service = LinkScanService(settings=settings)
+    app.state.channel_service = ChannelService(SqliteChannelStore(settings.channel_db_path), settings)
     # Fallback cleanup for abandoned snapshot workspaces.
     try:
         deleted = service.cleanup_abandoned()
@@ -46,12 +51,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+_settings = get_settings()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=list(_settings.cors_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -59,11 +63,13 @@ app.add_middleware(
 
 app.include_router(github_router)
 app.include_router(linkscan_router)
+app.include_router(channel_router)
 
 # Rate limits exist before any request, so they also hold when lifespan is skipped.
-_settings = get_settings()
 app.state.repo_rate_limiter = RateLimiter(_settings.repo_scans_per_minute)
 app.state.link_rate_limiter = RateLimiter(_settings.link_scans_per_minute)
+app.state.channel_run_limiter = RateLimiter(_settings.channel_runs_per_minute, error=ChannelRateLimitedError)
+app.state.channel_read_limiter = RateLimiter(_settings.channel_reads_per_minute, error=ChannelRateLimitedError)
 
 
 class HealthResponse(BaseModel):

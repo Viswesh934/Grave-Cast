@@ -1,0 +1,29 @@
+/* The Emergency section's stylesheet: only what it uses. No website styles, no animation. */
+@import "tailwindcss" source(none);
+@source "../emergency";
+@import "../../../../packages/grave-ui/src/styles/grave-ui.css";
+@import "../theme.css";
+
+html {
+  color-scheme: dark;
+  /* Text scales with the person's own browser setting. */
+  font-size: 100%;
+}
+body {
+  margin: 0;
+  background: var(--grave-dark-950);
+  color: var(--grave-bone-200);
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+/* A clear focus ring on everything that can be reached with a keyboard. */
+:focus-visible {
+  outline: 3px solid var(--grave-bone-100);
+  outline-offset: 3px;
+}
+/* No motion at all, whatever the device says. */
+*, *::before, *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

@@ -2,7 +2,7 @@
  * Asks Gravecast's server to read a public GitHub repo and return its marker
  * comments (TODO, FIXME, HACK, XXX) as graves.
  */
-import { apiUrl, postJson } from '../site/api'
+import { apiUrl, postJson } from '../shared/api'
 
 export type MarkerKind = 'FIXME' | 'XXX' | 'HACK' | 'TODO'
 

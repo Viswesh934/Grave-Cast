@@ -38,7 +38,9 @@ The app has two parts:
   - Every network action needs three states: loading, offline/failed (with a retry), and stale data with a "last updated" time.
 - **Outbox for anything sent.** Messages go to the IndexedDB outbox first, then send through Background Sync, or on the next open where it isn't supported. Each message gets an ID made on the device.
 - **The grave card is one shared format.** QR, haunted radio, and the channel all use the same versioned encoder and decoder. Never add a separate format per channel.
-- **Accessibility:**
+- **Accessibility (the driving factor, above looks or extra features):**
+  - In the Emergency section, accessibility wins every trade-off.
+  - Large tap targets, readable text at 200% zoom, and AA contrast at least (AAA for kit cards and tools).
   - Every control works from the keyboard and has a label.
   - Respect reduced motion.
   - Announce scan results and incoming messages through `useAriaAnnounce`.

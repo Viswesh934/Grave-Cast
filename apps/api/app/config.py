@@ -28,6 +28,15 @@ def _env_float(name: str, default: float) -> float:
     return float(raw)
 
 
+def _env_list(name: str, default: tuple[str, ...], *, upper: bool = False) -> tuple[str, ...]:
+    """A comma-separated environment variable as a tuple, or `default` when unset."""
+    raw = os.getenv(name)
+    if raw is None or raw.strip() == "":
+        return default
+    items = tuple(part.strip() for part in raw.split(",") if part.strip())
+    return tuple(item.upper() for item in items) if upper else items
+
+
 @dataclass(frozen=True)
 class Settings:
     """Runtime settings for the API and GitHub ingestion."""
@@ -64,6 +73,22 @@ class Settings:
     # Scans per client address per minute.
     link_scans_per_minute: int = 20
     repo_scans_per_minute: int = 4
+
+    # Chat (the Emergency Channel): public echoes, small messages, mail runs.
+    channel_db_path: Path = Path("storage/channel.sqlite3")
+    channel_echoes: tuple[str, ...] = ("EMERGENCY", "DEMO")
+    channel_max_nick_chars: int = 24
+    channel_max_body_chars: int = 500
+    # Messages one mail run may send, and how many one read may return.
+    channel_max_run_messages: int = 20
+    channel_page_size: int = 100
+    # Older messages in an echo are dropped past this many.
+    channel_keep_per_echo: int = 500
+    channel_runs_per_minute: int = 60
+    channel_reads_per_minute: int = 90
+
+    # Which websites may call the API from a browser.
+    cors_origins: tuple[str, ...] = ("http://localhost:5173", "http://127.0.0.1:5173")
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -114,6 +139,23 @@ class Settings:
             ),
             link_scans_per_minute=_env_int("GRAVECAST_LINK_SCANS_PER_MINUTE", 20),
             repo_scans_per_minute=_env_int("GRAVECAST_REPO_SCANS_PER_MINUTE", 4),
+            channel_db_path=Path(
+                os.getenv(
+                    "GRAVECAST_CHANNEL_DB_PATH",
+                    str(Path(__file__).resolve().parents[3] / "storage" / "channel.sqlite3"),
+                )
+            ),
+            channel_echoes=_env_list("GRAVECAST_CHANNEL_ECHOES", ("EMERGENCY", "DEMO"), upper=True),
+            channel_max_nick_chars=_env_int("GRAVECAST_CHANNEL_MAX_NICK_CHARS", 24),
+            channel_max_body_chars=_env_int("GRAVECAST_CHANNEL_MAX_BODY_CHARS", 500),
+            channel_max_run_messages=_env_int("GRAVECAST_CHANNEL_MAX_RUN_MESSAGES", 20),
+            channel_page_size=_env_int("GRAVECAST_CHANNEL_PAGE_SIZE", 100),
+            channel_keep_per_echo=_env_int("GRAVECAST_CHANNEL_KEEP_PER_ECHO", 500),
+            channel_runs_per_minute=_env_int("GRAVECAST_CHANNEL_RUNS_PER_MINUTE", 60),
+            channel_reads_per_minute=_env_int("GRAVECAST_CHANNEL_READS_PER_MINUTE", 90),
+            cors_origins=_env_list(
+                "GRAVECAST_CORS_ORIGINS", ("http://localhost:5173", "http://127.0.0.1:5173")
+            ),
         )
 
 

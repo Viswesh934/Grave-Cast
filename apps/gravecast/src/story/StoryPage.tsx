@@ -4,11 +4,13 @@ import { KIT_PROTOTYPE_NOTICE, recoveryPosition } from '../kit/recoveryPosition'
 
 const delay = (seconds: number) => ({ ['--gc-delay' as string]: `${seconds}s` }) as CSSProperties
 
-/** The story, told in the maker's words, one line at a time. */
+/** The team's story, one line at a time. */
 const STORY: readonly string[] = [
-  'I was stuck in a power cut for about two days. No electricity, no internet, no phone signal.',
-  'My survival skills are about as good as a mosquito\u2019s. There was nothing much I could do, and nothing I could look up.',
-  'And a power cut isn\u2019t the worst that can happen. One day it could be a war.',
+  'One of us lives in a cyclone region. In one cyclone, trees started flying through the air.',
+  'Then came about two days of power cut: no electricity, no internet, no phone signal.',
+  'With the survival skills of a mosquito, there wasn\u2019t much to do, and nothing to look up.',
+  'Another of us is from Lebanon, where war can cut a place off. Another is from Florida, where hurricanes come often.',
+  'For all three of us, an emergency is never far away.',
   'So we built something that keeps working on limited internet, and holds the common emergency know-how for when there is none at all.',
 ]
 
@@ -44,7 +46,7 @@ export function StoryPage() {
         <div className="gc-reveal mt-16" style={delay(1.1 + STORY.length * 0.9)}>
           <BoneOssuaryDivider label="The Emergency section" pattern="row" size="md" />
           <p className="mt-8 mb-0 text-lg leading-relaxed text-grave-mist-300">
-            It will install on your phone like an app, so it is already there when the lights go out. It is being built now, and holds four things:
+            It installs on your phone like an app, so it is already there when the lights go out. It is being built step by step. The survival kit is open now; the rest is on its way:
           </p>
           <dl className="mt-8 mb-0 space-y-5">
             {PARTS.map((part) => (
@@ -72,6 +74,11 @@ export function StoryPage() {
 
         <div className="gc-reveal mt-16" style={delay(2 + STORY.length * 0.9)}>
           <p className="m-0 text-grave-mist-400">Install it before you need it. In an emergency, there may be no internet to download it.</p>
+          <p className="mt-6 mb-0">
+            <a href="/emergency/" className="text-lg text-grave-bone-100 underline decoration-grave-mist-500 underline-offset-4 hover:decoration-grave-bone-100">
+              Open the Emergency section {'\u2192'}
+            </a>
+          </p>
         </div>
       </main>
     </div>
