@@ -13,8 +13,8 @@ function PlaceCard({ place }: { place: Place }) {
   return (
     <li className={ui.card}>
       <p className="m-0 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <strong className="text-xl text-grave-bone-100">{title}</strong>
-        <span className="text-lg font-semibold text-grave-grove-glow">{formatDistance(place.distanceM)}</span>
+        <strong className="text-base text-grave-bone-100">{title}</strong>
+        <span className="text-sm font-semibold text-grave-mist-200">{formatDistance(place.distanceM)}</span>
       </p>
       {place.address && <p className={`${ui.muted} mt-1 mb-0`}>{place.address}</p>}
       <p className={`${ui.muted} mt-1 mb-0`}>
@@ -24,7 +24,7 @@ function PlaceCard({ place }: { place: Place }) {
         </a>
       </p>
       {place.phone && (
-        <p className="mt-2 mb-0 text-lg">
+        <p className="mt-2 mb-0 text-sm">
           <a href={`tel:${place.phone.replace(/[^+\d]/g, '')}`} className={ui.link}>
             Call {place.phone}
           </a>
@@ -52,19 +52,19 @@ export function HelpPage() {
         so you can use it with no internet.
       </p>
 
-      <div className={`${ui.card} mt-6`}>
-        <h2 className="m-0 text-xl font-bold text-grave-bone-100">Your location stays private</h2>
+      <div className={`${ui.card} mt-5`}>
+        <h2 className={ui.h2}>Your location stays private</h2>
         <p className={`${ui.muted} mt-1 mb-0`}>
           To find places, your phone sends where you are, rounded to about 100 metres, to a public map service (Overpass, which reads OpenStreetMap). Gravecast
           never receives it. The list is saved on this phone only, and you can delete it at any time.
         </p>
       </div>
 
-      <div className="mt-6" role="status">
-        {phase === 'locating' && <p className="m-0 text-lg text-grave-bone-100">Finding where you are{'\u2026'}</p>}
-        {phase === 'downloading' && <p className="m-0 text-lg text-grave-bone-100">Finding places near you. This can take up to half a minute{'\u2026'}</p>}
+      <div className="mt-4" role="status">
+        {phase === 'locating' && <p className="m-0 text-base text-grave-bone-100">Finding where you are{'\u2026'}</p>}
+        {phase === 'downloading' && <p className="m-0 text-base text-grave-bone-100">Finding places near you. This can take up to half a minute{'\u2026'}</p>}
         {error && (
-          <p role="alert" className="m-0 rounded-xl border-2 border-grave-bone-200 p-4 text-lg text-grave-bone-100">
+          <p role="alert" className="m-0 rounded-lg border border-grave-grove-brass/60 p-3 text-base text-grave-bone-100">
             {error}
           </p>
         )}
@@ -79,12 +79,12 @@ export function HelpPage() {
       {pack && (
         <>
           <div className={`${ui.card} mt-4`}>
-            <p className="m-0 text-lg font-semibold text-grave-bone-100">Saved on this phone: {formatDate(pack.fetchedAt)}</p>
+            <p className="m-0 text-base font-semibold text-grave-bone-100">Saved on this phone: {formatDate(pack.fetchedAt)}</p>
             <p className={`${ui.muted} mt-1 mb-0`}>
               {pack.places.length} places within a few kilometres of {pack.center.lat.toFixed(3)}, {pack.center.lon.toFixed(3)}. About {sizeInKb(pack)} KB.
             </p>
             {isStale(pack.fetchedAt) && (
-              <p className="mt-2 mb-0 text-lg font-semibold text-grave-bone-100">This list is over a month old. Update it when you have a connection.</p>
+              <p className="mt-2 mb-0 text-sm font-semibold text-grave-grove-brass">This list is over a month old. Update it when you have a connection.</p>
             )}
             <div className="mt-4 flex flex-wrap gap-3">
               <button type="button" onClick={() => void download()} disabled={working} className={ui.secondary}>
@@ -119,11 +119,11 @@ export function HelpPage() {
             const places = pack.places.filter((p) => p.kind === kind.id)
             if (places.length === 0) return null
             return (
-              <section key={kind.id} aria-labelledby={`kind-${kind.id}`} className="mt-8">
+              <section key={kind.id} aria-labelledby={`kind-${kind.id}`} className="mt-6">
                 <h2 id={`kind-${kind.id}`} className={ui.h2}>
-                  {kind.group} <span className="text-lg font-normal text-grave-mist-200">({places.length})</span>
+                  {kind.group} <span className="text-sm font-normal text-grave-mist-300">({places.length})</span>
                 </h2>
-                <ul className="mt-3 mb-0 grid list-none gap-3 p-0">
+                <ul className="mt-2 mb-0 grid list-none gap-2 p-0 lg:grid-cols-2">
                   {places.map((place) => (
                     <PlaceCard key={place.id} place={place} />
                   ))}
@@ -134,7 +134,7 @@ export function HelpPage() {
         </>
       )}
 
-      <p className={`${ui.muted} mt-10 mb-0`}>
+      <p className={`${ui.muted} mt-8 mb-0`}>
         Map data {'\u00a9'}{' '}
         <a href={OSM_COPYRIGHT} target="_blank" rel="noopener noreferrer" className={ui.link}>
           OpenStreetMap contributors

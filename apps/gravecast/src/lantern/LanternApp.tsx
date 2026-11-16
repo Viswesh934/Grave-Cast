@@ -5,8 +5,10 @@ import { KitCardPage } from './KitCardPage'
 import { KitPage } from './KitPage'
 import { Shell } from './Shell'
 import { StatusProvider } from './StatusProvider'
+import { ToolPage } from './tools/ToolPage'
+import { ToolsPage } from './tools/ToolsPage'
 
-/** The installable Lantern: one home screen with three things on it. It shares no code with the website's pages. */
+/** The installable Lantern: the survival kit, tools, help near you, and Chat. It shares no code with the website's pages. */
 export function LanternApp() {
   return (
     <BrowserRouter basename="/lantern">
@@ -18,6 +20,8 @@ export function LanternApp() {
             <Route path="help" element={<HelpPage />} />
             <Route path="kit" element={<KitPage />} />
             <Route path="kit/:slug" element={<KitCardPage />} />
+            <Route path="tools" element={<ToolsPage />} />
+            <Route path="tools/:slug" element={<ToolPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Shell>

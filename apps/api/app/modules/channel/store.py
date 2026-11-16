@@ -30,6 +30,15 @@ class StoredMessage:
     received_at: str
 
 
+@dataclass(frozen=True)
+class StoredEcho:
+    """A channel someone created. The built-in echoes are not stored."""
+
+    name: str
+    about: str
+    created_at: str
+
+
 class ChannelStore(Protocol):
     """What the Chat service needs from storage. Implementations must be safe to call from async code."""
 
@@ -48,6 +57,14 @@ class ChannelStore(Protocol):
     async def newest_seq(self) -> int:
         """The highest seq stored, or 0 when empty."""
 
+    async def add_echo(self, echo: StoredEcho, limit: int) -> str:
+        """Stores a new channel. Returns "added", "exists" when the name is taken,
+        or "full" when `limit` channels are already stored. Checked and stored in one step.
+        """
+
+    async def echoes(self) -> list[StoredEcho]:
+        """Every created channel, oldest first."""
+
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS messages (
@@ -60,6 +77,11 @@ CREATE TABLE IF NOT EXISTS messages (
     received_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS messages_area_seq ON messages (area, seq);
+CREATE TABLE IF NOT EXISTS echoes (
+    name TEXT PRIMARY KEY,
+    about TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
 """
 
 _COLUMNS = "seq, msgid, area, sender, body, sent_at, received_at"
@@ -129,6 +151,29 @@ class SqliteChannelStore:
         finally:
             db.close()
 
+    def _add_echo(self, echo: StoredEcho, limit: int) -> str:
+        db = self._connect()
+        try:
+            with db:
+                # BEGIN IMMEDIATE takes the write lock first, so two creates can't both pass the count.
+                db.execute("BEGIN IMMEDIATE")
+                if db.execute("SELECT 1 FROM echoes WHERE name = ?", (echo.name,)).fetchone():
+                    return "exists"
+                if db.execute("SELECT COUNT(*) FROM echoes").fetchone()[0] >= limit:
+                    return "full"
+                db.execute("INSERT INTO echoes (name, about, created_at) VALUES (?, ?, ?)", (echo.name, echo.about, echo.created_at))
+                return "added"
+        finally:
+            db.close()
+
+    def _echoes(self) -> list[StoredEcho]:
+        db = self._connect()
+        try:
+            rows = db.execute("SELECT name, about, created_at FROM echoes ORDER BY created_at, name").fetchall()
+            return [StoredEcho(*row) for row in rows]
+        finally:
+            db.close()
+
     async def add(self, message: NewMessage, keep: int) -> bool:
         return await asyncio.to_thread(self._add, message, keep)
 
@@ -140,3 +185,9 @@ class SqliteChannelStore:
 
     async def newest_seq(self) -> int:
         return await asyncio.to_thread(self._newest_seq)
+
+    async def add_echo(self, echo: StoredEcho, limit: int) -> str:
+        return await asyncio.to_thread(self._add_echo, echo, limit)
+
+    async def echoes(self) -> list[StoredEcho]:
+        return await asyncio.to_thread(self._echoes)

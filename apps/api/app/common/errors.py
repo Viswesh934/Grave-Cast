@@ -217,3 +217,17 @@ class UnknownEchoError(AppError):
 class TooManyMessagesError(AppError):
     def __init__(self, message: str = "Too many messages in one mail run.") -> None:
         super().__init__(code="TOO_MANY_MESSAGES", message=message, status_code=422)
+
+class InvalidEchoNameError(AppError):
+    def __init__(self, message: str) -> None:
+        super().__init__(code="INVALID_ECHO", message=message, status_code=422)
+
+
+class EchoExistsError(AppError):
+    def __init__(self, message: str = "A channel with that name already exists. Open it instead.") -> None:
+        super().__init__(code="ECHO_EXISTS", message=message, status_code=409)
+
+
+class TooManyEchoesError(AppError):
+    def __init__(self, message: str = "There are as many channels as this server can hold. Use one of them.") -> None:
+        super().__init__(code="TOO_MANY_ECHOES", message=message, status_code=422)

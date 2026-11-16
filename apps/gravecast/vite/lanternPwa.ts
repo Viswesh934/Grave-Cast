@@ -8,7 +8,7 @@ import { deflateSync } from 'node:zlib'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
 import { palette } from '../../../packages/grave-ui/src/tokens/colors.ts'
-import { CHANNEL_DB, MAIL_RUN_PATH, MAX_RUN_MESSAGES, MAX_RUN_ROUNDS, SYNC_TAG } from '../src/shared/channelContract.ts'
+import { BUILTIN_ECHOES, CHANNEL_DB, MAIL_RUN_PATH, MAX_FOLLOWED_ECHOES, MAX_RUN_MESSAGES, MAX_RUN_ROUNDS, SYNC_TAG } from '../src/shared/channelContract.ts'
 
 /** Where Lantern lives. Its manifest and service worker are scoped here. */
 export const LANTERN_BASE = '/lantern/'
@@ -144,6 +144,8 @@ const DB = ${JSON.stringify(CHANNEL_DB)};
 const MAIL_RUN_PATH = ${JSON.stringify(MAIL_RUN_PATH)};
 const MAX_RUN_MESSAGES = ${MAX_RUN_MESSAGES};
 const MAX_RUN_ROUNDS = ${MAX_RUN_ROUNDS};
+const BUILTIN = ${JSON.stringify(BUILTIN_ECHOES)};
+const MAX_FOLLOWED = ${MAX_FOLLOWED_ECHOES};
 const SYNC_TAG = ${JSON.stringify(SYNC_TAG)};
 
 function openDb() {
@@ -179,7 +181,12 @@ async function mailRun() {
       const read = db.transaction([DB.stores.outbox, DB.stores.meta], 'readonly');
       const outbox = await wrap(read.objectStore(DB.stores.outbox).getAll());
       const cursorRow = await wrap(read.objectStore(DB.stores.meta).get('cursors'));
-      const cursors = cursorRow ? cursorRow.value : {};
+      const joinedRow = await wrap(read.objectStore(DB.stores.meta).get('joined'));
+      // Same as followedCursors in src/lantern/chat/mailRun.ts: built-in echoes, then joined ones; left ones dropped.
+      const stored = cursorRow ? cursorRow.value : {};
+      const followed = BUILTIN.concat((joinedRow && joinedRow.value) || []).filter(function (a, i, all) { return all.indexOf(a) === i; }).slice(0, MAX_FOLLOWED);
+      const cursors = {};
+      followed.forEach(function (a) { cursors[a] = stored[a] || 0; });
       outbox.sort(function (a, b) { return a.sentAt < b.sentAt ? -1 : a.sentAt > b.sentAt ? 1 : 0; });
       const batch = outbox.slice(0, MAX_RUN_MESSAGES);
       const response = await fetch(API + MAIL_RUN_PATH, {

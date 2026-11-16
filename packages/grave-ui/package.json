@@ -55,6 +55,10 @@
       "import": "./dist/components/effects/Doodle/index.js",
       "types": "./dist/components/effects/Doodle/index.d.ts"
     },
+    "./signal": {
+      "import": "./dist/signal/index.js",
+      "types": "./dist/signal/index.d.ts"
+    },
     "./audio": {
       "import": "./dist/audio/index.js",
       "types": "./dist/audio/index.d.ts"

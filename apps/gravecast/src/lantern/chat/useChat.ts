@@ -20,7 +20,8 @@ export type RunState = 'idle' | 'running' | 'offline' | 'failed'
 
 /** Messages waiting to send have no place in the server's order yet, so they count as the newest. */
 const order = (m: ShownMessage) => m.seq ?? Number.MAX_SAFE_INTEGER
-const byNewest = (a: ShownMessage, b: ShownMessage) => order(b) - order(a) || (a.sentAt < b.sentAt ? 1 : -1)
+/** Oldest first, so the newest message sits at the bottom, next to where you type. */
+const byOldest = (a: ShownMessage, b: ShownMessage) => order(a) - order(b) || (a.sentAt < b.sentAt ? -1 : 1)
 
 /** Asks the browser to send the outbox when the connection returns, even if the app is closed. */
 async function askForBackgroundSend(): Promise<void> {
@@ -161,7 +162,7 @@ export function useChat(area: string) {
       .filter((m) => m.area === area)
       .map((m): ShownMessage => ({ ...m, pending: false, mine: deviceOf(m.msgid) === deviceId })),
     ...outbox.filter((m) => m.area === area).map((m): ShownMessage => ({ ...m, seq: null, receivedAt: null, pending: true, mine: true })),
-  ].sort(byNewest)
+  ].sort(byOldest)
 
   return { loaded, nick, setNick, deviceId, messages: shown, waiting: outbox.length, refused, dismissRefused, lastRunAt, state, problem, send, retry: run }
 }

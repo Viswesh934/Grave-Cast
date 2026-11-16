@@ -8,7 +8,14 @@ from fastapi.responses import JSONResponse
 from app.common.errors import AppError
 from app.common.rate_limit import RateLimiter, client_key
 from app.modules.channel.service import ChannelService
-from app.modules.channel.types import EchoResponse, MailRunRequest, MailRunResponse
+from app.modules.channel.types import (
+    CreateEchoRequest,
+    EchoInfo,
+    EchoListResponse,
+    EchoResponse,
+    MailRunRequest,
+    MailRunResponse,
+)
 
 router = APIRouter(prefix="/api/channel", tags=["channel"])
 
@@ -28,6 +35,30 @@ async def mail_run(body: MailRunRequest, request: Request) -> MailRunResponse | 
     try:
         limiter.check(client_key(request))
         return await service.mail_run(body)
+    except AppError as exc:
+        return _error(exc)
+
+
+@router.get("/echoes", response_model=EchoListResponse, response_model_by_alias=True)
+async def list_echoes(request: Request) -> EchoListResponse | JSONResponse:
+    """Every channel: the built-in echoes, then the ones people created."""
+    service: ChannelService = request.app.state.channel_service
+    limiter: RateLimiter = request.app.state.channel_read_limiter
+    try:
+        limiter.check(client_key(request))
+        return await service.list_echoes()
+    except AppError as exc:
+        return _error(exc)
+
+
+@router.post("/echoes", response_model=EchoInfo, response_model_by_alias=True, status_code=201)
+async def create_echo(body: CreateEchoRequest, request: Request) -> EchoInfo | JSONResponse:
+    """Create a public channel. Names are checked, and the number of channels is capped."""
+    service: ChannelService = request.app.state.channel_service
+    limiter: RateLimiter = request.app.state.channel_create_limiter
+    try:
+        limiter.check(client_key(request))
+        return await service.create_echo(body.name, body.about)
     except AppError as exc:
         return _error(exc)
 

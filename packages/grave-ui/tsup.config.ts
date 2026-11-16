@@ -16,6 +16,8 @@ export default defineConfig({
     // The doodle system on its own, so a page that only draws comics loads no 3D code.
     'components/effects/Doodle/index': 'src/components/effects/Doodle/index.ts',
     'audio/index': 'src/audio/index.ts',
+    // Signals that do a job (Morse, alarm tones, a beat, torch, compass), with no 3D code.
+    'signal/index': 'src/signal/index.ts',
     'ascii/index': 'src/ascii/index.ts',
     'video/index': 'src/video/index.ts',
     'voice/index': 'src/voice/index.ts',

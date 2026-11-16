@@ -1034,4 +1034,10 @@
   --grave-bone-200: #e2ede6;
   --grave-bone-300: #cbdcd1;
   --grave-grove-glow: #34d399;
+  /* Quiet companions to the glow, for calm screens such as Lantern:
+     sage is the one accent (main action, current item), brass only marks
+     something that needs attention (waiting, offline, an error).
+     Both read at AAA on the grove darks. */
+  --grave-grove-sage: #a9c8b2;
+  --grave-grove-brass: #cdb27a;
 }

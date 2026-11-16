@@ -217,6 +217,10 @@ export const palette = {
     bone300: '#cbdcd1',
     /** The living light: lanterns, the vial, the active step. */
     glow: '#34d399',
+    /** A soft sage: the one accent on calm screens (main action, current item). */
+    sage: '#a9c8b2',
+    /** Dull brass: only for what needs attention (waiting, offline, an error). */
+    brass: '#cdb27a',
   },
 } as const;
 

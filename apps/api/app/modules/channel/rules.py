@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Collection
 from datetime import datetime
 
 from app.config import Settings
@@ -12,6 +13,22 @@ MSGID_RE = re.compile(r"^[0-9a-f]{8}@gravecast [0-9a-f]{8}$")
 
 # Control characters, except newline and tab.
 _CONTROL_RE = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
+
+
+# An echo tag, the way FidoNet wrote them: a capital letter, then capitals, digits, dashes or underscores.
+ECHO_NAME_RE = re.compile(r"^[A-Z][A-Z0-9_-]{1,19}$")
+
+
+def echo_name_problem(name: str) -> str | None:
+    """Why a new channel's name can't be used, in plain words, or None when it is fine."""
+    if not ECHO_NAME_RE.match(name):
+        return "Use 2 to 20 capital letters, digits, dashes or underscores, starting with a letter."
+    return None
+
+
+def clean_about(text: str, max_chars: int) -> str:
+    """A channel's description on one line, without control characters, cut to max_chars."""
+    return " ".join(_CONTROL_RE.sub(" ", text).split())[:max_chars]
 
 
 def nick_pattern(max_chars: int) -> re.Pattern[str]:
@@ -32,9 +49,21 @@ def parses_as_time(text: str) -> bool:
     return True
 
 
-def problem_with(*, msgid: str, area: str, sender: str, body: str, sent_at: str, settings: Settings) -> str | None:
-    """Why a message can't be accepted, in plain words, or None when it is fine."""
-    if area not in settings.channel_echoes:
+def problem_with(
+    *,
+    msgid: str,
+    area: str,
+    sender: str,
+    body: str,
+    sent_at: str,
+    settings: Settings,
+    echoes: Collection[str] | None = None,
+) -> str | None:
+    """Why a message can't be accepted, in plain words, or None when it is fine.
+
+    ``echoes`` is every echo that exists; it defaults to the built-in ones.
+    """
+    if area not in (settings.channel_echoes if echoes is None else echoes):
         return "That echo doesn't exist."
     if not MSGID_RE.match(msgid):
         return "The message id isn't in the right form."

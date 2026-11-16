@@ -70,6 +70,7 @@ app.state.repo_rate_limiter = RateLimiter(_settings.repo_scans_per_minute)
 app.state.link_rate_limiter = RateLimiter(_settings.link_scans_per_minute)
 app.state.channel_run_limiter = RateLimiter(_settings.channel_runs_per_minute, error=ChannelRateLimitedError)
 app.state.channel_read_limiter = RateLimiter(_settings.channel_reads_per_minute, error=ChannelRateLimitedError)
+app.state.channel_create_limiter = RateLimiter(_settings.channel_creates_per_minute, error=ChannelRateLimitedError)
 
 
 class HealthResponse(BaseModel):
