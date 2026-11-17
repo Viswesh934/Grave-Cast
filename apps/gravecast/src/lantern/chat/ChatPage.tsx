@@ -1,25 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { DEFAULT_ECHO, ECHO_NAME_PATTERN } from '../../shared/channelContract'
+import { DEFAULT_ECHO, ECHO_NAME_PATTERN, isRadioEcho } from '../../shared/channelContract'
+import { RefreshButton } from '../RefreshButton'
 import { ui } from '../ui'
 import { ChannelPanel } from './ChannelPanel'
 import { Composer } from './Composer'
 import { MessageList } from './MessageList'
 import { useChannels } from './useChannels'
-import { useChat, type RunState } from './useChat'
-
-const STATE_TEXT: Record<RunState, string> = {
-  idle: '',
-  running: 'Checking\u2026',
-  offline: 'No connection. Messages wait here and send when it returns.',
-  failed: 'Could not send right now. Messages are kept and will try again.',
-}
-
-const clock = (iso: string | null): string => {
-  if (!iso) return ''
-  const date = new Date(iso)
-  return Number.isNaN(date.getTime()) ? '' : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-}
+import { clock, STATE_TEXT } from './runText'
+import { useChat } from './useChat'
 
 /**
  * Chat, laid out like a chat app: channels on the left (behind a button on a
@@ -30,7 +19,7 @@ const clock = (iso: string | null): string => {
 export function ChatPage() {
   const [params, setParams] = useSearchParams()
   const requested = params.get('echo')?.toUpperCase() ?? ''
-  const area = ECHO_NAME_PATTERN.test(requested) ? requested : DEFAULT_ECHO
+  const area = ECHO_NAME_PATTERN.test(requested) && !isRadioEcho(requested) ? requested : DEFAULT_ECHO
   const channels = useChannels()
   const chat = useChat(area)
   const [wire, setWire] = useState(false)
@@ -132,11 +121,7 @@ export function ChatPage() {
             </span>
           )}
           {chat.problem && chat.state === 'failed' && <span>{chat.problem}</span>}
-          {chat.state !== 'running' && (
-            <button type="button" onClick={() => void chat.retry()} className="cursor-pointer border-0 bg-transparent p-0 text-xs text-grave-grove-sage underline underline-offset-2">
-              Check now
-            </button>
-          )}
+          <RefreshButton onClick={() => void chat.retry()} busy={chat.state === 'running'} />
         </div>
 
         {!echo && !channels.isBuiltin(area) && (

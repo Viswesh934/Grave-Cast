@@ -43,4 +43,44 @@ export const signalTokens = {
   },
   /** Degrees of tilt under which the phone counts as level. */
   levelToleranceDeg: 2,
+  /** Reading a message aloud with the browser's own voice. */
+  speech: {
+    /** The language voices are chosen for. */
+    lang: 'en',
+    /** Speaking speed, where 1 is the voice's normal pace. A little slower, so it is easy to follow. */
+    rate: 0.95,
+    /** Safety net for browsers that never report the end of a sentence: allow this long per character… */
+    safetyMsPerChar: 120,
+    /** …plus this long, then treat it as finished. */
+    safetyGraceMs: 3000,
+  },
+  /** Radio teletype, the way amateur stations send it: 45.45 baud, tones 170 Hz apart. */
+  rtty: {
+    baud: 45.45,
+    /** The tone for a 1 bit, and for the idle line. */
+    markHz: 2125,
+    /** The tone for a 0 bit. It sits 170 Hz above the mark tone. */
+    spaceHz: 2295,
+    /** How long the stop bit lasts, in bit lengths. */
+    stopBits: 1.5,
+    /** Idle mark tone before the first character, in bit lengths, so a listener hears it start. */
+    leadBits: 22,
+    /** Idle mark tone after the last character, in bit lengths. */
+    tailBits: 11,
+    /** Loudness, before the shared limiter. Quieter than an alarm: it is a tone to listen to. */
+    volume: 0.5,
+    /** The hiss a receiver makes while it is on, so you can hear it is running. */
+    static: {
+      /** Loudness at full volume: well under the message tones, so they always stand out. */
+      level: 0.12,
+      /** Centre of the band the hiss is filtered to, roughly a voice radio's range. */
+      centreHz: 1400,
+      /** How wide the band is; lower is wider. */
+      q: 0.6,
+      /** How loud the hiss stays while a message plays, as a share of its normal level. */
+      duck: 0.2,
+      /** How long it takes to fade in, out, or under a message. */
+      fadeMs: 250,
+    },
+  },
 } as const;

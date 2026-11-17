@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { fetchElements, roundPosition } from './overpass'
-import { toPlaces, type PlacePack } from './normalize'
+import { awsConfig, searchAll } from './awsPlaces'
+import { KINDS } from './kinds'
+import { roundPosition, type PlacePack } from './normalize'
 import { deletePack, loadPack, savePack } from './placesDb'
 
 export type PlacesPhase = 'idle' | 'locating' | 'downloading'
@@ -27,8 +28,10 @@ export function usePlaces() {
   const [pack, setPack] = useState<PlacePack | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [phase, setPhase] = useState<PlacesPhase>('idle')
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const busy = useRef(false)
+  const config = awsConfig()
 
   useEffect(() => {
     let live = true
@@ -44,6 +47,8 @@ export function usePlaces() {
   const download = useCallback(async () => {
     if (busy.current) return
     setError(null)
+    const settings = awsConfig()
+    if (!settings) return setError('Finding places isn\u2019t set up in this version of the app yet.')
     if (!('geolocation' in navigator)) return setError('This browser can\u2019t share your location.')
     if (!navigator.onLine) return setError('You need a connection to download this. Try again when you have one.')
     busy.current = true
@@ -55,19 +60,22 @@ export function usePlaces() {
       const center = { lat: roundPosition(position.coords.latitude), lon: roundPosition(position.coords.longitude) }
 
       setPhase('downloading')
-      const result = await fetchElements(center.lat, center.lon)
-      if (!result.ok) throw new Error(result.reason)
-      const places = toPlaces(result.elements, center)
-      if (places.length === 0) {
-        throw new Error('The map has no hospitals, pharmacies, police, shelters or water points near you. That can mean the area isn\u2019t mapped yet.')
-      }
+      setProgress({ done: 0, total: KINDS.length })
+      const results = await searchAll(settings, center, (done, total) => setProgress({ done, total }))
+      const failed = results.filter((r) => !r.ok)
+      const places = results.flatMap((r) => (r.ok ? r.places : []))
+      if (failed.length === results.length) throw new Error(failed[0] && !failed[0].ok ? failed[0].reason : 'The places service didn\u2019t answer.')
+      if (places.length === 0) throw new Error('No hospitals, clinics, pharmacies, police or fire stations were found near you.')
+
       const saved: PlacePack = {
         id: 'current',
         center,
         fetchedAt: new Date().toISOString(),
-        source: `OpenStreetMap, through Overpass (${result.mirror})`,
+        source: 'Amazon Location Service',
         places,
+        missing: failed.map((r) => r.kind),
       }
+      // Replace the old list only once the new one is good, so a bad connection never leaves the phone with nothing.
       await savePack(saved)
       setPack(saved)
     } catch (e) {
@@ -75,6 +83,7 @@ export function usePlaces() {
     } finally {
       busy.current = false
       setPhase('idle')
+      setProgress(null)
     }
   }, [])
 
@@ -84,5 +93,5 @@ export function usePlaces() {
     setError(null)
   }, [])
 
-  return { pack, loaded, phase, error, download, remove }
+  return { pack, loaded, phase, progress, error, download, remove, configured: config !== null }
 }

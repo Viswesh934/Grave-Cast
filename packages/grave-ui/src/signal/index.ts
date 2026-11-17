@@ -7,7 +7,10 @@
  */
 export * from './tokens';
 export * from './morse';
+export * from './rtty';
+export * from './radioStatic';
 export * from './sound';
+export * from './speech';
 export * from './light';
 export * from './orientation';
 export * from '../hooks/useWakeLock';

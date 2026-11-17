@@ -15,10 +15,12 @@ export interface ComposerProps {
   onNick: (nick: string) => Promise<string | null>
   onCancelNick: () => void
   onSend: (text: string) => Promise<string | null>
+  /** What the message box is for, in a screen reader's words and as the hint. Defaults to the channel. */
+  target?: string
 }
 
 /** The message box under the conversation. Without a nickname, it asks for one first. */
-export function Composer({ area, nick, changingNick, onNick, onCancelNick, onSend }: ComposerProps) {
+export function Composer({ area, nick, changingNick, onNick, onCancelNick, onSend, target }: ComposerProps) {
   const [text, setText] = useState('')
   const [nickDraft, setNickDraft] = useState(nick ?? '')
   const [error, setError] = useState<string | null>(null)
@@ -99,7 +101,7 @@ export function Composer({ area, nick, changingNick, onNick, onCancelNick, onSen
     <form onSubmit={onSubmit} className="mt-2 shrink-0" noValidate>
       <div className="flex items-end gap-2 rounded-xl border border-grave-mist-500 bg-grave-dark-950 p-1.5 focus-within:border-grave-grove-sage">
         <label htmlFor={ids.message} className="sr-only">
-          Message to {area}
+          Message to {target ?? area}
         </label>
         <textarea
           id={ids.message}
@@ -112,7 +114,7 @@ export function Composer({ area, nick, changingNick, onNick, onCancelNick, onSen
           onKeyDown={onKeyDown}
           rows={1}
           maxLength={MAX_BODY_CHARS}
-          placeholder={`Message #${area}`}
+          placeholder={target ? `Message to ${target}` : `Message #${area}`}
           aria-describedby={error ? ids.error : undefined}
           className="block max-h-36 min-h-10 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-base leading-snug text-grave-bone-100 outline-none placeholder:text-grave-mist-400"
         />

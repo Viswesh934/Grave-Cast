@@ -1,18 +1,8 @@
 /**
- * Turns what the map service sends back into the short list the phone keeps.
- * Pure, so it can be checked without a network.
+ * The short list of places the phone keeps, and turning what Amazon Location
+ * Service sends back into it. Pure, so it can be checked without a network.
  */
-import { KINDS, type PlaceKind } from './kinds'
-
-/** One thing the map service found. A node has its own position; a way or relation has a centre. */
-export interface MapElement {
-  type: string
-  id: number
-  lat?: number
-  lon?: number
-  center?: { lat: number; lon: number }
-  tags?: Record<string, string>
-}
+import type { PlaceKind } from './kinds'
 
 export interface Place {
   id: string
@@ -33,10 +23,17 @@ export interface PlacePack {
   fetchedAt: string
   source: string
   places: Place[]
+  /** Kinds that couldn't be searched this time. Lists saved before this field existed have none. */
+  missing?: PlaceKind[]
 }
+
+/** Decimal places kept in a position: three is about 100 metres. */
+export const POSITION_DECIMALS = 3
+export const roundPosition = (value: number): number => Number(value.toFixed(POSITION_DECIMALS))
 
 const EARTH_RADIUS_M = 6_371_000
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180
+const toDegrees = (radians: number) => (radians * 180) / Math.PI
 
 /** The distance between two points on the Earth, in metres. */
 export const distanceBetween = (a: { lat: number; lon: number }, b: { lat: number; lon: number }): number => {
@@ -46,56 +43,56 @@ export const distanceBetween = (a: { lat: number; lon: number }, b: { lat: numbe
   return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(h))
 }
 
-const clean = (text: string | undefined): string | null => {
+/** The compass bearing from one point to another, in degrees from north (0 up to 360). */
+export const bearingBetween = (a: { lat: number; lon: number }, b: { lat: number; lon: number }): number => {
+  const lat1 = toRadians(a.lat)
+  const lat2 = toRadians(b.lat)
+  const dLon = toRadians(b.lon - a.lon)
+  const y = Math.sin(dLon) * Math.cos(lat2)
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
+  return (toDegrees(Math.atan2(y, x)) + 360) % 360
+}
+
+/** The part of one Amazon Location Service SearchNearby result that the page uses. */
+export interface AwsResultItem {
+  PlaceId?: string
+  Title?: string
+  Position?: number[]
+  Address?: { Label?: string }
+  Contacts?: { Phones?: { Value?: string }[] }
+}
+
+const clean = (text: string | undefined | null): string | null => {
   const value = text?.trim()
   return value ? value : null
 }
 
-const addressOf = (tags: Record<string, string>): string | null => {
-  const full = clean(tags['addr:full'])
-  if (full) return full
-  const street = [clean(tags['addr:housenumber']), clean(tags['addr:street'])].filter(Boolean).join(' ')
-  const area = clean(tags['addr:suburb']) ?? clean(tags['addr:city'])
-  return [street, area].filter(Boolean).join(', ') || null
+/** AWS's address label starts with the place's own name; drop it so the address doesn't repeat the title. */
+const addressWithoutName = (label: string | null, name: string | null): string | null => {
+  if (!label) return null
+  if (name && label.startsWith(`${name}, `)) return clean(label.slice(name.length + 2))
+  return label
 }
 
-const phoneOf = (tags: Record<string, string>): string | null => {
-  const first = (clean(tags.phone) ?? clean(tags['contact:phone']))?.split(';')[0]
-  return clean(first)
-}
-
-/** The nearest places of each kind, kinds in the order the page lists them. */
-export function toPlaces(elements: readonly MapElement[], center: { lat: number; lon: number }): Place[] {
+/** One kind's results, as places: those with a position, each once, nearest first, at most `keep`. */
+export function placesFromAws(items: readonly AwsResultItem[], kind: PlaceKind, center: { lat: number; lon: number }, keep: number): Place[] {
   const seen = new Set<string>()
-  const byKind = new Map<PlaceKind, Place[]>()
-
-  for (const element of elements) {
-    const id = `${element.type}/${element.id}`
-    if (seen.has(id)) continue
-    seen.add(id)
-
-    const position = element.type === 'node' ? { lat: element.lat, lon: element.lon } : element.center
-    if (!position || typeof position.lat !== 'number' || typeof position.lon !== 'number') continue
-    const tags = element.tags ?? {}
-    const kind = KINDS.find((k) => k.tags.some(([key, value]) => tags[key] === value))
-    if (!kind) continue
-
-    const point = { lat: position.lat, lon: position.lon }
-    const place: Place = {
-      id,
-      kind: kind.id,
-      name: clean(tags.name) ?? clean(tags['name:en']),
-      ...point,
-      distanceM: Math.round(distanceBetween(center, point)),
-      address: addressOf(tags),
-      phone: phoneOf(tags),
-    }
-    byKind.set(kind.id, [...(byKind.get(kind.id) ?? []), place])
+  const places: Place[] = []
+  for (const item of items) {
+    const [lon, lat] = item.Position ?? []
+    if (typeof lat !== 'number' || typeof lon !== 'number' || !item.PlaceId || seen.has(item.PlaceId)) continue
+    seen.add(item.PlaceId)
+    const name = clean(item.Title)
+    places.push({
+      id: `aws/${item.PlaceId}`,
+      kind,
+      name,
+      lat,
+      lon,
+      distanceM: Math.round(distanceBetween(center, { lat, lon })),
+      address: addressWithoutName(clean(item.Address?.Label), name),
+      phone: clean(item.Contacts?.Phones?.find((p) => clean(p.Value))?.Value),
+    })
   }
-
-  return KINDS.flatMap((kind) =>
-    (byKind.get(kind.id) ?? [])
-      .sort((a, b) => a.distanceM - b.distanceM)
-      .slice(0, kind.keep),
-  )
+  return places.sort((a, b) => a.distanceM - b.distanceM).slice(0, keep)
 }

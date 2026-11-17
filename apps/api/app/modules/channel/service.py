@@ -33,6 +33,13 @@ _BUILTIN_ABOUT = {
 }
 
 
+def _about(name: str) -> str:
+    """What a built-in echo is for. The Radio channels are numbered, so their text is made from the name."""
+    if name.startswith("RADIO-"):
+        return f"Radio channel {name.removeprefix('RADIO-')}, played as radio teletype."
+    return _BUILTIN_ABOUT.get(name, "")
+
+
 def _now() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -138,7 +145,7 @@ class ChannelService:
         """The built-in echoes first, then every created channel, oldest first."""
         settings = self._settings
         created = await self._store.echoes()
-        echoes = [EchoInfo(name=name, about=_BUILTIN_ABOUT.get(name, ""), builtin=True) for name in settings.channel_echoes]
+        echoes = [EchoInfo(name=name, about=_about(name), builtin=True) for name in settings.channel_echoes]
         echoes += [EchoInfo(name=e.name, about=e.about, builtin=False, created_at=e.created_at) for e in created]
         return EchoListResponse(echoes=echoes, room=max(0, settings.channel_max_echoes - len(created)))
 

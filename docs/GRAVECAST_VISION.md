@@ -64,7 +64,7 @@ The part of the app that installs as a PWA. It has four tabs. Board, Chat, and R
 
 - **Board:** plain-text updates (shelters, helplines, news), written as real Gopher menu files (RFC 1436 format) and served as static files over HTTPS from Vercel. They are not on port 70, so the app says "Gopher menus over HTTPS". Small, fast, and cached so they open offline.
 - **Chat:** FidoNet-style **echomail**, the store-and-forward messaging that BBSes used over slow, on-and-off dial-up. Nobody stays connected. The phone makes a short **mail run**: one small HTTP request to Lambda that sends its queued messages and receives everything new since its last run. Public areas are **echoes**, such as `EMERGENCY`. Messages carry FidoNet-style headers (area, from, MSGID, origin line), which the Wire view shows. Pick a nickname with no sign-up form. The phone joins `EMERGENCY` by default. While the Chat tab is open, it runs every few seconds; in the background, much less often.
-- **Radio:** a shortwave-style dial over public web radio streams, with static between stations. Later, recorded low-bitrate bulletins that download in the background and play offline.
+- **Radio:** a replica of a shortwave radio net with nine channels. It looks like a radio: a channel display, a tuning scale with a needle, a tuning control with the scale's channel buttons as its plain alternative, a volume control, a mode switch, and On and RX lamps. A message goes out like a Chat message, through the outbox and a mail run, to the tuned channel's echo (`RADIO-1` to `RADIO-9`). While the radio is on, a quiet hiss plays and each phone gives the channel's messages in one of two modes: **Voice** reads them aloud in English with the phone's own voice (the browser's speech synthesis), and **Tones** plays them as RTTY (ITA2 Baudot at 45.45 baud, 2125 Hz and 2295 Hz). No library. The message travels as text, not as live audio, and the page says so. Messages are hidden until the person opens them.
 
 ### 3.5 Sharing: the grave card
 
@@ -248,9 +248,9 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 10. Board: Gopher menu files on Vercel, cached offline.
 11. Chat: FidoNet-style echomail with mail runs through Lambda; the `EMERGENCY` and `DEMO` echoes.
 12. Outbox + Background Sync, making a mail run when the network returns.
-13. Radio dial over a few public streams.
+13. Radio: a replica radio net that reads messages aloud on the phone (built).
 
-### Iteration 4: haunted radio
+### Iteration 4: haunted radio (cut for the hackathon, see section 9)
 
 14. Grave card over sound with ggwave (send and receive).
 
@@ -330,9 +330,12 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | The remaining kit card strips are built around Chat (before or after), in batches from the doodle scripts | Agreed |
 | All 31 kit cards are drawn as drafts from the doodle scripts, with captions word for word. Close-ups and scenes in the scripts are Groove UI props (shape data), not poses; a placement label can override a badge's text | Agreed |
 | Cut for the hackathon: grave card (QR and sharing), the `/demo` page, haunted radio with ggwave, and the streams-based Radio dial. The vision's other sections stay as the plan for later | Agreed |
-| Lantern's dead tech on top is **Radio**: a replica of a shortwave radio-teletype net. A message written in Radio goes through the same outbox and mail run as Chat, to a built-in `RADIO` echo, and each listening phone plays it as RTTY (Baudot at 45.45 baud, two tones 170 Hz apart), generated on the phone with Web Audio and no library | Agreed |
-| Radio is its own place in Lantern's side menu, after Chat. The `RADIO` echo is hidden from Chat's channel list. Radio says plainly that it is a replica: the message travels as text over the internet and is turned into sound on the phone | Agreed |
-| Radio plays messages from others while the user is listening (started by a tap, as browsers require). Every message is also shown as text with a Play button, and sound is never the only way to read it. Baudot has capitals, digits and a few marks only; other characters are skipped in the sound, and the text shows in full | Agreed |
+| Lantern's dead tech on top is **Radio**: a replica of a shortwave radio net. A message written in Radio goes through the same outbox and mail run as Chat, to the tuned channel, one of nine built-in echoes `RADIO-1` to `RADIO-9`. Each phone that is on and tuned to that channel gives it in the mode the person picks: Voice (read aloud in English by the browser's speech synthesis, preferring a voice that works offline) or Tones (RTTY, made with Web Audio). Voice is the default; where the browser cannot speak, Voice is turned off and the page says so. No library | Agreed |
+| Radio is its own place in Lantern's side menu, after Chat. Its nine channel echoes are hidden from Chat's channel list. The dial shows channel numbers, never real frequencies, so nobody tunes a real radio to a number they saw here. Radio says plainly that it is a replica: the message travels as text over the internet and is turned into sound on the phone | Agreed |
+| While Radio is on (turned on by a tap, as browsers require), it reads every message on the tuned channel by itself: the newest one when it is turned on or tuned, then each new one as it arrives, including your own once it is sent. The display says who is being received. Messages are hidden by default and open with one tap, each with a Replay button. Where the browser cannot speak, the page says so and the messages are the way to read them | Agreed |
+| Radio is the one exception to "no decorative sound" in Lantern: while it is on, a quiet static hiss plays so the person can hear that the set is running. It follows the volume control, fades under a message while one plays, and stops the moment Radio is turned off or the page is left. It never plays anywhere else | Agreed |
+| Radio's set uses the palette's warm brass (case, dial, needle, lamps and the On button) so it reads as a radio; this is the one place brass is used for looks rather than attention. The set takes about three fifths of the width, with the channel's chat in a narrower column on its right; on narrow screens the chat sits under the set | Agreed |
+| Help near you finds places with Amazon Location Service (Places SearchNearby), called from the phone with a browser API key limited to that one action, our site's addresses and an expiry date. Results are saved on the phone, so every request sets `IntendedUse` to `Storage`, as AWS's terms require. For now it covers hospitals, clinics, pharmacies, police and fire stations; AWS has no category for shelters or drinking water, so those are left out until a second source is added (Photon, OpenStreetMap data, is the candidate). Overpass is dropped: its public servers refused or timed out on this query. Gravecast's own server never sees the location. The saved list works with no internet: distances and compass directions from where it was saved, calls, and a maps link | Agreed |
 | Next, in order: Radio, then the Board (Gopher menu files over HTTPS, app how-tos and community notes only) | Agreed |
 | Accessibility is the driving factor for Lantern: when a choice trades accessibility against looks or features, accessibility wins | Agreed |
 | The installable part is called **Lantern** (replaces “Emergency section”, since it will hold more than emergency tools). It lives at `/lantern/`, installs as “Gravecast Lantern”, and old `/emergency/` links redirect there. The Chat echo `EMERGENCY` keeps its name | Agreed |
@@ -347,7 +350,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 ## 10. Open questions
 
 1. Zero cost: confirm that Lambda Function URLs add no charge; that Lambda is among the always-free services (AWS says 30+ services are always free on both the Free and Paid plans; DynamoDB is listed); and that Vercel Hobby's terms allow this project. Also confirm FidoNet details (MSGID, origin line, tear line) against the FidoNet standards (FTS documents).
-2. Which public radio streams allow embedding? Test this before building the dial.
+2. Radio no longer uses public streams (section 9), so there is nothing to embed. Speech voices differ by phone, and some need the internet; the app prefers a voice that works offline, but this is not yet tested on real phones.
 3. Google Safe Browsing terms for our use.
 4. The exact grave card format. Align it with the signal envelope in BUILD_SPEC §8.
 5. ggwave: check its payload limit against the grave card's size (about 200 bytes) and split or shrink the card if needed. Also confirm its JavaScript/WebAssembly build and licence.

@@ -37,6 +37,11 @@ def _env_list(name: str, default: tuple[str, ...], *, upper: bool = False) -> tu
     return tuple(item.upper() for item in items) if upper else items
 
 
+# The Radio place's channels: built-in echoes RADIO-1 to RADIO-9, hidden from Chat.
+RADIO_CHANNELS: tuple[str, ...] = tuple(f"RADIO-{n}" for n in range(1, 10))
+DEFAULT_ECHOES: tuple[str, ...] = ("EMERGENCY", "DEMO", *RADIO_CHANNELS)
+
+
 @dataclass(frozen=True)
 class Settings:
     """Runtime settings for the API and GitHub ingestion."""
@@ -76,7 +81,7 @@ class Settings:
 
     # Chat (the channel, in Lantern): public echoes, small messages, mail runs.
     channel_db_path: Path = Path("storage/channel.sqlite3")
-    channel_echoes: tuple[str, ...] = ("EMERGENCY", "DEMO")
+    channel_echoes: tuple[str, ...] = DEFAULT_ECHOES
     channel_max_nick_chars: int = 24
     channel_max_body_chars: int = 500
     # Messages one mail run may send, and how many one read may return.
@@ -151,7 +156,7 @@ class Settings:
                     str(Path(__file__).resolve().parents[3] / "storage" / "channel.sqlite3"),
                 )
             ),
-            channel_echoes=_env_list("GRAVECAST_CHANNEL_ECHOES", ("EMERGENCY", "DEMO"), upper=True),
+            channel_echoes=_env_list("GRAVECAST_CHANNEL_ECHOES", DEFAULT_ECHOES, upper=True),
             channel_max_nick_chars=_env_int("GRAVECAST_CHANNEL_MAX_NICK_CHARS", 24),
             channel_max_body_chars=_env_int("GRAVECAST_CHANNEL_MAX_BODY_CHARS", 500),
             channel_max_run_messages=_env_int("GRAVECAST_CHANNEL_MAX_RUN_MESSAGES", 20),

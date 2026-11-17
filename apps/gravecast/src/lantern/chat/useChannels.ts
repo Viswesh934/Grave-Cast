@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createEcho, fetchEchoList, type EchoInfo } from '../../shared/channel'
-import { BUILTIN_ECHOES, ECHO_NAME_PATTERN, MAX_FOLLOWED_ECHOES, META_KEYS } from '../../shared/channelContract'
+import { BUILTIN_ECHOES, ECHO_NAME_PATTERN, MAX_FOLLOWED_ECHOES, META_KEYS, isRadioEcho } from '../../shared/channelContract'
 import { getMeta, setMeta } from './db'
 
 /** What the built-in echoes are for, until the server's list arrives. */
@@ -9,7 +9,7 @@ const BUILTIN_LIST: EchoInfo[] = [
   { name: 'DEMO', about: 'For testing. Say hello here.', builtin: true, createdAt: null },
 ]
 
-const isBuiltin = (name: string) => (BUILTIN_ECHOES as readonly string[]).includes(name)
+const isBuiltin = (name: string) => BUILTIN_ECHOES.includes(name)
 
 interface CachedList {
   echoes: EchoInfo[]
@@ -65,7 +65,8 @@ export function useChannels() {
   const join = useCallback(
     async (name: string): Promise<string | null> => {
       if (isBuiltin(name) || joined.includes(name)) return null
-      if (BUILTIN_ECHOES.length + joined.length >= MAX_FOLLOWED_ECHOES) return `You can follow up to ${MAX_FOLLOWED_ECHOES} channels. Leave one first.`
+      if (BUILTIN_ECHOES.length + joined.length >= MAX_FOLLOWED_ECHOES)
+        return `You can follow up to ${MAX_FOLLOWED_ECHOES - BUILTIN_ECHOES.length} channels of your own. Leave one first.`
       await saveJoined([...joined, name])
       return null
     },
@@ -91,6 +92,8 @@ export function useChannels() {
     [join, refreshList],
   )
 
-  const followed = [...BUILTIN_ECHOES, ...joined]
-  return { list, room, joined, followed, listError, isBuiltin, join, leave, create, refreshList }
+  // Radio's channels have their own place in the menu, so Chat neither lists them nor counts them as its own.
+  const followed = [...BUILTIN_ECHOES, ...joined].filter((name) => !isRadioEcho(name))
+  const visible = list.filter((echo) => !isRadioEcho(echo.name))
+  return { list: visible, room, joined, followed, listError, isBuiltin, join, leave, create, refreshList }
 }
