@@ -32,6 +32,18 @@ class LinkHop(BaseModel):
     status: int
 
 
+class DomainRecord(BaseModel):
+    """What a WHOIS server said about when a domain was registered."""
+
+    domain: str
+    server: str
+    created: str = Field(description="The registration date, YYYY-MM-DD.")
+    line: str = Field(description="The record's own line, word for word.")
+    age_days: int = Field(serialization_alias="ageDays")
+
+    model_config = {"populate_by_name": True}
+
+
 class LinkScanResponse(BaseModel):
     requested_url: str = Field(serialization_alias="requestedUrl")
     final_url: str = Field(serialization_alias="finalUrl")
@@ -39,5 +51,7 @@ class LinkScanResponse(BaseModel):
     hops: list[LinkHop]
     graves: list[LinkGrave]
     headers_checked: bool = Field(serialization_alias="headersChecked")
+    domain_records: list[DomainRecord] = Field(default_factory=list, serialization_alias="domainRecords")
+    domain_age_checked: bool = Field(default=False, serialization_alias="domainAgeChecked")
 
     model_config = {"populate_by_name": True}

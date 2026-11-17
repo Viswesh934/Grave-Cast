@@ -48,9 +48,12 @@ export const CHECKED_ON_SERVER: readonly string[] = [
   'Which protections the site sets for its visitors',
 ];
 
+/** Domain age: read by the server over WHOIS when a registry still answers it. */
+export const DOMAIN_AGE = 'How long the site has existed';
+
 /** Not checked by anything yet. Shown with every result, so the verdict stays honest. */
 export const NOT_CHECKED_YET: readonly string[] = [
-  'How long the site has existed',
+  DOMAIN_AGE,
   'Whether the site is on known lists of harmful sites',
 ];
 

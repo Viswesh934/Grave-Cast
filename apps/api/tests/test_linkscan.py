@@ -259,10 +259,17 @@ def test_x_frame_options_alone_covers_framing() -> None:
 # The endpoint
 
 
+class _NoWhois:
+    """WHOIS that never answers, so these tests stay off the network."""
+
+    async def record(self, domain: str):
+        return None
+
+
 def _install(tmp_path: Path, routes: dict[str, httpx.Response], table: dict[str, list[str]], per_minute: int = 20) -> None:
     settings = _settings(tmp_path)
     fetcher = LinkFetcher(settings, resolver=_resolver(table), transport=_site(routes, []))
-    app.state.link_scan_service = LinkScanService(settings=settings, fetcher=fetcher)
+    app.state.link_scan_service = LinkScanService(settings=settings, fetcher=fetcher, whois=_NoWhois())
     app.state.link_rate_limiter = RateLimiter(per_minute)
 
 

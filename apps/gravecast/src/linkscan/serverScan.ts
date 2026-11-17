@@ -10,6 +10,18 @@ export interface LinkHop {
   status: number;
 }
 
+/** What a WHOIS server said about when a domain was registered. */
+export interface DomainRecord {
+  domain: string;
+  /** The WHOIS server that answered. */
+  server: string;
+  /** YYYY-MM-DD. */
+  created: string;
+  /** The record's own line, word for word. */
+  line: string;
+  ageDays: number;
+}
+
 export interface ServerScan {
   finalUrl: string;
   statusCode: number | null;
@@ -17,6 +29,10 @@ export interface ServerScan {
   graves: Grave[];
   /** False when the visit stopped early, for example on a bad certificate. */
   headersChecked: boolean;
+  /** Registration dates read over WHOIS, for the link's domain and where it ends. */
+  domainRecords: DomainRecord[];
+  /** True when WHOIS gave a date for the domain the link ends on. */
+  domainAgeChecked: boolean;
 }
 
 export type ServerScanResult = { ok: true; scan: ServerScan } | { ok: false; reason: string };
@@ -41,6 +57,13 @@ const readGrave = (value: unknown): Grave | null => {
   };
 };
 
+const readRecord = (value: unknown): DomainRecord | null => {
+  if (typeof value !== 'object' || value === null) return null;
+  const r = value as Record<string, unknown>;
+  if (!isString(r.domain) || !isString(r.server) || !isString(r.created) || !isString(r.line) || typeof r.ageDays !== 'number') return null;
+  return { domain: r.domain, server: r.server, created: r.created, line: r.line, ageDays: r.ageDays };
+};
+
 const readScan = (body: unknown): ServerScan | null => {
   if (typeof body !== 'object' || body === null) return null;
   const b = body as Record<string, unknown>;
@@ -53,6 +76,8 @@ const readScan = (body: unknown): ServerScan | null => {
     ),
     graves: b.graves.map(readGrave).filter((g): g is Grave => g !== null),
     headersChecked: b.headersChecked === true,
+    domainRecords: Array.isArray(b.domainRecords) ? b.domainRecords.map(readRecord).filter((r): r is DomainRecord => r !== null) : [],
+    domainAgeChecked: b.domainAgeChecked === true,
   };
 };
 
