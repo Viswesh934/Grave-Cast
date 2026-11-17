@@ -77,6 +77,14 @@ class Settings:
 
     # Scans per client address per minute.
     link_scans_per_minute: int = 20
+
+    # Domain age, read over WHOIS (port 43), the 1982 protocol that RDAP replaced.
+    whois_root_server: str = "whois.iana.org"
+    whois_port: int = 43
+    whois_timeout_seconds: float = 4.0
+    whois_max_bytes: int = 65536
+    whois_young_days: int = 30
+    whois_recent_days: int = 180
     repo_scans_per_minute: int = 4
 
     # Chat (the channel, in Lantern): public echoes, small messages, mail runs.
@@ -149,6 +157,12 @@ class Settings:
                 "GRAVECAST_LINK_USER_AGENT", "Gravecast-LinkCheck/0.1"
             ),
             link_scans_per_minute=_env_int("GRAVECAST_LINK_SCANS_PER_MINUTE", 20),
+            whois_root_server=os.getenv("GRAVECAST_WHOIS_ROOT_SERVER", "whois.iana.org"),
+            whois_port=_env_int("GRAVECAST_WHOIS_PORT", 43),
+            whois_timeout_seconds=_env_float("GRAVECAST_WHOIS_TIMEOUT_SECONDS", 4.0),
+            whois_max_bytes=_env_int("GRAVECAST_WHOIS_MAX_BYTES", 65536),
+            whois_young_days=_env_int("GRAVECAST_WHOIS_YOUNG_DAYS", 30),
+            whois_recent_days=_env_int("GRAVECAST_WHOIS_RECENT_DAYS", 180),
             repo_scans_per_minute=_env_int("GRAVECAST_REPO_SCANS_PER_MINUTE", 4),
             channel_db_path=Path(
                 os.getenv(
