@@ -9,6 +9,7 @@ export * from './tokens';
 export * from './morse';
 export * from './rtty';
 export * from './radioStatic';
+export * from './shake';
 export * from './sound';
 export * from './speech';
 export * from './light';

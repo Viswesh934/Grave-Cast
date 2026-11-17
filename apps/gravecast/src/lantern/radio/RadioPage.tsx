@@ -5,6 +5,7 @@ import { Composer } from '../chat/Composer'
 import { getMeta, setMeta } from '../chat/db'
 import { clock, STATE_TEXT } from '../chat/runText'
 import { useChat, type ShownMessage } from '../chat/useChat'
+import { useBuzzOnNewMessages } from '../access/settings'
 import { RefreshButton } from '../RefreshButton'
 import { ui } from '../ui'
 import { MAX_PLAYED_CHARS, soundOf, useRadioPlayer, type RadioMode } from './useRadioPlayer'
@@ -138,6 +139,7 @@ export function RadioPage() {
   const mode: RadioMode = canSpeak ? chosenMode : 'tones'
   const area = radioEcho(channel)
   const chat = useChat(area)
+  useBuzzOnNewMessages(chat.messages)
   const player = useRadioPlayer(chat.messages, on, area, volume / 100, mode)
   const ids = { tune: useId(), volume: useId() }
 

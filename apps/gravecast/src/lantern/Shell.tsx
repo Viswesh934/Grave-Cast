@@ -44,9 +44,10 @@ function AppBar() {
 const PLACES: readonly { to: string; label: string }[] = [
   { to: '/kit', label: 'Survival kit' },
   { to: '/tools', label: 'Tools' },
-  { to: '/help', label: 'Help near you' },
   { to: '/chat', label: 'Chat' },
   { to: '/radio', label: 'Radio' },
+  { to: '/access', label: 'Access' },
+  { to: '/help', label: 'Help near you' },
 ]
 
 /**
@@ -61,7 +62,7 @@ function SideNav() {
       className="shrink-0 border-b border-grave-dark-700 bg-grave-dark-900 px-3 py-2 select-none md:sticky md:top-0 md:w-56 md:self-start md:border-r md:border-b-0 md:bg-transparent md:py-5 md:pr-3 md:pl-2"
     >
       <h2 className="m-0 mb-2 hidden px-3 font-mono text-xs font-bold tracking-wider text-grave-mist-300 uppercase md:block">Lantern</h2>
-      <ul className="m-0 grid list-none grid-cols-3 gap-1.5 sm:grid-cols-5 p-0 md:grid-cols-1 md:gap-1">
+      <ul className="m-0 grid list-none grid-cols-3 gap-1.5 sm:grid-cols-6 p-0 md:grid-cols-1 md:gap-1">
         {PLACES.map((place) => (
           <li key={place.to}>
             <NavLink

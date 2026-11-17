@@ -19,7 +19,7 @@ So we built something that keeps working on limited internet and holds the commo
 | Layer | Works with | What it does |
 | --- | --- | --- |
 | **Gravecast website** | Normal internet | Scans links, sites, and repos for danger and shows the graveyard. Web only. |
-| **Lantern** | Little or no internet | The installable part of the app: the channel (Board, Chat, Radio) for little internet, and the survival kit, which works with none. |
+| **Lantern** | Little or no internet | The installable part of the app: the channel (Chat, Radio) for little internet, and the survival kit, which works with none. |
 | **Groove UI** | n/a | The horror-themed library that makes it all look and sound alive (`packages/grave-ui`). |
 
 "Little internet" means a slow, patchy connection (2G, a weak signal, frequent drops). The channel is built for that. When there is no internet at all, the survival kit still works.
@@ -62,7 +62,7 @@ Paste a public GitHub repo and see its dead code, old TODOs, vulnerable dependen
 
 The part of the app that installs as a PWA. It has four tabs. Board, Chat, and Radio form the channel, built for little internet. The survival kit (§3.7) works with no internet at all. The link scan and developer mode are not in the installed app.
 
-- **Board:** plain-text updates (shelters, helplines, news), written as real Gopher menu files (RFC 1436 format) and served as static files over HTTPS from Vercel. They are not on port 70, so the app says "Gopher menus over HTTPS". Small, fast, and cached so they open offline.
+- **Access:** two tiles and one setting. The person picks their mode, and the pad's keys work for that mode; each pad explains its keys. **Can't see and can't speak:** the braille pad gives a voice to someone who is blind and mute (a blind person who can speak, speaks). The whole screen is one braille cell (dots 1-2-3 down the left, 4-5-6 down the right); touching the dots of a letter and pausing says and shows a ready message that starts with that letter (A: ambulance, H: help, D: doctor, W: water, S: shelter, B: I am blind, Y/N: yes/no, T: thank you, L: list them all; all six dots at once: distress signal). **Can't hear or can't speak:** a dial pad: keys 1 to 9 each show a ready message across the screen in very large text, 0 opens a large screen to write anything, by the person or the one they are talking to, and an SOS key starts the distress signal. **Distress signal:** started by three hard shakes or five quick taps anywhere in Lantern (each turned on in Access, off by default), or by the pads' SOS. Shakes and taps first count down 3 seconds, buzzing, and can be cancelled by holding the screen. The signal then repeats a spoken help message and the SOS tone (Loud, the default), or only vibrates (Silent, for when noise is dangerous), shows HELP across the screen, and opens the SMS app to a help contact saved on the phone, with the GPS position; the person still taps Send. It works only while Lantern is open, and five taps are ignored inside the braille pad. **Vibrate for new messages** buzzes for Chat and Radio (Android only). Each kit card can also be read aloud step by step on its own page. Access only speaks and shows; it never contacts anyone by itself. A screen reader takes over touches, so the braille pad needs it paused. Phone volume keys can't be used: browsers don't pass them to web pages. All of it works with no internet. It replaces the Board: Chat already carries notices.
 - **Chat:** FidoNet-style **echomail**, the store-and-forward messaging that BBSes used over slow, on-and-off dial-up. Nobody stays connected. The phone makes a short **mail run**: one small HTTP request to Lambda that sends its queued messages and receives everything new since its last run. Public areas are **echoes**, such as `EMERGENCY`. Messages carry FidoNet-style headers (area, from, MSGID, origin line), which the Wire view shows. Pick a nickname with no sign-up form. The phone joins `EMERGENCY` by default. While the Chat tab is open, it runs every few seconds; in the background, much less often.
 - **Radio:** a replica of a shortwave radio net with nine channels. It looks like a radio: a channel display, a tuning scale with a needle, a tuning control with the scale's channel buttons as its plain alternative, a volume control, a mode switch, and On and RX lamps. A message goes out like a Chat message, through the outbox and a mail run, to the tuned channel's echo (`RADIO-1` to `RADIO-9`). While the radio is on, a quiet hiss plays and each phone gives the channel's messages in one of two modes: **Voice** reads them aloud in English with the phone's own voice (the browser's speech synthesis), and **Tones** plays them as RTTY (ITA2 Baudot at 45.45 baud, 2125 Hz and 2295 Hz). No library. The message travels as text, not as live audio, and the page says so. Messages are hidden until the person opens them.
 
@@ -152,7 +152,7 @@ Use Groove UI first. Anything missing gets built in Groove UI, so the Gravecast 
 | Graves, severity | `TombstoneCard` / `TombstoneCard3D` weathering (pristine → crumbling) |
 | Haunted radio | ggwave for encoding and decoding, wrapped in Groove UI with the sound engine (static, atmosphere) and `useOccultMic` (listening) |
 | Locked cards | `Seal` |
-| Board | ASCII and typewriter effects |
+| Access aids (braille pad, read aloud) | `groove-ui/signal` speech |
 | Presenting | `Scribble` |
 | Kit card comics | The doodle system (below), drawn with Rough.js |
 | CPR metronome, SOS sound | Sound engine |
@@ -198,7 +198,7 @@ The list of doodles needed comes from the kit card content. Each doodle illustra
 | App | React + Vite + TypeScript website; Lantern is the installable PWA | `apps/gravecast` (new) |
 | Look and sound | Groove UI | `packages/grave-ui` |
 | Echo storage | DynamoDB, provisioned mode at 25 read / 25 write units (the free tier) | Behind Lambda |
-| Board content | Gopher menu files | Static files on Vercel |
+| Access content | Built into Lantern (phrases, kit captions) | Cached offline with Lantern |
 | Docs site | Groove UI docs, under `/docs` in the same app (moved from `apps/web`) | `apps/gravecast/src/docs` |
 
 **One app: a website with an installable section.** There is one codebase and one build:
@@ -245,7 +245,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 
 ### Iteration 3: the channel
 
-10. Board: Gopher menu files on Vercel, cached offline.
+10. Access: a braille pad for blind people and a dial pad for deaf people, plus vibrate for messages; read aloud lives on each kit card.
 11. Chat: FidoNet-style echomail with mail runs through Lambda; the `EMERGENCY` and `DEMO` echoes.
 12. Outbox + Background Sync, making a mail run when the network returns.
 13. Radio: a replica radio net that reads messages aloud on the phone (built).
@@ -289,7 +289,8 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Share findings as grave cards via QR, haunted radio, and the channel | Agreed |
 | Outbox with Background Sync; sending is a mail run | Agreed |
 | Chat is FidoNet-style echomail through Lambda (replaces IRC, Ergo, and KiwiIRC) | Agreed |
-| Board is Gopher menu files served over HTTPS from Vercel (replaces a port 70 Gopher server) | Agreed |
+| Access (renamed from the Board) has two modes, chosen by the person: a braille pad (blind or low vision) and a dial pad of messages (deaf or hard of hearing). Talk's turn-taking and saved own phrases are dropped for now; the dial pad's 0 key writes anything. Help near you is last in the side menu | Agreed |
+| Access tiles are named by the problem: "Can't see and can't speak" (braille pad) and "Can't hear or can't speak" (dial pad). A distress signal (shake or five taps, off by default; or the pads' SOS) speaks and sounds for help or vibrates silently, and opens the SMS app to a saved help contact with the GPS position. Loud is the default; Silent is offered because noise can be dangerous, for example when hiding | Agreed |
 | Only Vercel and Lambda: no always-on server, no Lightsail, no DNS | Agreed |
 | Zero-cost deploy inside free tiers: Vercel Hobby, Lambda with Function URLs, DynamoDB provisioned at 25/25, a $1 billing alert | Agreed |
 | Demo with a real tester group in a `DEMO` echo (§12) | Agreed |
@@ -336,10 +337,10 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Radio is the one exception to "no decorative sound" in Lantern: while it is on, a quiet static hiss plays so the person can hear that the set is running. It follows the volume control, fades under a message while one plays, and stops the moment Radio is turned off or the page is left. It never plays anywhere else | Agreed |
 | Radio's set uses the palette's warm brass (case, dial, needle, lamps and the On button) so it reads as a radio; this is the one place brass is used for looks rather than attention. The set takes about three fifths of the width, with the channel's chat in a narrower column on its right; on narrow screens the chat sits under the set | Agreed |
 | Help near you finds places with Amazon Location Service (Places SearchNearby), called from the phone with a browser API key limited to that one action, our site's addresses and an expiry date. Results are saved on the phone, so every request sets `IntendedUse` to `Storage`, as AWS's terms require. For now it covers hospitals, clinics, pharmacies, police and fire stations; AWS has no category for shelters or drinking water, so those are left out until a second source is added (Photon, OpenStreetMap data, is the candidate). Overpass is dropped: its public servers refused or timed out on this query. Gravecast's own server never sees the location. The saved list works with no internet: distances and compass directions from where it was saved, calls, and a maps link | Agreed |
-| Next, in order: Radio, then the Board (Gopher menu files over HTTPS, app how-tos and community notes only) | Agreed |
+| Next: Access; the spoken menu and corner button come after it | Agreed |
 | Accessibility is the driving factor for Lantern: when a choice trades accessibility against looks or features, accessibility wins | Agreed |
 | The installable part is called **Lantern** (replaces “Emergency section”, since it will hold more than emergency tools). It lives at `/lantern/`, installs as “Gravecast Lantern”, and old `/emergency/` links redirect there. The Chat echo `EMERGENCY` keeps its name | Agreed |
-| Lantern has a left side menu built like the docs sidebar (Survival kit, Help near you, Chat), with larger text and tap targets; on a phone the places sit in a row on top. No home screen and no back links | Agreed |
+| Lantern has a left side menu built like the docs sidebar (Survival kit, Help near you, Chat), with larger text and tap targets; on a phone the places sit in a row on top. No home screen. Pages one level down (a kit card, an Access mode) have a plain back arrow with no label, at the top left | Agreed |
 | Lantern has a **Tools** place in its side menu, after Survival kit: SOS light, SOS sound, CPR metronome, compass and level, lightning distance, and the help message. Each tool is one screen with one big Start/Stop button | Agreed |
 | The help message and the "last seen" note are one tool: a position plus a short message, saved on the phone and ready to send by SMS. Sharing it as a grave card waits for the grave card format | Agreed |
 | The SOS light on screen flashes at most 2 times a second (WCAG 2.3.1 allows 3), and warns before it starts. The tools' light and beat are the only motion in Lantern | Agreed |
@@ -369,11 +370,12 @@ Use these terms everywhere: code, UI, and docs.
 | **Grave card** | A small shareable message (finding or note), about 200 bytes |
 | **Haunted radio** | Sending a grave card as sound |
 | **Lantern** | The installable part of the app (PWA), at `/lantern/`. It holds the survival kit, Help near you, and the channel |
-| **Channel** | Board, Chat, and Radio, inside Lantern |
+| **Channel** | Chat and Radio, inside Lantern |
 | **Echo** | A public message area in Chat, such as `EMERGENCY` (FidoNet's word) |
 | **Mail run** | One short request that sends queued messages and fetches new ones |
 | **Tester** | A real person in the demo group who uses the `DEMO` echo |
-| **Board / Chat / Radio / Survival kit** | The four tabs of Lantern |
+| **Survival kit / Tools / Chat / Radio / Access / Help near you** | The places in Lantern's side menu |
+| **Spoken menu** | Moving through Lantern by taps and the phone's voice, for blind people |
 | **Kit card** | One offline guide, drawn as a comic strip: panels for the steps, Do / Don't, and its source |
 | **Panel** | One step of a kit card: a stick-figure drawing and its caption |
 | **Doodle** | The drawing in one panel, generated from a data file |
