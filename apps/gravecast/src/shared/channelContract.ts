@@ -6,7 +6,19 @@
  */
 
 /** The echoes every phone follows. People can create more channels; those come from the server's list. */
-export const BUILTIN_ECHOES = ['EMERGENCY', 'DEMO'] as const
+/** How many channels the Radio dial has. */
+export const RADIO_CHANNEL_COUNT = 9
+
+/** The echoes behind the Radio dial, RADIO-1 to RADIO-9. Chat never lists them or opens them. */
+export const RADIO_CHANNELS: readonly string[] = Array.from({ length: RADIO_CHANNEL_COUNT }, (_, i) => `RADIO-${i + 1}`)
+
+/** The echo for one Radio channel, counting from 1. */
+export const radioEcho = (channel: number): string => `RADIO-${channel}`
+
+/** Whether an echo belongs to the Radio dial. */
+export const isRadioEcho = (name: string): boolean => RADIO_CHANNELS.includes(name)
+
+export const BUILTIN_ECHOES: readonly string[] = ['EMERGENCY', 'DEMO', ...RADIO_CHANNELS]
 
 /** An echo's name. Created channels follow {@link ECHO_NAME_PATTERN}. */
 export type Echo = string

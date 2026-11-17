@@ -16,7 +16,7 @@ from app.common.errors import (
     TooManyMessagesError,
 )
 from app.common.rate_limit import RateLimiter
-from app.config import Settings
+from app.config import DEFAULT_ECHOES, Settings
 from app.main import app
 from app.modules.channel.rules import (
     MSGID_RE,
@@ -32,6 +32,7 @@ from app.modules.channel.store import NewMessage, SqliteChannelStore
 from app.modules.channel.types import IncomingMessage, MailRunRequest
 
 DEVICE = "1a2b3c4d"
+BUILTIN = list(DEFAULT_ECHOES)
 
 
 def _settings(tmp_path: Path, **overrides) -> Settings:
@@ -301,9 +302,9 @@ async def test_a_created_channel_is_listed_after_the_built_in_ones(tmp_path: Pat
     made = await service.create_echo(" chennai-flood ", "Updates for the flood")
     listed = await service.list_echoes()
     assert made.name == "CHENNAI-FLOOD"
-    assert [e.name for e in listed.echoes] == ["EMERGENCY", "DEMO", "CHENNAI-FLOOD"]
-    assert [e.builtin for e in listed.echoes] == [True, True, False]
-    assert listed.echoes[2].about == "Updates for the flood"
+    assert [e.name for e in listed.echoes] == [*BUILTIN, "CHENNAI-FLOOD"]
+    assert [e.builtin for e in listed.echoes] == [True] * len(BUILTIN) + [False]
+    assert listed.echoes[-1].about == "Updates for the flood"
     assert listed.room == 99
 
 
@@ -349,7 +350,7 @@ async def test_unknown_echoes_are_refused_and_not_followed(tmp_path: Path) -> No
 
 
 async def test_a_mail_run_reads_at_most_the_followed_cap(tmp_path: Path) -> None:
-    service, _ = _service(tmp_path, channel_max_followed_echoes=3)
+    service, _ = _service(tmp_path, channel_echoes=("EMERGENCY", "DEMO"), channel_max_followed_echoes=3)
     for name in ("AAA", "BBB", "CCC"):
         await service.create_echo(name, "")
     run = await service.mail_run(_run(cursors={"AAA": 0, "BBB": 0, "CCC": 0}))
@@ -370,7 +371,7 @@ async def test_channel_endpoints_create_list_and_read(tmp_path: Path) -> None:
     assert again.status_code == 409 and again.json()["error"]["code"] == "ECHO_EXISTS"
     assert bad.status_code == 422 and bad.json()["error"]["code"] == "INVALID_ECHO"
     assert listed.status_code == 200
-    assert [e["name"] for e in listed.json()["echoes"]] == ["EMERGENCY", "DEMO", "NEWS"]
+    assert [e["name"] for e in listed.json()["echoes"]] == [*BUILTIN, "NEWS"]
     assert set(listed.json()) == {"echoes", "room"}
     assert read.status_code == 200 and read.json()["area"] == "NEWS"
 
@@ -383,3 +384,14 @@ async def test_creating_channels_is_rate_limited(tmp_path: Path) -> None:
         second = await client.post("/api/channel/echoes", json={"name": "TWO"})
     assert first.status_code == 201
     assert second.status_code == 429 and second.json()["error"]["code"] == "CHANNEL_RATE_LIMITED"
+
+
+async def test_radio_channels_are_built_in_with_their_own_about_text(tmp_path: Path) -> None:
+    service, _ = _service(tmp_path)
+    listed = await service.list_echoes()
+    radio = [e for e in listed.echoes if e.name.startswith("RADIO-")]
+    assert [e.name for e in radio] == [f"RADIO-{n}" for n in range(1, 10)]
+    assert all(e.builtin for e in radio)
+    assert radio[2].about == "Radio channel 3, played as radio teletype."
+    with pytest.raises(EchoExistsError):
+        await service.create_echo("radio-4", "")
