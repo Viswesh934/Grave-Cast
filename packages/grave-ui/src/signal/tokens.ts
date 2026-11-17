@@ -43,6 +43,17 @@ export const signalTokens = {
   },
   /** Degrees of tilt under which the phone counts as level. */
   levelToleranceDeg: 2,
+  /** Telling a deliberate shake from ordinary movement. */
+  shake: {
+    /** How hard a jolt must be, in metres per second squared beyond gravity. Walking stays well under this. */
+    jolt: 15,
+    /** Jolts closer together than this count as one, in milliseconds. */
+    minGapMs: 250,
+    /** How many jolts make a shake. */
+    count: 3,
+    /** All of them must happen within this window, in milliseconds. */
+    windowMs: 2000,
+  },
   /** Reading a message aloud with the browser's own voice. */
   speech: {
     /** The language voices are chosen for. */

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { DEFAULT_ECHO, ECHO_NAME_PATTERN, isRadioEcho } from '../../shared/channelContract'
+import { useBuzzOnNewMessages } from '../access/settings'
 import { RefreshButton } from '../RefreshButton'
 import { ui } from '../ui'
 import { ChannelPanel } from './ChannelPanel'
@@ -22,6 +23,7 @@ export function ChatPage() {
   const area = ECHO_NAME_PATTERN.test(requested) && !isRadioEcho(requested) ? requested : DEFAULT_ECHO
   const channels = useChannels()
   const chat = useChat(area)
+  useBuzzOnNewMessages(chat.messages)
   const [wire, setWire] = useState(false)
   const [changingNick, setChangingNick] = useState(false)
   const [showChannels, setShowChannels] = useState(false)
