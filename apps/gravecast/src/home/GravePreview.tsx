@@ -4,7 +4,7 @@ import type { ScanSummary } from './graves'
 const RING_RADIUS = 30
 const RING_SEGMENTS_MAX = 40
 
-/** The status ring: one arc per story, like a status you haven't watched yet. */
+/** The ring: one arc per grave. */
 function StoryRing({ count }: { count: number }) {
   const circumference = 2 * Math.PI * RING_RADIUS
   const segments = Math.min(count, RING_SEGMENTS_MAX)
@@ -32,7 +32,7 @@ export interface GravePreviewProps {
 
 /** A small preview of the graveyard. Opening it plays the graves one after another. */
 export const GravePreview = forwardRef<HTMLButtonElement, GravePreviewProps>(({ summary, onOpen }, ref) => {
-  const stories = summary.graves.length + 1
+  const stones = Math.max(1, summary.graves.length)
   return (
     <button
       ref={ref}
@@ -41,7 +41,7 @@ export const GravePreview = forwardRef<HTMLButtonElement, GravePreviewProps>(({ 
       className="group flex w-full cursor-pointer items-center gap-5 rounded-2xl border border-grave-dark-700 bg-grave-dark-900/70 p-5 text-left backdrop-blur-md transition-colors hover:border-grave-mist-500"
     >
       <span className="relative grid place-items-center">
-        <StoryRing count={stories} />
+        <StoryRing count={stones} />
         <span className="absolute font-serif text-2xl text-grave-bone-100">{summary.graves.length}</span>
       </span>
       <span className="min-w-0 flex-1">
