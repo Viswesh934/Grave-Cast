@@ -2,12 +2,12 @@
  * GraveyardScene3D - A moonlit graveyard to set behind a page
  * @module components/horror3d/GraveyardScene3D
  */
-import { useMemo, useRef, type ReactNode } from 'react';
+import { useCallback, useMemo, useRef, type ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { ExtrudeGeometry, Shape, Vector3, type Group, type Mesh, type PointLight } from 'three';
 import { palette } from '../../tokens/colors';
 import { BestiaryCharacter3D } from './BestiaryCharacter3D';
-import { DriftingClouds, HauntEffects, NightSky, WatchingEyes } from './Haunting/Haunting';
+import { DriftingClouds, HauntedGround, HauntEffects, NightSky, PhasedMoon, WatchingEyes } from './Haunting/Haunting';
 import { seeded } from './seeded';
 
 /** Where the camera stands and what it looks at. */
@@ -142,7 +142,17 @@ const HAUNT = {
   eyesBeyond: 3.5,
   /** How far in front of the moon the clouds hang. */
   cloudsBefore: 3,
+  /** The yard's lights are turned down to this share, so the graves and lanterns do more of the lighting. */
+  dim: 0.6,
+  /** Grass, leaves and stones keep this far from each headstone and lantern, and off the path down the middle. */
+  clear: { stone: 0.85, lantern: 0.3, path: 0.7 },
+  /** Places the worn ground's grass, leaves and stones. */
+  groundSeed: 523,
 } as const;
+/** The ground plane: wide and deep enough to reach the fog on every side, centred on the yard. */
+const GROUND = { width: 80, depth: 60, center: [0, YARD.back / 2] as [number, number] } as const;
+/** The moon's size, and its halo's size and strength. */
+const MOON_LOOK = { radius: 1.6, halo: 3.2, haloOpacity: 0.12 } as const;
 const YARD_MIDDLE: [number, number, number] = [0, 0, YARD.back / 2];
 
 // Still exported from here, where it used to live.
@@ -362,6 +372,14 @@ export function GraveyardScene3D({
     wispGroup.current.position.set(4.5 + Math.sin(t * 0.18) * 2.5, 1.8 + Math.sin(t * 0.7) * 0.25, -8 + Math.cos(t * 0.18) * 2);
   });
   const pose = poses[Math.min(Math.max(0, focus), poses.length - 1)];
+  const dim = haunted ? HAUNT.dim : 1;
+  const keepClear = useCallback(
+    (x: number, z: number) =>
+      Math.abs(x) < HAUNT.clear.path ||
+      yard.some((stone) => Math.hypot(stone.position[0] - x, stone.position[2] - z) < HAUNT.clear.stone) ||
+      lanternSpots.some((spot) => Math.hypot(spot[0] - x, spot[2] - z) < HAUNT.clear.lantern),
+    [yard, lanternSpots]
+  );
 
   return (
     <>
@@ -370,25 +388,37 @@ export function GraveyardScene3D({
       <CameraRig pose={pose} getScroll={getScroll} still={still} />
 
       {/* Moonlight: cool, low and from behind, so stones stand out as shapes. */}
-      <ambientLight color={colors.ambient} intensity={0.5} />
-      <hemisphereLight args={[colors.skyLight, colors.sky, 0.35]} />
-      <directionalLight position={[MOON[0] * 0.8, 9, -12]} color={colors.moonlight} intensity={1.3} />
-      <directionalLight position={[-4, 5, 10]} color={colors.moonlight} intensity={0.35} />
+      <ambientLight color={colors.ambient} intensity={0.5 * dim} />
+      <hemisphereLight args={[colors.skyLight, colors.sky, 0.35 * dim]} />
+      <directionalLight position={[MOON[0] * 0.8, 9, -12]} color={colors.moonlight} intensity={1.3 * dim} />
+      <directionalLight position={[-4, 5, 10]} color={colors.moonlight} intensity={0.35 * dim} />
 
-      {/* The moon. Fog is off so it stays visible far away. */}
-      <mesh position={[MOON[0], MOON[1], MOON[2]]}>
-        <sphereGeometry args={[1.6, 32, 16]} />
-        <meshBasicMaterial color={colors.moon} fog={false} />
-      </mesh>
-      <mesh position={[MOON[0], MOON[1], MOON[2] - 0.5]}>
-        <circleGeometry args={[3.2, 40]} />
-        <meshBasicMaterial color={colors.halo} transparent opacity={0.12} fog={false} depthWrite={false} />
-      </mesh>
+      {/* The moon. Fog is off so it stays visible far away. Haunted, it shows tonight's real phase. */}
+      {haunted ? (
+        <group position={[MOON[0], MOON[1], MOON[2]]}>
+          <PhasedMoon radius={MOON_LOOK.radius} halo={MOON_LOOK.halo} haloColor={colors.halo} haloOpacity={MOON_LOOK.haloOpacity} />
+        </group>
+      ) : (
+        <>
+          <mesh position={[MOON[0], MOON[1], MOON[2]]}>
+            <sphereGeometry args={[MOON_LOOK.radius, 32, 16]} />
+            <meshBasicMaterial color={colors.moon} fog={false} />
+          </mesh>
+          <mesh position={[MOON[0], MOON[1], MOON[2] - 0.5]}>
+            <circleGeometry args={[MOON_LOOK.halo, 40]} />
+            <meshBasicMaterial color={colors.halo} transparent opacity={MOON_LOOK.haloOpacity} fog={false} depthWrite={false} />
+          </mesh>
+        </>
+      )}
 
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, YARD.back / 2]}>
-        <planeGeometry args={[80, 60]} />
-        <meshStandardMaterial color={colors.ground} roughness={1} />
-      </mesh>
+      {haunted ? (
+        <HauntedGround bounds={HAUNT.bounds} plane={GROUND} keepClear={keepClear} seed={HAUNT.groundSeed} />
+      ) : (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[GROUND.center[0], 0, GROUND.center[1]]}>
+          <planeGeometry args={[GROUND.width, GROUND.depth]} />
+          <meshStandardMaterial color={colors.ground} roughness={1} />
+        </mesh>
+      )}
 
       <TreeLine color={colors.trees} />
       {yard.map((stone, i) => (

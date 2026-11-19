@@ -192,14 +192,34 @@ export const palette = {
    * finding is. Always shown with weathering and a label, never on its own.
    */
   haunt: {
-    /** Serious: fresh blood. */
-    serious: '#ff2a3c',
-    /** Risky: witch-fire. */
-    risky: '#a66bff',
-    /** Unusual: a candle's curse-gold. */
-    unusual: '#f0b33a',
-    /** A note: a cold, pale ghost-light. */
-    note: '#8fe6ff',
+    /** Serious: dried blood. */
+    serious: '#c46a5f',
+    /** Risky: faded plum. */
+    risky: '#8f7aa6',
+    /** Unusual: tarnished brass. */
+    unusual: '#b39556',
+    /** A note: grey-green lichen. */
+    note: '#82a197',
+  },
+  /** Soil - a graveyard's worn ground: dark earth, dead grass, fallen leaves and loose stones. */
+  soil: {
+    /** Damp earth, the ground's base. */
+    dark: '#15130f',
+    /** Turned earth, browner. */
+    loam: '#2b2218',
+    /** Old moss in the shade. */
+    moss: '#1f2a1a',
+    /** Dead grass, straw-grey. */
+    deadGrass: '#5a5638',
+    /** Grass that is still barely alive. */
+    grass: '#2f3b22',
+    /** Fallen leaves. */
+    leafRust: '#5e2e1a',
+    leafOchre: '#6e5326',
+    leafBrown: '#3b2a1c',
+    /** Loose stones and grit. */
+    pebble: '#4a4842',
+    grit: '#6b675e',
   },
   /** Bone - ivory through ash */
   bone: {

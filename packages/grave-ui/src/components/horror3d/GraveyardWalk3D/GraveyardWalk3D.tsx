@@ -13,7 +13,7 @@ import { layoutWalkYard, routeTo, steer, turnToward, walkSeed, yawOf, type WalkG
 import { GraveAura, HauntEffects } from '../Haunting/Haunting';
 import { graveGlow } from '../Haunting/tokens';
 import { WalkScenery } from './Scenery';
-import { walkCamera, walkColors, walkCracks, walkFog, walkMotion, walkRender, walkStone, walkWeathering, walkWitch } from './tokens';
+import { walkCamera, walkColors, walkCracks, walkMaterial, walkFog, walkMotion, walkRender, walkRubble, walkStone, walkWeathering, walkWitch } from './tokens';
 import { useWitchTexture, WITCH_ASPECT } from './witchTexture';
 
 /** One grave in the walk. Each stands for one finding. */
@@ -59,6 +59,13 @@ export interface GraveyardWalk3DProps {
    * @default true
    */
   haunted?: boolean;
+  /**
+   * Change this number to send her back outside the gate, facing in, as at
+   * the start. Clicking the gate calls `onGate`; pass it on here to go back.
+   */
+  returnKey?: number;
+  /** Called when the gate is clicked: the way back to the start. */
+  onGate?: () => void;
 }
 
 /** What the flight keeps between frames. Kept out of React, so a frame never re-renders anything. */
@@ -80,6 +87,9 @@ interface Flight {
   follow: boolean;
   /** 1 when she faces right on screen, -1 when left. */
   facing: number;
+  /** When her latest giggle began, in scene seconds, and whether one is waiting to begin on the next frame. */
+  giggleFrom: number | null;
+  giggleAsked: boolean;
   placed: boolean;
 }
 
@@ -95,6 +105,8 @@ const startFlight = (layout: WalkYardLayout): Flight => ({
   pitch: 0,
   follow: false,
   facing: 1,
+  giggleFrom: null,
+  giggleAsked: false,
   placed: false,
 });
 
@@ -107,8 +119,36 @@ const pathLength = (from: WalkPoint, path: readonly WalkPoint[]): number =>
 const isTyping = (target: EventTarget | null): boolean =>
   target instanceof HTMLElement && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName));
 
+const HALF = 0.5;
 /** The middle of a plane, as a share of its size: drawing positions are measured from here. */
-const CENTRE = 0.5;
+const CENTRE = HALF;
+
+/** One straight piece of a crack, from one point to the next, in the stone's own space. */
+interface CrackPiece {
+  x: number;
+  y: number;
+  length: number;
+  turn: number;
+}
+
+/** The pieces of the first `count` cracks, fitted to a stone's face. */
+const crackPieces = (kind: WalkGraveSpot['kind'], count: number): CrackPiece[] => {
+  const face = kind === 'slab' ? walkStone.face.slab : walkStone.face.arch;
+  return walkCracks.slice(0, count).flatMap((line) =>
+    line.slice(1).map((point, i) => {
+      const [ax, ay] = line[i];
+      const from = { x: ax * face.halfWidth, y: ay * face.height };
+      const to = { x: point[0] * face.halfWidth, y: point[1] * face.height };
+      return {
+        x: (from.x + to.x) * HALF,
+        y: (from.y + to.y) * HALF,
+        length: Math.hypot(to.x - from.x, to.y - from.y),
+        // A box's length runs up its Y; turn it to lie along the piece.
+        turn: Math.atan2(to.y - from.y, to.x - from.x) - Math.PI * HALF,
+      };
+    })
+  );
+};
 
 interface FindingGraveProps {
   grave: GraveyardWalk3DGrave;
@@ -132,6 +172,8 @@ function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, o
   const lean = look.lean * (index % 2 === 0 ? 1 : -1);
   const stone: YardStone = { kind: spot.kind, position: [0, 0, 0], rotation: [0, 0, 0], scale: 1 };
   const ring = walkStone.ring;
+  const cracks = useMemo(() => crackPieces(spot.kind, look.cracks), [spot.kind, look.cracks]);
+  const crackWidth = grave.weathering === 'crumbling' ? walkStone.crack.crumblingWidth : walkStone.crack.width;
   return (
     <group position={[spot.x, 0, spot.z]} rotation={[0, spot.turn, 0]}>
       <group
@@ -182,13 +224,21 @@ function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, o
           </Text>
         )}
         </Suspense>
-        {walkCracks.slice(0, look.cracks).map((crack, i) => (
-          <mesh key={i} position={[crack.x, crack.y, walkStone.faceZ]} rotation={[0, 0, crack.turn]}>
-            <boxGeometry args={[walkStone.crack.width, walkStone.crack.length, walkStone.crack.depth]} />
-            <meshBasicMaterial color={walkColors.crack} />
+        {/* Haunted, the cracks show the grave's colour, dimly, as if something smoulders inside. */}
+        {cracks.map((crack, i) => (
+          <mesh key={i} position={[crack.x, crack.y, walkStone.faceZ]} rotation={[0, 0, crack.turn]} raycast={() => null}>
+            <boxGeometry args={[crackWidth, crack.length + crackWidth, walkStone.crack.depth]} />
+            <meshBasicMaterial color={haunted ? marked : walkColors.crack} />
           </mesh>
         ))}
       </group>
+      {grave.weathering === 'crumbling' &&
+        walkRubble.map(([x, z, size], i) => (
+          <mesh key={i} position={[x, size * HALF, z]} rotation={[size, x, z]} raycast={() => null}>
+            <dodecahedronGeometry args={[size]} />
+            <meshStandardMaterial color={look.tint} roughness={walkMaterial.stone.roughness} flatShading />
+          </mesh>
+        ))}
       {haunted && <GraveAura weathering={grave.weathering} lit={hovered || current} still={still} />}
       {(hovered || current) && (
         <mesh position={[0, ring.lift, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -206,9 +256,11 @@ function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, o
  * One grave stands for each item in `graves`, scattered through the yard with
  * room to walk between them, and worn to its weathering. The witch (the
  * `WitchOnBroom` drawing) starts outside the gate, facing in, with the camera
- * behind her shoulder, as in a third-person game.
+ * behind her shoulder, as in a third-person game. She giggles (a quick shake)
+ * each time she reaches a grave, unless `still`.
  *
  * - **Look around:** hold the left mouse button and drag. The arrow keys turn too.
+ * - **Start again:** click the gate. She is back outside it, facing in.
  * - **Go to a grave:** click it. She flies through the gate and round the
  *   other stones, and the camera swings in behind her. Once she is beside it,
  *   `onArrive` is called and `renderArrived` is shown above the grave.
@@ -237,6 +289,8 @@ export function GraveyardWalk3D({
   still = false,
   turnKeys = true,
   haunted = true,
+  returnKey = 0,
+  onGate,
 }: GraveyardWalk3DProps) {
   const colors: GraveyardSceneColors = GRAVEYARD_SCENE_THEMES[theme];
   const ids = graves.map((grave) => grave.id).join('\n');
@@ -273,17 +327,19 @@ export function GraveyardWalk3D({
       if (grave) f.heading = yawOf({ x: grave.x - f.pos.x, z: grave.z - f.pos.z });
       f.follow = true;
       setArrived(index);
+      // She giggles at the grave, unless motion is reduced.
+      if (!still) f.giggleAsked = true;
       callbacks.current.onArrive?.(index);
     },
-    [layout]
+    [layout, still]
   );
 
-  // A new set of graves is a new yard: back outside the gate.
+  // A new set of graves is a new yard, and a new `returnKey` asks to start again: back outside the gate.
   useEffect(() => {
     flight.current = startFlight(layout);
     setArrived(null);
     setOwnTarget(null);
-  }, [layout]);
+  }, [layout, returnKey]);
 
   // Set off for the grave asked for.
   useEffect(() => {
@@ -301,6 +357,16 @@ export function GraveyardWalk3D({
       arrive(goal);
     }
   }, [goal, layout, still, arrive]);
+
+  // Uncontrolled, a click on the gate goes straight back; controlled, the owner decides.
+  const gate = useCallback(() => {
+    if (onGate) onGate();
+    else {
+      flight.current = startFlight(layout);
+      setArrived(null);
+      setOwnTarget(null);
+    }
+  }, [onGate, layout]);
 
   const pick = useCallback(
     (index: number) => {
@@ -428,11 +494,24 @@ export function GraveyardWalk3D({
     );
     camera.lookAt(f.pos.x + forward.x * c.lookAhead + right.x * c.shoulder, c.lookHeight, f.pos.z + forward.z * c.lookAhead + right.z * c.shoulder);
 
+    // Her giggle: she shakes and bounces for a moment, fading out.
+    const t = clock.elapsedTime;
+    if (f.giggleAsked) {
+      f.giggleFrom = t;
+      f.giggleAsked = false;
+    }
+    const g = walkWitch.giggle;
+    const since = f.giggleFrom === null ? Infinity : t - f.giggleFrom;
+    const giggle = still || since >= g.seconds ? 0 : 1 - since / g.seconds;
+
     // The witch: where she is, turned to the camera, facing the way she goes.
-    const bob = still ? 0 : Math.sin(clock.elapsedTime * Math.PI * 2 * walkWitch.bobHz) * walkWitch.bob;
-    witch.current?.position.set(f.pos.x, bob, f.pos.z);
+    const bob = still ? 0 : Math.sin(t * Math.PI * 2 * walkWitch.bobHz) * walkWitch.bob;
+    witch.current?.position.set(f.pos.x, bob + Math.abs(Math.sin(t * g.bounceSpeed)) * g.bounce * giggle, f.pos.z);
     const toCamera = Math.atan2(camera.position.x - f.pos.x, camera.position.z - f.pos.z);
-    if (billboard.current) billboard.current.rotation.y = toCamera;
+    if (billboard.current) {
+      billboard.current.rotation.y = toCamera;
+      billboard.current.rotation.z = Math.sin(t * g.shakeSpeed) * g.shake * giggle;
+    }
     // How far her heading points along the drawing's right edge, as the camera sees it.
     const sideways = -Math.sin(f.heading) * Math.cos(toCamera) + Math.cos(f.heading) * Math.sin(toCamera);
     if (sideways > walkWitch.flipThreshold) f.facing = 1;
@@ -447,7 +526,7 @@ export function GraveyardWalk3D({
   return (
     <>
       <fog attach="fog" args={[colors.sky, haunted ? walkFog.haunted.near : walkFog.near, haunted ? walkFog.haunted.far : walkFog.far]} />
-      <WalkScenery layout={layout} colors={colors} seed={seed} still={still} haunted={haunted} />
+      <WalkScenery layout={layout} colors={colors} seed={seed} still={still} haunted={haunted} onGate={gate} />
       {graves.map((grave, index) =>
         layout.graves[index] ? (
           <FindingGrave

@@ -6,6 +6,12 @@
 /* ==========================================================================
    Design Tokens & CSS Variables
    ========================================================================== */
+
+/* HorrorCursor: while it is on, no element shows the native cursor beside it. */
+.grave-native-cursor-hidden,
+.grave-native-cursor-hidden * {
+  cursor: none !important;
+}
 :root {
   /* Crypt Palette */
   --grave-crypt-stone: #16161a;
@@ -28,10 +34,10 @@
 
   /* Haunt Palette: each grave's glow by how serious its finding is (palette.haunt).
      Always shown with weathering and a label, never on its own. */
-  --grave-haunt-serious: #ff2a3c;
-  --grave-haunt-risky: #a66bff;
-  --grave-haunt-unusual: #f0b33a;
-  --grave-haunt-note: #8fe6ff;
+  --grave-haunt-serious: #c46a5f;
+  --grave-haunt-risky: #8f7aa6;
+  --grave-haunt-unusual: #b39556;
+  --grave-haunt-note: #82a197;
 
   /* Bone Palette */
   --grave-bone-100: #f5f2eb;

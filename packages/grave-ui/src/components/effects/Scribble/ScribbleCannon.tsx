@@ -71,13 +71,20 @@ export interface ScribbleCannonProps {
   dockInset?: { x?: number; y?: number };
   /** Remember "turn off" in localStorage under this key, so it stays off on the next visit. */
   storageKey?: string;
+  /**
+   * Show the small × that turns the cannon off. Set it to `false` to fire it
+   * on every visit and leave it there for everyone to find; `storageKey` is
+   * then ignored. @default true
+   */
+  dismissible?: boolean;
 }
 
 /**
  * A launcher for {@link Scribble} with an entrance. Once, after the page
  * opens, a pen in a ball is fired from the bottom-left corner and arcs into
  * the top-right corner, where it stays with a soft red glow. Click it to draw.
- * The small × beside it turns it off, and that is remembered.
+ * The small × beside it turns it off, and that is remembered, unless
+ * `dismissible` is `false`: then it is fired on every visit and always stays.
  *
  * For people who ask for less motion it skips the shot and is simply there.
  *
@@ -86,10 +93,10 @@ export interface ScribbleCannonProps {
  * <ScribbleCannon dockInset={{ x: 24, y: 8 }} storageKey="my-page-cannon" />
  * ```
  */
-export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCatch, paused = false, dockInset, storageKey }: ScribbleCannonProps) {
+export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCatch, paused = false, dockInset, storageKey, dismissible = true }: ScribbleCannonProps) {
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<CannonMode>(() => (readOff(storageKey) ? 'off' : 'waiting'));
+  const [mode, setMode] = useState<CannonMode>(() => (dismissible && readOff(storageKey) ? 'off' : 'waiting'));
   const { playSound } = useSpookyAudio();
   const holder = useRef<HTMLDivElement>(null);
   const ball = useRef<HTMLSpanElement>(null);
@@ -196,7 +203,7 @@ export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCa
             </svg>
           </span>
         </button>
-        {landed && (
+        {landed && dismissible && (
           <button
             type="button"
             onClick={turnOff}

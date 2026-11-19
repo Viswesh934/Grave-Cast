@@ -8,6 +8,10 @@ export interface GraveyardWalkSceneProps {
   onArrive: (index: number) => void
   renderArrived: (index: number) => ReactNode
   still: boolean
+  /** Changes to send the witch back outside the gate. */
+  returnKey: number
+  /** The gate was clicked. */
+  onGate: () => void
 }
 
 /** The 3D yard, in its own file so three.js loads only when the graveyard is opened. */

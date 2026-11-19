@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { CensoredCoordinates } from '../CensoredCoordinates'
+import { useShowCoordinates } from '../hiddenPosition'
 import { morseUnits, morseVibration, playMorse, SOS_SEGMENTS, signalTokens, watchShake, type SignalPlayback } from 'groove-ui/signal'
 import { helpMessageText, smsLink, type Fix } from '../tools/tools'
 import { hush, say } from './aid'
@@ -52,6 +54,7 @@ export function DistressSignal() {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
   const [position, setPosition] = useState<Position>(null)
   const [startedAt, setStartedAt] = useState<Date | null>(null)
+  const [showCoordinates, setShowCoordinates] = useShowCoordinates()
   const hold = useRef<{ timer: number; at: number } | null>(null)
   const textLinkRef = useRef<HTMLAnchorElement>(null)
   const active = phase.kind !== 'idle'
@@ -233,8 +236,22 @@ export function DistressSignal() {
             HELP
           </p>
           <p className="m-0 max-w-xl text-2xl leading-snug font-bold sm:text-3xl">{helpWords()}</p>
-          <p className="m-0 font-mono text-base">
-            {fix ? `${fix.lat.toFixed(5)}, ${fix.lon.toFixed(5)}` : position === 'finding' ? 'Finding your position\u2026' : 'Position not found'}
+          <p className="m-0 text-base">
+            {fix ? (
+              // Censored until tapped; the text for help includes the real position.
+              <CensoredCoordinates
+                value={`${fix.lat.toFixed(5)}, ${fix.lon.toFixed(5)}`}
+                shown={showCoordinates}
+                onToggle={() => setShowCoordinates((shown) => !shown)}
+                onPointerDown={keepToButton}
+                onPointerUp={keepToButton}
+                className="min-h-11 px-2 text-lg !text-current"
+              />
+            ) : position === 'finding' ? (
+              'Finding your position\u2026'
+            ) : (
+              'Position not found'
+            )}
           </p>
           <p id="distress-how" className="m-0 max-w-md text-lg">
             Tap anywhere to text {contact ? 'your help contact' : 'for help'}; you still press Send. Hold the screen to stop.

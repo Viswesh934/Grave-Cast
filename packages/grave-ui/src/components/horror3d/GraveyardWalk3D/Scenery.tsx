@@ -4,13 +4,13 @@
  * nothing here can be mistaken for a finding.
  * @module components/horror3d/GraveyardWalk3D/Scenery
  */
-import { useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useCallback, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import { Object3D, type InstancedMesh, type Mesh } from 'three';
 import { Lantern, seeded, type GraveyardSceneColors } from '../GraveyardScene3D';
-import { DriftingClouds, NightSky, WatchingEyes } from '../Haunting/Haunting';
+import { DriftingClouds, HauntedGround, NightSky, PhasedMoon, WatchingEyes } from '../Haunting/Haunting';
 import type { WalkYardLayout } from './layout';
-import { walkColors, walkHaunt, walkMaterial, walkScenery, walkYard } from './tokens';
+import { walkCamera, walkColors, walkHaunt, walkMaterial, walkScenery, walkYard } from './tokens';
 
 type Box = WalkYardLayout['fence'];
 
@@ -57,7 +57,7 @@ function IronMaterial({ colors }: { colors: GraveyardSceneColors }) {
   return <meshStandardMaterial color={colors.post} roughness={walkMaterial.iron.roughness} metalness={walkMaterial.iron.metalness} />;
 }
 
-function Fence({ box, colors }: { box: Box; colors: GraveyardSceneColors }) {
+function Fence({ box, colors, onGate }: { box: Box; colors: GraveyardSceneColors; onGate?: () => void }) {
   const { fence: f, gate: g } = walkScenery;
   const gateEdge = walkYard.gateHalfWidth;
   const posts = useMemo(() => {
@@ -103,7 +103,15 @@ function Fence({ box, colors }: { box: Box; colors: GraveyardSceneColors }) {
           <IronMaterial colors={colors} />
         </mesh>
       ))}
-      {/* The gate: two stone pillars and an iron arch between them. */}
+      {/* The gate: two stone pillars and an iron arch between them. Clicking it goes back to the start. */}
+      <group
+        onClick={(event: ThreeEvent<MouseEvent>) => {
+          // A press that turned the view is not a click on the gate.
+          if (!onGate || event.delta > walkCamera.clickSlopPx) return;
+          event.stopPropagation();
+          onGate();
+        }}
+      >
       {[-1, 1].map((side) => (
         <mesh key={side} position={[side * (gateEdge + g.pillarSize / 2), g.pillarHeight / 2, box.maxZ]}>
           <boxGeometry args={[g.pillarSize, g.pillarHeight, g.pillarSize]} />
@@ -112,6 +120,74 @@ function Fence({ box, colors }: { box: Box; colors: GraveyardSceneColors }) {
       ))}
       <mesh position={[0, g.archLift, box.maxZ]}>
         <torusGeometry args={[gateEdge, g.archTube, walkMaterial.segments.arch[0], walkMaterial.segments.arch[1], Math.PI]} />
+        <IronMaterial colors={colors} />
+      </mesh>
+      <GateEmblem archTop={g.archLift + gateEdge} ringY={g.archLift + gateEdge * walkScenery.emblem.at} z={box.maxZ} colors={colors} />
+      </group>
+    </group>
+  );
+}
+
+/** The two sides of the emblem: left (-1) and right (1). */
+const EMBLEM_SIDES = [-1, 1] as const;
+
+/**
+ * The wrought-iron sign hung in the arch over the gate: an hourglass in a
+ * ring, with a wing fanned out each side (the winged hourglass carved on old
+ * gravestones: time flies), a bar up to the arch, and a spike on top.
+ */
+function GateEmblem({ archTop, ringY, z, colors }: { archTop: number; ringY: number; z: number; colors: GraveyardSceneColors }) {
+  const e = walkScenery.emblem;
+  const h = e.hourglass;
+  const sides = walkMaterial.segments.spike * 2;
+  const ringTop = ringY + e.ring.radius;
+  return (
+    <group>
+      <group position={[0, ringY, z]}>
+        <mesh>
+          <torusGeometry args={[e.ring.radius, e.ring.tube, walkMaterial.segments.arch[0], walkMaterial.segments.arch[1]]} />
+          <IronMaterial colors={colors} />
+        </mesh>
+        {/* The hourglass: two bulbs meeting at the neck, a plate at each end, and the posts between the plates. */}
+        <mesh position={[0, h.half / 2, 0]} rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[h.bulb, h.half, sides]} />
+          <IronMaterial colors={colors} />
+        </mesh>
+        <mesh position={[0, -h.half / 2, 0]}>
+          <coneGeometry args={[h.bulb, h.half, sides]} />
+          <IronMaterial colors={colors} />
+        </mesh>
+        {EMBLEM_SIDES.map((side) => (
+          <mesh key={`plate${side}`} position={[0, side * h.half, 0]}>
+            <cylinderGeometry args={[h.plate, h.plate, h.plateThickness, sides]} />
+            <IronMaterial colors={colors} />
+          </mesh>
+        ))}
+        {EMBLEM_SIDES.map((side) => (
+          <mesh key={`post${side}`} position={[side * h.plate, 0, 0]}>
+            <cylinderGeometry args={[h.post, h.post, h.half * 2, walkMaterial.segments.spike]} />
+            <IronMaterial colors={colors} />
+          </mesh>
+        ))}
+        {/* The wings: feathers fanned up and out from the ring. */}
+        {EMBLEM_SIDES.map((side) =>
+          e.feathers.map((feather, i) => (
+            <group key={`feather${side}${i}`} position={[side * e.ring.radius * e.featherFrom, 0, 0]} rotation={[0, 0, side * feather.angle]}>
+              <mesh position={[(side * feather.length) / 2, 0, 0]}>
+                <boxGeometry args={[feather.length, e.featherWidth, e.featherDepth]} />
+                <IronMaterial colors={colors} />
+              </mesh>
+            </group>
+          ))
+        )}
+      </group>
+      {/* The bar from the ring up to the arch, and the spike on top. */}
+      <mesh position={[0, (ringTop + archTop) / 2, z]}>
+        <boxGeometry args={[e.bar, archTop - ringTop, e.bar]} />
+        <IronMaterial colors={colors} />
+      </mesh>
+      <mesh position={[0, archTop + e.finial.height / 2, z]}>
+        <coneGeometry args={[e.finial.radius, e.finial.height, walkMaterial.segments.spike]} />
         <IronMaterial colors={colors} />
       </mesh>
     </group>
@@ -218,16 +294,33 @@ export interface WalkSceneryProps {
   still: boolean;
   /** Add the black sky and stars, clouds over the moon, and eyes watching from the trees. */
   haunted?: boolean;
+  /** Called when the gate is clicked. */
+  onGate?: () => void;
 }
 
 /** Everything in the yard that isn't a grave or the witch. */
-export function WalkScenery({ layout, colors, seed, still, haunted = false }: WalkSceneryProps) {
+export function WalkScenery({ layout, colors, seed, still, haunted = false, onGate }: WalkSceneryProps) {
   const { fence: box } = layout;
   const s = walkScenery;
   const width = box.maxX - box.minX;
   const depth = box.maxZ - box.minZ;
   const pathLength = layout.start.z - box.maxZ + s.trees.offset * 2;
   const moonAt: [number, number, number] = [width * s.moon.right, s.moon.height, box.minZ - s.moon.behind];
+  const light = haunted ? s.hauntedLight : s.light;
+  // The worn ground leaves the graves, lanterns and path clear, so nothing hides a stone or the way in.
+  const keepClear = useCallback(
+    (x: number, z: number) => {
+      const c = walkHaunt.groundClear;
+      if (Math.abs(x) < s.path.width / 2 + c.pathMargin && z > box.maxZ) return true;
+      if (layout.graves.some((grave) => Math.hypot(grave.x - x, grave.z - z) < c.grave)) return true;
+      return layout.lanterns.some((spot) => Math.hypot(spot.x - x, spot.z - z) < c.lantern);
+    },
+    [layout, box, s.path.width]
+  );
+  const groundPlane = useMemo(
+    () => ({ width: width + s.groundMargin * 2, depth: depth + s.groundMargin * 2, center: [(box.minX + box.maxX) / 2, (box.minZ + box.maxZ) / 2] as [number, number] }),
+    [width, depth, box, s.groundMargin]
+  );
   const bare = useMemo(() => {
     const random = seeded(seed ^ walkMaterial.bareTreeSeed);
     return Array.from({ length: walkYard.bareTrees }, (_, i) => ({
@@ -239,31 +332,41 @@ export function WalkScenery({ layout, colors, seed, still, haunted = false }: Wa
   return (
     <>
       <color attach="background" args={[colors.sky]} />
-      <ambientLight color={colors.ambient} intensity={s.light.ambient} />
-      <hemisphereLight args={[colors.skyLight, colors.sky, s.light.sky]} />
-      <directionalLight position={moonAt} color={colors.moonlight} intensity={s.light.moon} />
-      <directionalLight position={[-width / 4, s.moon.height / 2, layout.start.z + depth]} color={colors.moonlight} intensity={s.light.fill} />
-      {/* The moon, high over the back of the yard. Fog is off so it stays visible. */}
+      <ambientLight color={colors.ambient} intensity={light.ambient} />
+      <hemisphereLight args={[colors.skyLight, colors.sky, light.sky]} />
+      <directionalLight position={moonAt} color={colors.moonlight} intensity={light.moon} />
+      <directionalLight position={[-width / 4, s.moon.height / 2, layout.start.z + depth]} color={colors.moonlight} intensity={light.fill} />
+      {/* The moon, high over the back of the yard. Fog is off so it stays visible. Haunted, it shows tonight's real phase. */}
       <group position={moonAt}>
-        <mesh>
-          <sphereGeometry args={[s.moon.radius, ...walkMaterial.segments.moon]} />
-          <meshBasicMaterial color={colors.moon} fog={false} />
-        </mesh>
-        <mesh position={[0, 0, -s.moon.radius]}>
-          <circleGeometry args={[s.moon.halo, walkMaterial.segments.halo]} />
-          <meshBasicMaterial color={colors.halo} transparent opacity={s.moon.haloOpacity} fog={false} depthWrite={false} />
-        </mesh>
+        {haunted ? (
+          <PhasedMoon radius={s.moon.radius} halo={s.moon.halo} haloColor={colors.halo} haloOpacity={s.moon.haloOpacity} />
+        ) : (
+          <>
+            <mesh>
+              <sphereGeometry args={[s.moon.radius, ...walkMaterial.segments.moon]} />
+              <meshBasicMaterial color={colors.moon} fog={false} />
+            </mesh>
+            <mesh position={[0, 0, -s.moon.radius]}>
+              <circleGeometry args={[s.moon.halo, walkMaterial.segments.halo]} />
+              <meshBasicMaterial color={colors.halo} transparent opacity={s.moon.haloOpacity} fog={false} depthWrite={false} />
+            </mesh>
+          </>
+        )}
       </group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[(box.minX + box.maxX) / 2, 0, (box.minZ + box.maxZ) / 2]}>
-        <planeGeometry args={[width + s.groundMargin * 2, depth + s.groundMargin * 2]} />
-        <meshStandardMaterial color={colors.ground} roughness={walkMaterial.ground.roughness} />
-      </mesh>
+      {haunted ? (
+        <HauntedGround bounds={box} plane={groundPlane} keepClear={keepClear} seed={seed} />
+      ) : (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[groundPlane.center[0], 0, groundPlane.center[1]]}>
+          <planeGeometry args={[groundPlane.width, groundPlane.depth]} />
+          <meshStandardMaterial color={colors.ground} roughness={walkMaterial.ground.roughness} />
+        </mesh>
+      )}
       {/* The worn path from where the witch waits, in through the gate. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, s.path.lift, box.maxZ + pathLength / 2 - s.trees.offset]}>
         <planeGeometry args={[s.path.width, pathLength]} />
         <meshStandardMaterial color={walkColors.path} roughness={walkMaterial.ground.roughness} />
       </mesh>
-      <Fence box={box} colors={colors} />
+      <Fence box={box} colors={colors} onGate={onGate} />
       <Trees box={box} colors={colors} seed={seed} />
       {bare.map((tree, i) => (
         <BareTree key={i} x={tree.x} z={tree.z} turn={tree.turn} colors={colors} />

@@ -3,7 +3,7 @@
  * @module components/effects/HorrorCursor
  */
 
-export { HorrorCursor, type HorrorCursorProps } from './HorrorCursor';
+export { HIDE_NATIVE_CURSOR_CLASS, HorrorCursor, type HorrorCursorProps } from './HorrorCursor';
 export {
   cursorVariantTokens,
   type HorrorCursorVariant,

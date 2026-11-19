@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { CensoredText } from '../CensoredCoordinates'
+import { useShowCoordinates } from '../hiddenPosition'
 import { ui } from '../ui'
 import { deleteNote, loadNotes, saveNote, type SavedNote } from './notes'
 import { helpMessageText, smsLink, type Fix } from './tools'
@@ -22,6 +24,8 @@ export function HelpMessageTool() {
   const [writtenAt, setWrittenAt] = useState(() => new Date())
   const [notes, setNotes] = useState<SavedNote[]>(loadNotes)
   const [copied, setCopied] = useState(false)
+  const [showCoordinates, setShowCoordinates] = useShowCoordinates()
+  const toggleCoordinates = () => setShowCoordinates((shown) => !shown)
 
   const text = helpMessageText(words, fix, writtenAt)
 
@@ -75,7 +79,10 @@ export function HelpMessageTool() {
       </p>
 
       <h2 className={`${ui.h2} mt-6`}>The text</h2>
-      <p className={`${ui.card} mt-2 mb-0 text-base break-words text-grave-bone-100`}>{text}</p>
+      <p className={`${ui.card} mt-2 mb-0 text-base break-words text-grave-bone-100`}>
+        <CensoredText text={text} shown={showCoordinates} onToggle={toggleCoordinates} />
+      </p>
+      {fix && <p className={`${ui.muted} mt-2 mb-0`}>Your coordinates are censored on screen; tap them to see. The text you send or copy includes them.</p>}
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <a href={smsLink(text)} className={ui.big}>
@@ -102,7 +109,9 @@ export function HelpMessageTool() {
                 <p className="m-0 text-sm text-grave-mist-200">
                   Saved {new Date(note.at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>
-                <p className="mt-1 mb-0 break-words text-grave-bone-100">{note.text}</p>
+                <p className="mt-1 mb-0 break-words text-grave-bone-100">
+                  <CensoredText text={note.text} shown={showCoordinates} onToggle={toggleCoordinates} />
+                </p>
                 <div className="mt-3 flex flex-wrap gap-3">
                   <a href={smsLink(note.text)} className={ui.secondary}>
                     Send this one

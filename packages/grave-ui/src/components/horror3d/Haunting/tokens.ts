@@ -10,10 +10,10 @@ import type { TombstoneWeathering } from '../../crypt/TombstoneCard/TombstoneCar
 
 /** The colour a grave glows in, by its weathering: the more worn, the more serious the finding. */
 export const graveGlow: Record<TombstoneWeathering, { color: string; strength: number }> = {
-  crumbling: { color: palette.haunt.serious, strength: 1 },
-  cracked: { color: palette.haunt.risky, strength: 0.85 },
-  aged: { color: palette.haunt.unusual, strength: 0.7 },
-  pristine: { color: palette.haunt.note, strength: 0.55 },
+  crumbling: { color: palette.haunt.serious, strength: 0.8 },
+  cracked: { color: palette.haunt.risky, strength: 0.68 },
+  aged: { color: palette.haunt.unusual, strength: 0.56 },
+  pristine: { color: palette.haunt.note, strength: 0.45 },
 };
 
 /** The look laid over the whole picture. */
@@ -25,7 +25,7 @@ export const hauntEffects = {
     intensity: 1.15,
     radius: 0.7,
   },
-  vignette: { offset: 0.22, darkness: 0.82 },
+  vignette: { offset: 0.18, darkness: 0.92 },
   /** Film grain. Off when motion is reduced, because it moves every frame. */
   grain: 0.12,
 } as const;
@@ -62,6 +62,35 @@ export const hauntSky = {
   },
 } as const;
 
+/**
+ * The moon in its real phase: a cratered face drawn on the device, lit on the
+ * side the sun is, with the dark part still faintly there (earthshine).
+ */
+export const hauntMoon = {
+  /** Size of the face's texture, in pixels. */
+  textureSize: 256,
+  /** The face's radius as a share of half the texture, leaving room for a soft edge. */
+  faceShare: 0.94,
+  face: palette.bone[200],
+  /** The darker seas and craters on the face. */
+  seas: palette.bone.decayed,
+  craters: palette.bone[300],
+  /** The face during a blood moon. */
+  blood: palette.sanguine.crimson,
+  bloodSeas: palette.sanguine.coagulated,
+  /** Seas: count, smallest and extra radius, and how dark, as shares of the face. */
+  sea: { count: 7, minRadius: 0.1, radiusRange: 0.18, opacity: 0.55, spread: 0.55 },
+  crater: { count: 22, minRadius: 0.02, radiusRange: 0.05, opacity: 0.5, spread: 0.8, rim: 0.35 },
+  /** How much of the unlit part still shows. */
+  earthshine: 0.13,
+  /** How bright the lit part burns: above 1, so the glow picks it up. */
+  brightness: 1.6,
+  /** The halo's strength follows how much is lit, but never drops below this share. */
+  haloFloor: 0.25,
+  /** Places the craters, so the moon always has the same face. */
+  seed: 1969,
+} as const;
+
 /** Low black clouds dragging slowly across the moon. */
 export const hauntClouds = {
   count: 5,
@@ -95,7 +124,7 @@ export const hauntEyes = {
   segments: [8, 6] as const,
   /** How bright they burn: above 1, so the glow picks them up. */
   brightness: 4,
-  colors: [palette.haunt.serious, palette.witch.gold, palette.haunt.serious] as const,
+  colors: [palette.sanguine.crimson, palette.witch.gold, palette.sanguine.crimson] as const,
   /** Seconds between blinks, how long a blink lasts, and how shut the eyes get. */
   blinkEvery: 4.5,
   blinkLength: 0.18,
@@ -105,9 +134,9 @@ export const hauntEyes = {
 /** The glow round a grave: a soft light behind the stone, a pool on the ground, and a candle. */
 export const hauntAura = {
   /** The light behind the stone. */
-  behind: { width: 2.4, height: 2.6, y: 0.7, z: -0.25, opacity: 0.55 },
+  behind: { width: 2.4, height: 2.6, y: 0.7, z: -0.25, opacity: 0.35 },
   /** The pool of light on the ground in front of it. */
-  pool: { radius: 1.25, lift: 0.02, z: 0.45, opacity: 0.45 },
+  pool: { radius: 1.25, lift: 0.02, z: 0.45, opacity: 0.28 },
   /** A small candle at the foot of the stone. */
   candle: {
     x: -0.32,
@@ -120,11 +149,50 @@ export const hauntAura = {
     flame: 0.045,
     flameSegments: [8, 6] as const,
     /** How bright the flame burns: above 1, so the glow picks it up. */
-    brightness: 6,
+    brightness: 3,
     /** How much it flickers, and the two speeds it flickers at, in radians a second. */
     flicker: 0.12,
     flickerSpeeds: [7.3, 13.1] as const,
   },
   /** The light the grave you point at, or have reached, throws on its stone. */
-  light: { intensity: 2.4, distance: 4, y: 0.9, z: 1 },
+  light: { intensity: 1.6, distance: 4, y: 0.9, z: 1 },
+} as const;
+
+/**
+ * The haunted ground: worn earth instead of a clean floor. A mottled soil
+ * texture, bare patches, tufts of dead grass, fallen leaves and loose stones.
+ * Sizes are in scene units; counts are per 100 square units of ground.
+ */
+export const hauntGround = {
+  texture: {
+    /** Size of one tile of the soil texture, in pixels, and how much ground it covers. */
+    size: 512,
+    tileUnits: 6,
+    base: palette.soil.dark,
+    /** Soft blotches of other earth: how many, their size in pixels, and how strong. */
+    blotches: 260,
+    blotchMin: 6,
+    blotchRange: 34,
+    blotchAlpha: 0.2,
+    blotchAlphaRange: 0.3,
+    blotchColors: [palette.soil.loam, palette.soil.moss, palette.soil.deadGrass, palette.soil.loam] as const,
+    /** Fine grit: how many specks, their size in pixels, and how strong. */
+    specks: 2200,
+    speckMax: 2,
+    speckAlpha: 0.5,
+    speckColors: [palette.soil.grit, palette.soil.pebble, palette.soil.leafBrown] as const,
+    roughness: 1,
+  },
+  /** Patches of bare, turned earth. */
+  patches: { per100: 4, minSize: 0.9, sizeRange: 1.6, opacity: 0.55, color: palette.soil.loam, lift: 0.006 },
+  /** Tufts of dead grass: thin leaning blades. */
+  grass: { per100: 90, radius: 0.025, height: 0.26, heightRange: 0.22, lean: 0.35, sides: 3, colors: [palette.soil.deadGrass, palette.soil.grass, palette.soil.deadGrass] as const },
+  /** Fallen leaves lying flat, a little lifted so they never flicker into the ground. */
+  leaves: { per100: 55, width: 0.14, length: 0.09, lift: 0.008, colors: [palette.soil.leafRust, palette.soil.leafOchre, palette.soil.leafBrown] as const },
+  /** Loose stones half sunk in the earth. */
+  stones: { per100: 18, minSize: 0.04, sizeRange: 0.09, sink: 0.4, colors: [palette.soil.pebble, palette.soil.grit] as const, roughness: 0.95 },
+  /** The cover spreads this far past the bounds it is given, into the fog. */
+  spread: 6,
+  /** Tries to place one piece before giving up on it, when the spot is kept clear. */
+  attempts: 4,
 } as const;

@@ -4,3 +4,4 @@
  */
 
 export * from './LunarPhaseSelector';
+export * from './moonPhase';
