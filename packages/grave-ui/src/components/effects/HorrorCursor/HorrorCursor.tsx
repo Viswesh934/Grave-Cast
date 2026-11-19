@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useMemo, type ReactNode, type CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { useCursorTracker } from '../../../hooks/useCursorTracker';
 import { useMediaQuery, breakpoints } from '../../../hooks/useMediaQuery';
 import { useSpookyAudio, type SpookySound } from '../../../audio';
@@ -194,7 +195,8 @@ export const HorrorCursor = ({
     willChange: 'transform',
   };
 
-  return (
+  // Rendered at the end of the page, so no stacking context (a sticky top bar, a dialog) can hold it beneath other layers.
+  const layer = (
     <div
       className={`grave-horror-cursor grave-horror-cursor--${variant} ${className}`.trim()}
       style={layerStyle}
@@ -231,4 +233,5 @@ export const HorrorCursor = ({
       </div>
     </div>
   );
+  return typeof document === 'undefined' ? layer : createPortal(layer, document.body);
 };

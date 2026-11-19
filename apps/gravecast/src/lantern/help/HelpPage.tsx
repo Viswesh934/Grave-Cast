@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { CoordinatesToggle } from '../CoordinatesToggle'
-import { HIDDEN_COORDINATES, useShowCoordinates } from '../hiddenPosition'
+import { NAV_STYLE } from '../../shared/sections'
+import { CensoredCoordinates } from '../CensoredCoordinates'
+import { useShowCoordinates } from '../hiddenPosition'
+import { CheckIcon, CopyIcon, MapPinIcon, PhoneIcon } from '../icons'
 import { useStatus } from '../statusContext'
 import { ui } from '../ui'
-import { KINDS } from './kinds'
+import { KINDS, type PlaceKind } from './kinds'
 import { coordinates, directionTo, formatDate, formatDistance, geoLink, isStale, sizeInKb, telLink } from './format'
 import type { Place, PlacePack } from './normalize'
 import { usePlaces } from './usePlaces'
@@ -11,13 +13,15 @@ import { usePlaces } from './usePlaces'
 /** How long "Copied" shows after copying a location. */
 const COPIED_MS = 2500
 
-/** A compact action under a place: at least 44 px tall, so it is easy to hit. */
+/** An icon action beside a place: 44 px square, so it is easy to hit. Its name is on the button for screen readers and as a tooltip. */
 const action =
-  'inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-grave-mist-500 bg-grave-dark-800 px-3 text-sm font-semibold text-grave-bone-100 no-underline hover:border-grave-grove-sage hover:bg-grave-dark-750 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-grave-bone-100'
+  'inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-grave-mist-500 bg-grave-dark-800 text-grave-bone-100 no-underline hover:border-grave-grove-sage hover:bg-grave-dark-750 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-grave-bone-100'
 
-/** A jump tab to one kind of place: brass, the palette's warm yellow, so the tabs stand apart from the actions. */
-const tab =
-  'inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border-2 border-grave-grove-brass bg-grave-dark-800 px-3 text-sm font-semibold text-grave-bone-100 no-underline hover:bg-grave-dark-750 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-grave-bone-100'
+/** A tab for one kind of place, underlined like the top bar's sections, and at least 44 px tall. */
+const tab = (current: boolean) => `${NAV_STYLE.link(current)} inline-flex min-h-11 cursor-pointer items-center gap-1.5 bg-transparent font-sans`
+
+/** Which places the tabs show: every kind, or one. */
+type Showing = 'all' | PlaceKind
 
 function PlaceRow({
   place,
@@ -25,18 +29,36 @@ function PlaceRow({
   copied,
   onCopy,
   showCoordinates,
+  onToggleCoordinates,
 }: {
   place: Place
   center: PlacePack['center']
   copied: boolean
   onCopy: () => void
   showCoordinates: boolean
+  onToggleCoordinates: () => void
 }) {
   const kind = KINDS.find((k) => k.id === place.kind)
   const title = place.name ?? `${kind?.label ?? 'Place'} (no name)`
   const direction = directionTo(center, place)
+  const name = kind?.label ?? 'place'
   return (
-    <li className={ui.card}>
+    <li className={`${ui.card} flex gap-3`}>
+      {/* The actions, as icons down the left of the card. */}
+      <div className="flex shrink-0 flex-col gap-2">
+        {place.phone && (
+          <a href={telLink(place.phone)} aria-label={`Call ${place.phone}`} title={`Call ${place.phone}`} className={`${action} border-grave-grove-sage`}>
+            <PhoneIcon />
+          </a>
+        )}
+        <a href={geoLink(place, kind?.label ?? 'Place')} aria-label={`Open ${title} in maps`} title="Open in maps" className={action}>
+          <MapPinIcon />
+        </a>
+        <button type="button" onClick={onCopy} aria-label={copied ? 'Location copied' : `Copy the ${name.toLowerCase()}'s location`} title={copied ? 'Copied' : 'Copy location'} className={action}>
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </button>
+      </div>
+      <div className="min-w-0 flex-1">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <strong className="min-w-0 text-base text-grave-bone-100">{title}</strong>
         <span className="shrink-0 text-base font-bold text-grave-bone-100 tabular-nums">
@@ -45,19 +67,10 @@ function PlaceRow({
         </span>
       </div>
       {place.address && <p className={`${ui.muted} mt-1 mb-0`}>{place.address}</p>}
-      <p className="mt-1 mb-0 font-mono text-xs text-grave-mist-300">{showCoordinates ? coordinates(place) : HIDDEN_COORDINATES}</p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {place.phone && (
-          <a href={telLink(place.phone)} className={`${action} border-grave-grove-sage`}>
-            Call {place.phone}
-          </a>
-        )}
-        <a href={geoLink(place, kind?.label ?? 'Place')} className={action}>
-          Open in maps
-        </a>
-        <button type="button" onClick={onCopy} className={action}>
-          {copied ? 'Copied' : 'Copy location'}
-        </button>
+      {place.phone && <p className="mt-1 mb-0 text-sm text-grave-bone-100 tabular-nums">{place.phone}</p>}
+      <p className="mt-1 mb-0 text-xs text-grave-mist-300">
+        <CensoredCoordinates value={coordinates(place)} shown={showCoordinates} onToggle={onToggleCoordinates} />
+      </p>
       </div>
     </li>
   )
@@ -76,6 +89,8 @@ export function HelpPage() {
   const [confirming, setConfirming] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [showCoordinates, setShowCoordinates] = useShowCoordinates()
+  const toggleCoordinates = () => setShowCoordinates((shown) => !shown)
+  const [showing, setShowing] = useState<Showing>('all')
   const working = phase !== 'idle'
   const canDownload = online && configured && !working
 
@@ -145,7 +160,8 @@ export function HelpPage() {
               Saved on this phone. Works with no internet.
             </h2>
             <p className={`${ui.muted} mt-1 mb-0`}>
-              Saved {formatDate(pack.fetchedAt)} near {showCoordinates ? `${pack.center.lat.toFixed(3)}, ${pack.center.lon.toFixed(3)}` : 'where you were (coordinates hidden)'}.{' '}
+              Saved {formatDate(pack.fetchedAt)} near{' '}
+              <CensoredCoordinates value={`${pack.center.lat.toFixed(3)}, ${pack.center.lon.toFixed(3)}`} shown={showCoordinates} onToggle={toggleCoordinates} />.{' '}
               {pack.places.length} places, about {sizeInKb(pack)} KB.
             </p>
             {isStale(pack.fetchedAt) && (
@@ -158,7 +174,6 @@ export function HelpPage() {
               <button type="button" onClick={() => void download()} disabled={!canDownload} className={ui.quiet}>
                 {working ? 'Working\u2026' : 'Update the list'}
               </button>
-              <CoordinatesToggle shown={showCoordinates} onToggle={() => setShowCoordinates((shown) => !shown)} />
               {confirming ? (
                 <>
                   <button
@@ -184,19 +199,24 @@ export function HelpPage() {
             </div>
           </section>
 
-          <nav aria-label="Jump to a kind of place" className="mt-4 flex flex-wrap gap-2">
+          <div role="group" aria-label="Show places" className="mt-4 flex flex-wrap gap-x-2 border-b border-grave-dark-700">
+            <button type="button" aria-pressed={showing === 'all'} onClick={() => setShowing('all')} className={tab(showing === 'all')}>
+              All <span className="font-normal text-grave-mist-300">{pack.places.length}</span>
+            </button>
             {shown.map(({ kind, places }) => (
-              <a key={kind.id} href={`#kind-${kind.id}`} className={tab}>
-                {kind.group} <span className="font-normal text-grave-grove-brass">{places.length}</span>
-              </a>
+              <button key={kind.id} type="button" aria-pressed={showing === kind.id} onClick={() => setShowing(kind.id)} className={tab(showing === kind.id)}>
+                {kind.group} <span className="font-normal text-grave-mist-300">{places.length}</span>
+              </button>
             ))}
-          </nav>
+          </div>
           <p className={`${ui.muted} mt-3 mb-0`}>
             Distances and directions are straight lines from where you saved the list. Calling uses the phone network, not the internet. Open in maps works with
-            no internet only if your maps app has offline maps saved; the coordinates (shown with Show coordinates, or copied) can be typed into any map.
+            no internet only if your maps app has offline maps saved; the coordinates (tap the censored bar to see them, or copy them) can be typed into any map.
           </p>
 
-          {shown.map(({ kind, places }) => (
+          {shown
+            .filter(({ kind }) => showing === 'all' || showing === kind.id)
+            .map(({ kind, places }) => (
             <section key={kind.id} id={`kind-${kind.id}`} aria-labelledby={`kind-${kind.id}-title`} className="mt-6 scroll-mt-4">
               <h2 id={`kind-${kind.id}-title`} className={ui.h2}>
                 {kind.group} <span className="text-sm font-normal text-grave-mist-300">({places.length})</span>
@@ -210,6 +230,7 @@ export function HelpPage() {
                     copied={copiedId === place.id}
                     onCopy={() => copy(place)}
                     showCoordinates={showCoordinates}
+                    onToggleCoordinates={toggleCoordinates}
                   />
                 ))}
               </ul>
