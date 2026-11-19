@@ -59,6 +59,13 @@ export interface GraveyardWalk3DProps {
    * @default true
    */
   haunted?: boolean;
+  /**
+   * Change this number to send her back outside the gate, facing in, as at
+   * the start. Clicking the gate calls `onGate`; pass it on here to go back.
+   */
+  returnKey?: number;
+  /** Called when the gate is clicked: the way back to the start. */
+  onGate?: () => void;
 }
 
 /** What the flight keeps between frames. Kept out of React, so a frame never re-renders anything. */
@@ -253,6 +260,7 @@ function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, o
  * each time she reaches a grave, unless `still`.
  *
  * - **Look around:** hold the left mouse button and drag. The arrow keys turn too.
+ * - **Start again:** click the gate. She is back outside it, facing in.
  * - **Go to a grave:** click it. She flies through the gate and round the
  *   other stones, and the camera swings in behind her. Once she is beside it,
  *   `onArrive` is called and `renderArrived` is shown above the grave.
@@ -281,6 +289,8 @@ export function GraveyardWalk3D({
   still = false,
   turnKeys = true,
   haunted = true,
+  returnKey = 0,
+  onGate,
 }: GraveyardWalk3DProps) {
   const colors: GraveyardSceneColors = GRAVEYARD_SCENE_THEMES[theme];
   const ids = graves.map((grave) => grave.id).join('\n');
@@ -324,12 +334,12 @@ export function GraveyardWalk3D({
     [layout, still]
   );
 
-  // A new set of graves is a new yard: back outside the gate.
+  // A new set of graves is a new yard, and a new `returnKey` asks to start again: back outside the gate.
   useEffect(() => {
     flight.current = startFlight(layout);
     setArrived(null);
     setOwnTarget(null);
-  }, [layout]);
+  }, [layout, returnKey]);
 
   // Set off for the grave asked for.
   useEffect(() => {
@@ -347,6 +357,16 @@ export function GraveyardWalk3D({
       arrive(goal);
     }
   }, [goal, layout, still, arrive]);
+
+  // Uncontrolled, a click on the gate goes straight back; controlled, the owner decides.
+  const gate = useCallback(() => {
+    if (onGate) onGate();
+    else {
+      flight.current = startFlight(layout);
+      setArrived(null);
+      setOwnTarget(null);
+    }
+  }, [onGate, layout]);
 
   const pick = useCallback(
     (index: number) => {
@@ -506,7 +526,7 @@ export function GraveyardWalk3D({
   return (
     <>
       <fog attach="fog" args={[colors.sky, haunted ? walkFog.haunted.near : walkFog.near, haunted ? walkFog.haunted.far : walkFog.far]} />
-      <WalkScenery layout={layout} colors={colors} seed={seed} still={still} haunted={haunted} />
+      <WalkScenery layout={layout} colors={colors} seed={seed} still={still} haunted={haunted} onGate={gate} />
       {graves.map((grave, index) =>
         layout.graves[index] ? (
           <FindingGrave

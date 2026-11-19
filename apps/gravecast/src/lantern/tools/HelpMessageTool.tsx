@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { CoordinatesToggle } from '../CoordinatesToggle'
+import { hideCoordinates, useShowCoordinates } from '../hiddenPosition'
 import { ui } from '../ui'
 import { deleteNote, loadNotes, saveNote, type SavedNote } from './notes'
 import { helpMessageText, smsLink, type Fix } from './tools'
@@ -22,6 +24,8 @@ export function HelpMessageTool() {
   const [writtenAt, setWrittenAt] = useState(() => new Date())
   const [notes, setNotes] = useState<SavedNote[]>(loadNotes)
   const [copied, setCopied] = useState(false)
+  const [showCoordinates, setShowCoordinates] = useShowCoordinates()
+  const onScreen = (message: string) => (showCoordinates ? message : hideCoordinates(message))
 
   const text = helpMessageText(words, fix, writtenAt)
 
@@ -74,8 +78,12 @@ export function HelpMessageTool() {
         {LOCATING_TEXT[locating]}
       </p>
 
-      <h2 className={`${ui.h2} mt-6`}>The text</h2>
-      <p className={`${ui.card} mt-2 mb-0 text-base break-words text-grave-bone-100`}>{text}</p>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
+        <h2 className={`${ui.h2} m-0`}>The text</h2>
+        <CoordinatesToggle shown={showCoordinates} onToggle={() => setShowCoordinates((shown) => !shown)} />
+      </div>
+      <p className={`${ui.card} mt-2 mb-0 text-base break-words text-grave-bone-100`}>{onScreen(text)}</p>
+      <p className={`${ui.muted} mt-2 mb-0`}>Coordinates are hidden on screen only. The text you send or copy includes them.</p>
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <a href={smsLink(text)} className={ui.big}>
@@ -102,7 +110,7 @@ export function HelpMessageTool() {
                 <p className="m-0 text-sm text-grave-mist-200">
                   Saved {new Date(note.at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>
-                <p className="mt-1 mb-0 break-words text-grave-bone-100">{note.text}</p>
+                <p className="mt-1 mb-0 break-words text-grave-bone-100">{onScreen(note.text)}</p>
                 <div className="mt-3 flex flex-wrap gap-3">
                   <a href={smsLink(note.text)} className={ui.secondary}>
                     Send this one

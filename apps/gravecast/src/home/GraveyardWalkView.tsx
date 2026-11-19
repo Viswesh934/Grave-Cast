@@ -72,6 +72,8 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
   const [target, setTarget] = useState<number | null>(null)
   const [arrived, setArrived] = useState<number | null>(null)
   const [listOpen, setListOpen] = useState(false)
+  // Each change sends the witch back outside the gate.
+  const [returns, setReturns] = useState(0)
   const flat = useHorrorFallback()
   const reduced = useReducedMotion()
   const { playSound } = useSpookyAudio()
@@ -116,6 +118,16 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
     announce(`Grave ${index + 1} of ${count}. ${grave.title}. ${grave.evidence}. ${grave.detail}`)
   }
 
+  // Back to the start: outside the gate, facing in, with no grave chosen.
+  const backToGate = () => {
+    window.clearTimeout(giggle.current)
+    setTarget(null)
+    setArrived(null)
+    setListOpen(false)
+    setReturns((count) => count + 1)
+    announce('Back at the gate.')
+  }
+
   const going = target !== null && arrived === null ? summary.graves[target] : null
 
   // Rendered at the end of the page, so the site's top bar can't sit above it.
@@ -140,6 +152,8 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
               onArrive={onArrive}
               renderArrived={(index) => <GraveCard summary={summary} grave={summary.graves[index]} index={index} count={count} />}
               still={reduced}
+              returnKey={returns}
+              onGate={backToGate}
             />
           </Suspense>
         </div>
@@ -151,6 +165,15 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
         <span>
           <span className="text-grave-grove-glow">{count}</span> {count === 1 ? 'grave' : 'graves'}
         </span>
+        {count > 0 && !flat && (target !== null || arrived !== null) && (
+          <button
+            type="button"
+            onClick={backToGate}
+            className="pointer-events-auto min-h-8 cursor-pointer rounded-full border border-grave-dark-600 bg-grave-dark-950/70 px-3 text-xs tracking-[0.2em] text-grave-bone-200 uppercase hover:border-grave-mist-400"
+          >
+            Back to the gate
+          </button>
+        )}
         {count > 0 && !flat && (
           <button
             type="button"
@@ -195,7 +218,7 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
       )}
       {count > 0 && !flat && (
         <p className="pointer-events-none absolute right-4 bottom-6 m-0 hidden text-xs text-grave-mist-400 sm:right-10 md:block">
-          Drag to look {'\u00b7'} Click a grave to go {'\u00b7'} Arrow keys turn {'\u00b7'} Esc closes
+          Drag to look {'\u00b7'} Click a grave to go {'\u00b7'} Click the gate to start again {'\u00b7'} Arrow keys turn {'\u00b7'} Esc closes
         </p>
       )}
 

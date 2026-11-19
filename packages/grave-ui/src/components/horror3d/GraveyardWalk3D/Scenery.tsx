@@ -5,12 +5,12 @@
  * @module components/horror3d/GraveyardWalk3D/Scenery
  */
 import { useCallback, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import { Object3D, type InstancedMesh, type Mesh } from 'three';
 import { Lantern, seeded, type GraveyardSceneColors } from '../GraveyardScene3D';
 import { DriftingClouds, HauntedGround, NightSky, PhasedMoon, WatchingEyes } from '../Haunting/Haunting';
 import type { WalkYardLayout } from './layout';
-import { walkColors, walkHaunt, walkMaterial, walkScenery, walkYard } from './tokens';
+import { walkCamera, walkColors, walkHaunt, walkMaterial, walkScenery, walkYard } from './tokens';
 
 type Box = WalkYardLayout['fence'];
 
@@ -57,7 +57,7 @@ function IronMaterial({ colors }: { colors: GraveyardSceneColors }) {
   return <meshStandardMaterial color={colors.post} roughness={walkMaterial.iron.roughness} metalness={walkMaterial.iron.metalness} />;
 }
 
-function Fence({ box, colors }: { box: Box; colors: GraveyardSceneColors }) {
+function Fence({ box, colors, onGate }: { box: Box; colors: GraveyardSceneColors; onGate?: () => void }) {
   const { fence: f, gate: g } = walkScenery;
   const gateEdge = walkYard.gateHalfWidth;
   const posts = useMemo(() => {
@@ -103,7 +103,15 @@ function Fence({ box, colors }: { box: Box; colors: GraveyardSceneColors }) {
           <IronMaterial colors={colors} />
         </mesh>
       ))}
-      {/* The gate: two stone pillars and an iron arch between them. */}
+      {/* The gate: two stone pillars and an iron arch between them. Clicking it goes back to the start. */}
+      <group
+        onClick={(event: ThreeEvent<MouseEvent>) => {
+          // A press that turned the view is not a click on the gate.
+          if (!onGate || event.delta > walkCamera.clickSlopPx) return;
+          event.stopPropagation();
+          onGate();
+        }}
+      >
       {[-1, 1].map((side) => (
         <mesh key={side} position={[side * (gateEdge + g.pillarSize / 2), g.pillarHeight / 2, box.maxZ]}>
           <boxGeometry args={[g.pillarSize, g.pillarHeight, g.pillarSize]} />
@@ -115,6 +123,7 @@ function Fence({ box, colors }: { box: Box; colors: GraveyardSceneColors }) {
         <IronMaterial colors={colors} />
       </mesh>
       <GateEmblem archTop={g.archLift + gateEdge} ringY={g.archLift + gateEdge * walkScenery.emblem.at} z={box.maxZ} colors={colors} />
+      </group>
     </group>
   );
 }
@@ -285,10 +294,12 @@ export interface WalkSceneryProps {
   still: boolean;
   /** Add the black sky and stars, clouds over the moon, and eyes watching from the trees. */
   haunted?: boolean;
+  /** Called when the gate is clicked. */
+  onGate?: () => void;
 }
 
 /** Everything in the yard that isn't a grave or the witch. */
-export function WalkScenery({ layout, colors, seed, still, haunted = false }: WalkSceneryProps) {
+export function WalkScenery({ layout, colors, seed, still, haunted = false, onGate }: WalkSceneryProps) {
   const { fence: box } = layout;
   const s = walkScenery;
   const width = box.maxX - box.minX;
@@ -355,7 +366,7 @@ export function WalkScenery({ layout, colors, seed, still, haunted = false }: Wa
         <planeGeometry args={[s.path.width, pathLength]} />
         <meshStandardMaterial color={walkColors.path} roughness={walkMaterial.ground.roughness} />
       </mesh>
-      <Fence box={box} colors={colors} />
+      <Fence box={box} colors={colors} onGate={onGate} />
       <Trees box={box} colors={colors} seed={seed} />
       {bare.map((tree, i) => (
         <BareTree key={i} x={tree.x} z={tree.z} turn={tree.turn} colors={colors} />

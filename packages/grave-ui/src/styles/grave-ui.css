@@ -6,6 +6,12 @@
 /* ==========================================================================
    Design Tokens & CSS Variables
    ========================================================================== */
+
+/* HorrorCursor: while it is on, no element shows the native cursor beside it. */
+.grave-native-cursor-hidden,
+.grave-native-cursor-hidden * {
+  cursor: none !important;
+}
 :root {
   /* Crypt Palette */
   --grave-crypt-stone: #16161a;

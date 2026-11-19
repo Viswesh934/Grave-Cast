@@ -27,6 +27,9 @@ import {
   type HorrorCursorVariant,
 } from './tokens';
 
+/** Set on the root element while a custom cursor hides the native one. Styled in grave-ui.css. */
+export const HIDE_NATIVE_CURSOR_CLASS = 'grave-native-cursor-hidden';
+
 /**
  * Props for {@link HorrorCursor}.
  */
@@ -136,16 +139,17 @@ export const HorrorCursor = ({
     reducedMotion: prefersReducedMotion,
   });
 
-  // Hide / restore the native cursor on the document while active.
+  // Hide / restore the native cursor while active. A class on the root hides it
+  // on every element too, including buttons, links and canvases that set their
+  // own cursor, so the native pointer never shows beside the glyph.
   useEffect(() => {
     if (!active || !hideNativeCursor || typeof document === 'undefined') {
       return;
     }
     const root = document.documentElement;
-    const previous = root.style.cursor;
-    root.style.cursor = 'none';
+    root.classList.add(HIDE_NATIVE_CURSOR_CLASS);
     return () => {
-      root.style.cursor = previous;
+      root.classList.remove(HIDE_NATIVE_CURSOR_CLASS);
     };
   }, [active, hideNativeCursor]);
 

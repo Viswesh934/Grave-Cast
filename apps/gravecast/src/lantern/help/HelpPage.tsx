@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { CoordinatesToggle } from '../CoordinatesToggle'
+import { HIDDEN_COORDINATES, useShowCoordinates } from '../hiddenPosition'
 import { useStatus } from '../statusContext'
 import { ui } from '../ui'
 import { KINDS } from './kinds'
@@ -13,7 +15,23 @@ const COPIED_MS = 2500
 const action =
   'inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-grave-mist-500 bg-grave-dark-800 px-3 text-sm font-semibold text-grave-bone-100 no-underline hover:border-grave-grove-sage hover:bg-grave-dark-750 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-grave-bone-100'
 
-function PlaceRow({ place, center, copied, onCopy }: { place: Place; center: PlacePack['center']; copied: boolean; onCopy: () => void }) {
+/** A jump tab to one kind of place: brass, the palette's warm yellow, so the tabs stand apart from the actions. */
+const tab =
+  'inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border-2 border-grave-grove-brass bg-grave-dark-800 px-3 text-sm font-semibold text-grave-bone-100 no-underline hover:bg-grave-dark-750 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-grave-bone-100'
+
+function PlaceRow({
+  place,
+  center,
+  copied,
+  onCopy,
+  showCoordinates,
+}: {
+  place: Place
+  center: PlacePack['center']
+  copied: boolean
+  onCopy: () => void
+  showCoordinates: boolean
+}) {
   const kind = KINDS.find((k) => k.id === place.kind)
   const title = place.name ?? `${kind?.label ?? 'Place'} (no name)`
   const direction = directionTo(center, place)
@@ -27,7 +45,7 @@ function PlaceRow({ place, center, copied, onCopy }: { place: Place; center: Pla
         </span>
       </div>
       {place.address && <p className={`${ui.muted} mt-1 mb-0`}>{place.address}</p>}
-      <p className="mt-1 mb-0 font-mono text-xs text-grave-mist-300">{coordinates(place)}</p>
+      <p className="mt-1 mb-0 font-mono text-xs text-grave-mist-300">{showCoordinates ? coordinates(place) : HIDDEN_COORDINATES}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {place.phone && (
           <a href={telLink(place.phone)} className={`${action} border-grave-grove-sage`}>
@@ -57,6 +75,7 @@ export function HelpPage() {
   const { pack, loaded, phase, progress, error, download, remove, configured } = usePlaces()
   const [confirming, setConfirming] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [showCoordinates, setShowCoordinates] = useShowCoordinates()
   const working = phase !== 'idle'
   const canDownload = online && configured && !working
 
@@ -126,7 +145,8 @@ export function HelpPage() {
               Saved on this phone. Works with no internet.
             </h2>
             <p className={`${ui.muted} mt-1 mb-0`}>
-              Saved {formatDate(pack.fetchedAt)} near {pack.center.lat.toFixed(3)}, {pack.center.lon.toFixed(3)}. {pack.places.length} places, about {sizeInKb(pack)} KB.
+              Saved {formatDate(pack.fetchedAt)} near {showCoordinates ? `${pack.center.lat.toFixed(3)}, ${pack.center.lon.toFixed(3)}` : 'where you were (coordinates hidden)'}.{' '}
+              {pack.places.length} places, about {sizeInKb(pack)} KB.
             </p>
             {isStale(pack.fetchedAt) && (
               <p className="mt-2 mb-0 text-sm font-semibold text-grave-grove-brass">This list is over a month old. Update it when you have a connection.</p>
@@ -138,6 +158,7 @@ export function HelpPage() {
               <button type="button" onClick={() => void download()} disabled={!canDownload} className={ui.quiet}>
                 {working ? 'Working\u2026' : 'Update the list'}
               </button>
+              <CoordinatesToggle shown={showCoordinates} onToggle={() => setShowCoordinates((shown) => !shown)} />
               {confirming ? (
                 <>
                   <button
@@ -165,14 +186,14 @@ export function HelpPage() {
 
           <nav aria-label="Jump to a kind of place" className="mt-4 flex flex-wrap gap-2">
             {shown.map(({ kind, places }) => (
-              <a key={kind.id} href={`#kind-${kind.id}`} className={action}>
-                {kind.group} <span className="font-normal text-grave-mist-300">{places.length}</span>
+              <a key={kind.id} href={`#kind-${kind.id}`} className={tab}>
+                {kind.group} <span className="font-normal text-grave-grove-brass">{places.length}</span>
               </a>
             ))}
           </nav>
           <p className={`${ui.muted} mt-3 mb-0`}>
             Distances and directions are straight lines from where you saved the list. Calling uses the phone network, not the internet. Open in maps works with
-            no internet only if your maps app has offline maps saved; the coordinates can be typed into any map.
+            no internet only if your maps app has offline maps saved; the coordinates (shown with Show coordinates, or copied) can be typed into any map.
           </p>
 
           {shown.map(({ kind, places }) => (
@@ -182,7 +203,14 @@ export function HelpPage() {
               </h2>
               <ul className="mt-2 mb-0 grid list-none gap-2 p-0 lg:grid-cols-2">
                 {places.map((place) => (
-                  <PlaceRow key={place.id} place={place} center={pack.center} copied={copiedId === place.id} onCopy={() => copy(place)} />
+                  <PlaceRow
+                    key={place.id}
+                    place={place}
+                    center={pack.center}
+                    copied={copiedId === place.id}
+                    onCopy={() => copy(place)}
+                    showCoordinates={showCoordinates}
+                  />
                 ))}
               </ul>
             </section>
