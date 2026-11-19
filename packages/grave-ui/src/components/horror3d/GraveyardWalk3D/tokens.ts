@@ -165,6 +165,8 @@ export const walkHaunt = {
   eyesBeyond: 3.5,
   /** The clouds hang this much nearer than the moon, so they pass in front of it. */
   cloudsBefore: 3,
+  /** Grass, leaves and stones keep this far from each grave (and its mound) and lantern, and this far either side of the path. */
+  groundClear: { grave: 1.25, lantern: 0.4, pathMargin: 0.25 },
 } as const;
 
 /** The yard's surroundings: the iron fence and gate, the trees, the path, mist and moon. */

@@ -1,6 +1,7 @@
 export {
   DriftingClouds,
   GraveAura,
+  HauntedGround,
   HauntEffects,
   NightSky,
   PhasedMoon,
@@ -8,9 +9,10 @@ export {
   WatchingEyes,
   type DriftingCloudsProps,
   type GraveAuraProps,
+  type HauntedGroundProps,
   type HauntEffectsProps,
   type NightSkyProps,
   type PhasedMoonProps,
   type WatchingEyesProps,
 } from './Haunting';
-export { graveGlow, hauntAura, hauntClouds, hauntEffects, hauntEyes, hauntMoon, hauntSky, hauntSoftSpot } from './tokens';
+export { graveGlow, hauntAura, hauntClouds, hauntEffects, hauntEyes, hauntGround, hauntMoon, hauntSky, hauntSoftSpot } from './tokens';

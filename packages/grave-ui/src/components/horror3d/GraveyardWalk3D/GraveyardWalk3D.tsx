@@ -217,11 +217,11 @@ function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, o
           </Text>
         )}
         </Suspense>
-        {/* Haunted, the cracks smoulder in the grave's colour, as if something burns inside. */}
+        {/* Haunted, the cracks show the grave's colour, dimly, as if something smoulders inside. */}
         {cracks.map((crack, i) => (
           <mesh key={i} position={[crack.x, crack.y, walkStone.faceZ]} rotation={[0, 0, crack.turn]} raycast={() => null}>
             <boxGeometry args={[crackWidth, crack.length + crackWidth, walkStone.crack.depth]} />
-            <meshBasicMaterial color={haunted ? marked : walkColors.crack} toneMapped={!haunted} />
+            <meshBasicMaterial color={haunted ? marked : walkColors.crack} />
           </mesh>
         ))}
       </group>

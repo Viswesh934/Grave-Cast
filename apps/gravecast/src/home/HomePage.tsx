@@ -374,11 +374,11 @@ export function HomePage() {
       {walkOpen && summary && <GraveyardWalkView summary={summary} onClose={closeWalk} />}
 
       {/* A pen fired across the screen: catch it to draw on the page. */}
-      {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar, and remembers being turned off. */}
+      {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar. It is fired on every visit and can't be turned off. */}
       <ScribbleCannon
         paused={diary.open || walkOpen}
         dockInset={{ x: 24, y: 8 }}
-        storageKey="gravecast-cannon"
+        dismissible={false}
         scribbleProps={{ storageKey: 'gravecast-scribble' }}
       />
     </div>

@@ -4,11 +4,11 @@
  * nothing here can be mistaken for a finding.
  * @module components/horror3d/GraveyardWalk3D/Scenery
  */
-import { useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Object3D, type InstancedMesh, type Mesh } from 'three';
 import { Lantern, seeded, type GraveyardSceneColors } from '../GraveyardScene3D';
-import { DriftingClouds, NightSky, PhasedMoon, WatchingEyes } from '../Haunting/Haunting';
+import { DriftingClouds, HauntedGround, NightSky, PhasedMoon, WatchingEyes } from '../Haunting/Haunting';
 import type { WalkYardLayout } from './layout';
 import { walkColors, walkHaunt, walkMaterial, walkScenery, walkYard } from './tokens';
 
@@ -296,6 +296,20 @@ export function WalkScenery({ layout, colors, seed, still, haunted = false }: Wa
   const pathLength = layout.start.z - box.maxZ + s.trees.offset * 2;
   const moonAt: [number, number, number] = [width * s.moon.right, s.moon.height, box.minZ - s.moon.behind];
   const light = haunted ? s.hauntedLight : s.light;
+  // The worn ground leaves the graves, lanterns and path clear, so nothing hides a stone or the way in.
+  const keepClear = useCallback(
+    (x: number, z: number) => {
+      const c = walkHaunt.groundClear;
+      if (Math.abs(x) < s.path.width / 2 + c.pathMargin && z > box.maxZ) return true;
+      if (layout.graves.some((grave) => Math.hypot(grave.x - x, grave.z - z) < c.grave)) return true;
+      return layout.lanterns.some((spot) => Math.hypot(spot.x - x, spot.z - z) < c.lantern);
+    },
+    [layout, box, s.path.width]
+  );
+  const groundPlane = useMemo(
+    () => ({ width: width + s.groundMargin * 2, depth: depth + s.groundMargin * 2, center: [(box.minX + box.maxX) / 2, (box.minZ + box.maxZ) / 2] as [number, number] }),
+    [width, depth, box, s.groundMargin]
+  );
   const bare = useMemo(() => {
     const random = seeded(seed ^ walkMaterial.bareTreeSeed);
     return Array.from({ length: walkYard.bareTrees }, (_, i) => ({
@@ -328,10 +342,14 @@ export function WalkScenery({ layout, colors, seed, still, haunted = false }: Wa
           </>
         )}
       </group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[(box.minX + box.maxX) / 2, 0, (box.minZ + box.maxZ) / 2]}>
-        <planeGeometry args={[width + s.groundMargin * 2, depth + s.groundMargin * 2]} />
-        <meshStandardMaterial color={colors.ground} roughness={walkMaterial.ground.roughness} />
-      </mesh>
+      {haunted ? (
+        <HauntedGround bounds={box} plane={groundPlane} keepClear={keepClear} seed={seed} />
+      ) : (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[groundPlane.center[0], 0, groundPlane.center[1]]}>
+          <planeGeometry args={[groundPlane.width, groundPlane.depth]} />
+          <meshStandardMaterial color={colors.ground} roughness={walkMaterial.ground.roughness} />
+        </mesh>
+      )}
       {/* The worn path from where the witch waits, in through the gate. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, s.path.lift, box.maxZ + pathLength / 2 - s.trees.offset]}>
         <planeGeometry args={[s.path.width, pathLength]} />
