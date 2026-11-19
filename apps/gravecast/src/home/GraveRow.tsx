@@ -17,16 +17,23 @@ const GUARDIAN: Record<TombstoneWeathering, CharacterSpec> = {
   pristine: mummySpec,
 }
 
-const SERIOUS: ReadonlySet<TombstoneWeathering> = new Set(['crumbling', 'cracked'])
+/**
+ * Each grave's haunt colour, the same glow it has in the 3D yard. The label
+ * beside it always says the same thing in words.
+ */
+const HAUNT: Record<TombstoneWeathering, { border: string; label: string }> = {
+  crumbling: { border: 'border-grave-haunt-serious/60', label: 'text-grave-haunt-serious' },
+  cracked: { border: 'border-grave-haunt-risky/55', label: 'text-grave-haunt-risky' },
+  aged: { border: 'border-grave-haunt-unusual/45', label: 'text-grave-haunt-unusual' },
+  pristine: { border: 'border-grave-haunt-note/35', label: 'text-grave-haunt-note' },
+}
 
 /** One grave in the list, with its guardian on the left. */
 export function GraveRow({ grave, index }: { grave: StoryGrave; index: number }) {
-  const serious = SERIOUS.has(grave.weathering)
+  const haunt = HAUNT[grave.weathering]
   return (
     <li
-      className={`flex items-center gap-4 rounded-xl border bg-grave-dark-900/80 py-3 pr-4 pl-2 backdrop-blur-sm ${
-        serious ? 'border-grave-grove-glow/50' : 'border-grave-dark-700'
-      }`}
+      className={`flex items-center gap-4 rounded-xl border bg-grave-dark-900/80 py-3 pr-4 pl-2 backdrop-blur-sm ${haunt.border}`}
     >
       <div aria-hidden="true" className="shrink-0">
         <BestiaryCharacter spec={GUARDIAN[grave.weathering]} size="sm" sound={false} growable={false} />
@@ -34,7 +41,7 @@ export function GraveRow({ grave, index }: { grave: StoryGrave; index: number })
       <div className="min-w-0 flex-1">
         <p className="m-0 flex items-baseline gap-2 text-xs tracking-[0.25em] uppercase">
           <span className="text-grave-mist-400">{String(index + 1).padStart(2, '0')}</span>
-          <span className={serious ? 'text-grave-grove-glow' : 'text-grave-mist-300'}>{grave.label}</span>
+          <span className={haunt.label}>{grave.label}</span>
         </p>
         <p className="mt-1 mb-0 font-serif text-lg text-grave-bone-100">{grave.title}</p>
         <p className="mt-1 mb-0 text-sm text-grave-mist-300">{grave.detail}</p>

@@ -8,8 +8,9 @@ import { useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Object3D, type InstancedMesh, type Mesh } from 'three';
 import { Lantern, seeded, type GraveyardSceneColors } from '../GraveyardScene3D';
+import { DriftingClouds, NightSky, WatchingEyes } from '../Haunting/Haunting';
 import type { WalkYardLayout } from './layout';
-import { walkColors, walkMaterial, walkScenery, walkYard } from './tokens';
+import { walkColors, walkHaunt, walkMaterial, walkScenery, walkYard } from './tokens';
 
 type Box = WalkYardLayout['fence'];
 
@@ -215,10 +216,12 @@ export interface WalkSceneryProps {
   seed: number;
   /** Stop the mist and lantern flicker, for reduced motion. */
   still: boolean;
+  /** Add the black sky and stars, clouds over the moon, and eyes watching from the trees. */
+  haunted?: boolean;
 }
 
 /** Everything in the yard that isn't a grave or the witch. */
-export function WalkScenery({ layout, colors, seed, still }: WalkSceneryProps) {
+export function WalkScenery({ layout, colors, seed, still, haunted = false }: WalkSceneryProps) {
   const { fence: box } = layout;
   const s = walkScenery;
   const width = box.maxX - box.minX;
@@ -269,6 +272,13 @@ export function WalkScenery({ layout, colors, seed, still }: WalkSceneryProps) {
         <Lantern key={i} position={[spot.x, 0, spot.z]} still={still} colors={colors} />
       ))}
       <Mist box={box} colors={colors} still={still} />
+      {haunted && (
+        <>
+          <NightSky center={[(box.minX + box.maxX) / 2, 0, (box.minZ + box.maxZ) / 2]} seed={seed} />
+          <DriftingClouds at={[moonAt[0], moonAt[1], moonAt[2] + walkHaunt.cloudsBefore]} seed={seed} still={still} />
+          <WatchingEyes bounds={box} beyond={walkHaunt.eyesBeyond} watching={[(box.minX + box.maxX) / 2, 0, (box.minZ + box.maxZ) / 2]} seed={seed} still={still} />
+        </>
+      )}
     </>
   );
 }
