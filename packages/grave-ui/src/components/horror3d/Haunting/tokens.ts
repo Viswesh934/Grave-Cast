@@ -25,7 +25,7 @@ export const hauntEffects = {
     intensity: 1.15,
     radius: 0.7,
   },
-  vignette: { offset: 0.22, darkness: 0.82 },
+  vignette: { offset: 0.18, darkness: 0.92 },
   /** Film grain. Off when motion is reduced, because it moves every frame. */
   grain: 0.12,
 } as const;
@@ -60,6 +60,35 @@ export const hauntSky = {
     color: palette.bone[200],
     opacity: 0.85,
   },
+} as const;
+
+/**
+ * The moon in its real phase: a cratered face drawn on the device, lit on the
+ * side the sun is, with the dark part still faintly there (earthshine).
+ */
+export const hauntMoon = {
+  /** Size of the face's texture, in pixels. */
+  textureSize: 256,
+  /** The face's radius as a share of half the texture, leaving room for a soft edge. */
+  faceShare: 0.94,
+  face: palette.bone[200],
+  /** The darker seas and craters on the face. */
+  seas: palette.bone.decayed,
+  craters: palette.bone[300],
+  /** The face during a blood moon. */
+  blood: palette.sanguine.crimson,
+  bloodSeas: palette.sanguine.coagulated,
+  /** Seas: count, smallest and extra radius, and how dark, as shares of the face. */
+  sea: { count: 7, minRadius: 0.1, radiusRange: 0.18, opacity: 0.55, spread: 0.55 },
+  crater: { count: 22, minRadius: 0.02, radiusRange: 0.05, opacity: 0.5, spread: 0.8, rim: 0.35 },
+  /** How much of the unlit part still shows. */
+  earthshine: 0.13,
+  /** How bright the lit part burns: above 1, so the glow picks it up. */
+  brightness: 1.6,
+  /** The halo's strength follows how much is lit, but never drops below this share. */
+  haloFloor: 0.25,
+  /** Places the craters, so the moon always has the same face. */
+  seed: 1969,
 } as const;
 
 /** Low black clouds dragging slowly across the moon. */

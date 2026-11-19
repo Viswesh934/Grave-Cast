@@ -8,7 +8,7 @@ import { useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Object3D, type InstancedMesh, type Mesh } from 'three';
 import { Lantern, seeded, type GraveyardSceneColors } from '../GraveyardScene3D';
-import { DriftingClouds, NightSky, WatchingEyes } from '../Haunting/Haunting';
+import { DriftingClouds, NightSky, PhasedMoon, WatchingEyes } from '../Haunting/Haunting';
 import type { WalkYardLayout } from './layout';
 import { walkColors, walkHaunt, walkMaterial, walkScenery, walkYard } from './tokens';
 
@@ -112,6 +112,73 @@ function Fence({ box, colors }: { box: Box; colors: GraveyardSceneColors }) {
       ))}
       <mesh position={[0, g.archLift, box.maxZ]}>
         <torusGeometry args={[gateEdge, g.archTube, walkMaterial.segments.arch[0], walkMaterial.segments.arch[1], Math.PI]} />
+        <IronMaterial colors={colors} />
+      </mesh>
+      <GateEmblem archTop={g.archLift + gateEdge} ringY={g.archLift + gateEdge * walkScenery.emblem.at} z={box.maxZ} colors={colors} />
+    </group>
+  );
+}
+
+/** The two sides of the emblem: left (-1) and right (1). */
+const EMBLEM_SIDES = [-1, 1] as const;
+
+/**
+ * The wrought-iron sign hung in the arch over the gate: an hourglass in a
+ * ring, with a wing fanned out each side (the winged hourglass carved on old
+ * gravestones: time flies), a bar up to the arch, and a spike on top.
+ */
+function GateEmblem({ archTop, ringY, z, colors }: { archTop: number; ringY: number; z: number; colors: GraveyardSceneColors }) {
+  const e = walkScenery.emblem;
+  const h = e.hourglass;
+  const sides = walkMaterial.segments.spike * 2;
+  const ringTop = ringY + e.ring.radius;
+  return (
+    <group>
+      <group position={[0, ringY, z]}>
+        <mesh>
+          <torusGeometry args={[e.ring.radius, e.ring.tube, walkMaterial.segments.arch[0], walkMaterial.segments.arch[1]]} />
+          <IronMaterial colors={colors} />
+        </mesh>
+        {/* The hourglass: two bulbs meeting at the neck, a plate at each end, and the posts between the plates. */}
+        <mesh position={[0, h.half / 2, 0]} rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[h.bulb, h.half, sides]} />
+          <IronMaterial colors={colors} />
+        </mesh>
+        <mesh position={[0, -h.half / 2, 0]}>
+          <coneGeometry args={[h.bulb, h.half, sides]} />
+          <IronMaterial colors={colors} />
+        </mesh>
+        {EMBLEM_SIDES.map((side) => (
+          <mesh key={`plate${side}`} position={[0, side * h.half, 0]}>
+            <cylinderGeometry args={[h.plate, h.plate, h.plateThickness, sides]} />
+            <IronMaterial colors={colors} />
+          </mesh>
+        ))}
+        {EMBLEM_SIDES.map((side) => (
+          <mesh key={`post${side}`} position={[side * h.plate, 0, 0]}>
+            <cylinderGeometry args={[h.post, h.post, h.half * 2, walkMaterial.segments.spike]} />
+            <IronMaterial colors={colors} />
+          </mesh>
+        ))}
+        {/* The wings: feathers fanned up and out from the ring. */}
+        {EMBLEM_SIDES.map((side) =>
+          e.feathers.map((feather, i) => (
+            <group key={`feather${side}${i}`} position={[side * e.ring.radius * e.featherFrom, 0, 0]} rotation={[0, 0, side * feather.angle]}>
+              <mesh position={[(side * feather.length) / 2, 0, 0]}>
+                <boxGeometry args={[feather.length, e.featherWidth, e.featherDepth]} />
+                <IronMaterial colors={colors} />
+              </mesh>
+            </group>
+          ))
+        )}
+      </group>
+      {/* The bar from the ring up to the arch, and the spike on top. */}
+      <mesh position={[0, (ringTop + archTop) / 2, z]}>
+        <boxGeometry args={[e.bar, archTop - ringTop, e.bar]} />
+        <IronMaterial colors={colors} />
+      </mesh>
+      <mesh position={[0, archTop + e.finial.height / 2, z]}>
+        <coneGeometry args={[e.finial.radius, e.finial.height, walkMaterial.segments.spike]} />
         <IronMaterial colors={colors} />
       </mesh>
     </group>
@@ -228,6 +295,7 @@ export function WalkScenery({ layout, colors, seed, still, haunted = false }: Wa
   const depth = box.maxZ - box.minZ;
   const pathLength = layout.start.z - box.maxZ + s.trees.offset * 2;
   const moonAt: [number, number, number] = [width * s.moon.right, s.moon.height, box.minZ - s.moon.behind];
+  const light = haunted ? s.hauntedLight : s.light;
   const bare = useMemo(() => {
     const random = seeded(seed ^ walkMaterial.bareTreeSeed);
     return Array.from({ length: walkYard.bareTrees }, (_, i) => ({
@@ -239,20 +307,26 @@ export function WalkScenery({ layout, colors, seed, still, haunted = false }: Wa
   return (
     <>
       <color attach="background" args={[colors.sky]} />
-      <ambientLight color={colors.ambient} intensity={s.light.ambient} />
-      <hemisphereLight args={[colors.skyLight, colors.sky, s.light.sky]} />
-      <directionalLight position={moonAt} color={colors.moonlight} intensity={s.light.moon} />
-      <directionalLight position={[-width / 4, s.moon.height / 2, layout.start.z + depth]} color={colors.moonlight} intensity={s.light.fill} />
-      {/* The moon, high over the back of the yard. Fog is off so it stays visible. */}
+      <ambientLight color={colors.ambient} intensity={light.ambient} />
+      <hemisphereLight args={[colors.skyLight, colors.sky, light.sky]} />
+      <directionalLight position={moonAt} color={colors.moonlight} intensity={light.moon} />
+      <directionalLight position={[-width / 4, s.moon.height / 2, layout.start.z + depth]} color={colors.moonlight} intensity={light.fill} />
+      {/* The moon, high over the back of the yard. Fog is off so it stays visible. Haunted, it shows tonight's real phase. */}
       <group position={moonAt}>
-        <mesh>
-          <sphereGeometry args={[s.moon.radius, ...walkMaterial.segments.moon]} />
-          <meshBasicMaterial color={colors.moon} fog={false} />
-        </mesh>
-        <mesh position={[0, 0, -s.moon.radius]}>
-          <circleGeometry args={[s.moon.halo, walkMaterial.segments.halo]} />
-          <meshBasicMaterial color={colors.halo} transparent opacity={s.moon.haloOpacity} fog={false} depthWrite={false} />
-        </mesh>
+        {haunted ? (
+          <PhasedMoon radius={s.moon.radius} halo={s.moon.halo} haloColor={colors.halo} haloOpacity={s.moon.haloOpacity} />
+        ) : (
+          <>
+            <mesh>
+              <sphereGeometry args={[s.moon.radius, ...walkMaterial.segments.moon]} />
+              <meshBasicMaterial color={colors.moon} fog={false} />
+            </mesh>
+            <mesh position={[0, 0, -s.moon.radius]}>
+              <circleGeometry args={[s.moon.halo, walkMaterial.segments.halo]} />
+              <meshBasicMaterial color={colors.halo} transparent opacity={s.moon.haloOpacity} fog={false} depthWrite={false} />
+            </mesh>
+          </>
+        )}
       </group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[(box.minX + box.maxX) / 2, 0, (box.minZ + box.maxZ) / 2]}>
         <planeGeometry args={[width + s.groundMargin * 2, depth + s.groundMargin * 2]} />

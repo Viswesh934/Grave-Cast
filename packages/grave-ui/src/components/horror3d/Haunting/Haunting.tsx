@@ -10,11 +10,14 @@
  */
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { Billboard } from '@react-three/drei';
 import { Bloom, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
 import { AdditiveBlending, BackSide, BufferGeometry, CanvasTexture, Color, Float32BufferAttribute, SRGBColorSpace, type Group, type Mesh, type PointLight, type Texture } from 'three';
 import type { TombstoneWeathering } from '../../crypt/TombstoneCard/TombstoneCard';
+import type { MoonPhase } from '../../lycan/LunarPhaseSelector/LunarPhaseSelector';
+import { moonPhaseOn, type MoonOnDay } from '../../lycan/LunarPhaseSelector/moonPhase';
 import { seeded } from '../seeded';
-import { graveGlow, hauntAura, hauntClouds, hauntEffects, hauntEyes, hauntSky, hauntSoftSpot } from './tokens';
+import { graveGlow, hauntAura, hauntClouds, hauntEffects, hauntEyes, hauntMoon, hauntSky, hauntSoftSpot } from './tokens';
 
 /** Halfway down a sphere's texture is its horizon. */
 const EQUATOR = 0.5;
@@ -311,5 +314,136 @@ export function GraveAura({ weathering, lit = false, still = false }: GraveAuraP
       </group>
       {lit && <pointLight ref={light} position={[0, a.light.y, a.light.z]} color={glow.color} intensity={a.light.intensity * glow.strength} distance={a.light.distance} />}
     </group>
+  );
+}
+
+/** How each named phase lights the face: share of it lit and which side grows. Matches `MOON_PHASES`. */
+const PHASE_LIGHT: Record<MoonPhase, { lit: number; waxing: boolean }> = {
+  new: { lit: 0, waxing: true },
+  'waxing-crescent': { lit: 0.25, waxing: true },
+  'first-quarter': { lit: 0.5, waxing: true },
+  'waxing-gibbous': { lit: 0.75, waxing: true },
+  full: { lit: 1, waxing: true },
+  'blood-moon': { lit: 1, waxing: true },
+  'waning-gibbous': { lit: 0.75, waxing: false },
+  'third-quarter': { lit: 0.5, waxing: false },
+  'waning-crescent': { lit: 0.25, waxing: false },
+};
+
+/** Draws the moon's face: seas and craters, seeded so it is always the same face. */
+const paintFace = (context: CanvasRenderingContext2D, centre: number, radius: number, blood: boolean) => {
+  const m = hauntMoon;
+  const random = seeded(m.seed);
+  context.fillStyle = blood ? m.blood : m.face;
+  context.beginPath();
+  context.arc(centre, centre, radius, 0, TURN);
+  context.fill();
+  const blot = (spread: number, size: number, color: string, opacity: number) => {
+    const angle = random() * TURN;
+    const out = Math.sqrt(random()) * spread * radius;
+    context.globalAlpha = opacity;
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(centre + Math.cos(angle) * out, centre + Math.sin(angle) * out, size * radius, 0, TURN);
+    context.fill();
+  };
+  for (let i = 0; i < m.sea.count; i += 1) blot(m.sea.spread, m.sea.minRadius + random() * m.sea.radiusRange, blood ? m.bloodSeas : m.seas, m.sea.opacity);
+  for (let i = 0; i < m.crater.count; i += 1) blot(m.crater.spread, m.crater.minRadius + random() * m.crater.radiusRange, blood ? m.bloodSeas : m.craters, m.crater.opacity);
+  context.globalAlpha = 1;
+};
+
+/**
+ * The lit part of the face. The bright limb is a half circle; the terminator
+ * is half an ellipse whose width follows how much is lit, bulging out for a
+ * crescent and in for a gibbous moon. Waxing moons are lit on the right, as
+ * seen from the northern half of the world.
+ */
+const litPath = (context: CanvasRenderingContext2D, centre: number, radius: number, lit: number, waxing: boolean) => {
+  const across = radius * Math.abs(1 - lit * 2);
+  context.save();
+  context.translate(centre, centre);
+  if (!waxing) context.scale(-1, 1);
+  context.beginPath();
+  context.arc(0, 0, radius, -Math.PI * HALF, Math.PI * HALF, false);
+  if (lit < HALF) context.ellipse(0, 0, across, radius, 0, Math.PI * HALF, -Math.PI * HALF, true);
+  else context.ellipse(0, 0, across, radius, 0, Math.PI * HALF, Math.PI * (1 + HALF), false);
+  context.closePath();
+  context.restore();
+};
+
+const moonTexture = (lit: number, waxing: boolean, blood: boolean): Texture => {
+  const m = hauntMoon;
+  const canvas = document.createElement('canvas');
+  canvas.width = m.textureSize;
+  canvas.height = m.textureSize;
+  const context = canvas.getContext('2d');
+  if (context) {
+    const centre = m.textureSize * HALF;
+    const radius = centre * m.faceShare;
+    // The whole face, faint: the dark part lit only by light off the Earth.
+    context.globalAlpha = m.earthshine;
+    const faint = document.createElement('canvas');
+    faint.width = m.textureSize;
+    faint.height = m.textureSize;
+    const faintContext = faint.getContext('2d');
+    if (faintContext) {
+      paintFace(faintContext, centre, radius, blood);
+      context.drawImage(faint, 0, 0);
+      context.globalAlpha = 1;
+      // Then the sunlit part, at full strength.
+      litPath(context, centre, radius, lit, waxing);
+      context.save();
+      context.clip();
+      context.clearRect(0, 0, m.textureSize, m.textureSize);
+      context.drawImage(faint, 0, 0);
+      context.restore();
+    }
+  }
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  return texture;
+};
+
+/** Props for {@link PhasedMoon}. */
+export interface PhasedMoonProps {
+  /** The moon's radius, in scene units. */
+  radius: number;
+  /** The radius of the soft halo round it. */
+  halo: number;
+  /** The halo's colour. */
+  haloColor: string;
+  /** How strong the halo is at full moon, 0 to 1. */
+  haloOpacity: number;
+  /**
+   * Which phase to show, from the Groove UI lunar phases. Leave it out for
+   * tonight's real phase, worked out on the device from the date.
+   */
+  phase?: MoonPhase;
+}
+
+/**
+ * The moon in a phase: a cratered face drawn once on the device, lit on the
+ * side the sun is, with the unlit part faintly showing. It always turns to
+ * face the camera and ignores fog. Place it at the moon's position.
+ */
+export function PhasedMoon({ radius, halo, haloColor, haloOpacity, phase }: PhasedMoonProps) {
+  // Tonight's phase is read once when the moon is placed; it changes too slowly to watch.
+  const tonight = useMemo<MoonOnDay | null>(() => (phase ? null : moonPhaseOn()), [phase]);
+  const light = phase ? PHASE_LIGHT[phase] : { lit: tonight?.lit ?? 1, waxing: tonight?.waxing ?? true };
+  const blood = phase === 'blood-moon';
+  const texture = useMemo(() => moonTexture(light.lit, light.waxing, blood), [light.lit, light.waxing, blood]);
+  const glow = useMemo(() => new Color(1, 1, 1).multiplyScalar(hauntMoon.brightness), []);
+  const haloShare = hauntMoon.haloFloor + (1 - hauntMoon.haloFloor) * light.lit;
+  return (
+    <Billboard>
+      <mesh position={[0, 0, -radius]} raycast={() => null}>
+        <circleGeometry args={[halo, hauntSky.segments[0]]} />
+        <meshBasicMaterial color={blood ? hauntMoon.blood : haloColor} transparent opacity={haloOpacity * haloShare} fog={false} depthWrite={false} />
+      </mesh>
+      <mesh raycast={() => null}>
+        <planeGeometry args={[radius * 2, radius * 2]} />
+        <meshBasicMaterial map={texture} color={glow} transparent fog={false} depthWrite={false} toneMapped={false} />
+      </mesh>
+    </Billboard>
   );
 }

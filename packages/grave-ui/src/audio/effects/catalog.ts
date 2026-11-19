@@ -346,6 +346,23 @@ export const EFFECT_SPECS = define({
       }),
     ],
   },
+  witchGiggle: {
+    label: 'Witch Giggle',
+    category: 'magic',
+    description: 'A short, high "hee-hee-hee" that rises, then falls away.',
+    layers: [
+      tone('sawtooth', [980, 1240], 0.07, {
+        gain: 0.32,
+        filter: bandpass(2200, 4),
+        vibrato: { rate: 18, depth: 220 },
+        repeat: { count: 5, interval: 0.1, fade: 0.86, pitchJitter: 0.1 },
+      }),
+      noise('pink', 0.06, bandpass(3200, 2), {
+        gain: 0.16,
+        repeat: { count: 5, interval: 0.1, fade: 0.86 },
+      }),
+    ],
+  },
   witchCackle: {
     label: 'Witch Cackle',
     category: 'magic',

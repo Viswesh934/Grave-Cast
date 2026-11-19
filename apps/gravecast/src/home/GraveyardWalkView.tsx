@@ -16,6 +16,9 @@ import type { ScanSummary, StoryGrave } from './graves'
 
 const GraveyardWalkScene = lazy(() => import('./GraveyardWalkScene'))
 
+/** The witch giggles just after the grave's own sound, as her shoulders shake. */
+const GIGGLE_AFTER_MS = 350
+
 const ARRIVE_SOUND: Record<TombstoneWeathering, SpookySound> = {
   crumbling: 'boneCrack',
   cracked: 'stoneGrind',
@@ -74,7 +77,10 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
   const { playSound } = useSpookyAudio()
   const { announce } = useAriaAnnounce()
   const dialog = useRef<HTMLDivElement>(null)
+  const giggle = useRef<number | undefined>(undefined)
   const count = summary.graves.length
+
+  useEffect(() => () => window.clearTimeout(giggle.current), [])
 
   const stones = useMemo<GraveyardWalk3DGrave[]>(
     () => summary.graves.map((grave) => ({ id: grave.id, title: grave.title, subtitle: engraving(summary, grave), weathering: grave.weathering })),
@@ -102,6 +108,11 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
     const grave = summary.graves[index]
     setArrived(index)
     playSound(ARRIVE_SOUND[grave.weathering], 0.45)
+    // She only giggles when she moves; with reduced motion she holds still and quiet.
+    if (!reduced) {
+      window.clearTimeout(giggle.current)
+      giggle.current = window.setTimeout(() => playSound('witchGiggle', 0.35), GIGGLE_AFTER_MS)
+    }
     announce(`Grave ${index + 1} of ${count}. ${grave.title}. ${grave.evidence}. ${grave.detail}`)
   }
 

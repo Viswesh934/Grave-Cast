@@ -57,6 +57,8 @@ export const walkWitch = {
   /** Up and down drift while she hovers, and how many times a second. */
   bob: 0.05,
   bobHz: 0.55,
+  /** Her giggle at a grave: how long it lasts, how far she rocks (radians) and bounces, and how fast. */
+  giggle: { seconds: 1.2, shake: 0.12, shakeSpeed: 24, bounce: 0.04, bounceSpeed: 19 },
   /** Top speed, and how quickly she reaches it, per second. */
   speed: 2.8,
   accel: 5,
@@ -130,16 +132,18 @@ export const walkStone = {
   cardHeight: 1.6,
   /** The ring on the ground round a grave you point at, or the one she is at. */
   ring: { inner: 0.78, outer: 0.9, segments: 40, lift: 0.015, hover: 0.35, current: 0.85 },
-  /** Cracks: thin dark cuts in the face. */
-  crack: { width: 0.022, length: 0.36, depth: 0.012 },
+  /** Cracks: thin dark cuts in the face, a little wider on a crumbling stone. */
+  crack: { width: 0.02, crumblingWidth: 0.03, depth: 0.012 },
+  /** The face of each kind of stone: half its width and its height, so cracks stay on the stone. */
+  face: { arch: { halfWidth: 0.38, height: 1.08 }, slab: { halfWidth: 0.35, height: 0.84 } },
 } as const;
 
 /** How each weathering looks on a grave in the walk: its stone, how far it leans and sinks, and its cracks. */
 export const walkWeathering: Record<TombstoneWeathering, { tint: string; lean: number; sink: number; cracks: number }> = {
   pristine: { tint: palette.grove.mist300, lean: 0, sink: 0, cracks: 0 },
-  aged: { tint: palette.grove.mist400, lean: 0.05, sink: 0.01, cracks: 0 },
-  cracked: { tint: palette.grove.mist500, lean: 0.12, sink: 0.04, cracks: 1 },
-  crumbling: { tint: palette.grove[600], lean: 0.22, sink: 0.09, cracks: 2 },
+  aged: { tint: palette.grove.mist400, lean: 0.05, sink: 0.01, cracks: 1 },
+  cracked: { tint: palette.grove.mist500, lean: 0.12, sink: 0.04, cracks: 3 },
+  crumbling: { tint: palette.grove[600], lean: 0.22, sink: 0.09, cracks: 5 },
 };
 
 /** Colours the walk adds to the yard's theme. */
@@ -182,6 +186,30 @@ export const walkScenery = {
     archTube: 0.04,
     archLift: 1.55,
   },
+  /**
+   * The wrought-iron sign in the arch over the gate: a winged hourglass in a
+   * ring, the old gravestone sign that time flies, with a spike on the arch's top.
+   */
+  emblem: {
+    /** How far up the arch's curve the ring hangs, as a share of the arch's radius. */
+    at: 0.5,
+    ring: { radius: 0.3, tube: 0.025 },
+    /** The bar from the ring up to the top of the arch. */
+    bar: 0.02,
+    hourglass: { bulb: 0.12, half: 0.17, plate: 0.15, plateThickness: 0.025, post: 0.012 },
+    /** Feathers fanned out each side: how long each is, and its angle up from level, in radians. */
+    feathers: [
+      { length: 0.62, angle: 0.12 },
+      { length: 0.54, angle: 0.36 },
+      { length: 0.44, angle: 0.6 },
+      { length: 0.32, angle: 0.84 },
+    ],
+    featherWidth: 0.07,
+    featherDepth: 0.02,
+    /** Feathers start just inside the ring. */
+    featherFrom: 0.9,
+    finial: { radius: 0.06, height: 0.28 },
+  },
   trees: {
     /** How far outside the fence they start, and how deep the band of them is. */
     offset: 2.5,
@@ -215,6 +243,13 @@ export const walkScenery = {
     moon: 1.3,
     fill: 0.35,
   },
+  /** Darker, for the haunted yard: the graves' own glow and the lanterns do more of the lighting. */
+  hauntedLight: {
+    ambient: 0.28,
+    sky: 0.2,
+    moon: 0.85,
+    fill: 0.18,
+  },
 } as const;
 
 /** How the yard's materials catch the light, and how finely round shapes are cut. */
@@ -232,11 +267,27 @@ export const walkMaterial = {
   bareTreeSeed: 0x9e3779b9,
 } as const;
 
-/** Where cracks run across a grave's face: across from the centre, how high, and their angle in radians. */
-export const walkCracks = [
-  { x: 0.12, y: 0.72, turn: 0.45 },
-  { x: -0.14, y: 0.32, turn: -0.6 },
-] as const;
+/**
+ * Where cracks run across a grave's face, each a jagged line of points. A
+ * point is [across, up]: across as a share of half the face's width from the
+ * middle, up as a share of its height. Worse weathering uses more of them,
+ * in this order.
+ */
+export const walkCracks: readonly (readonly (readonly [number, number])[])[] = [
+  [[0.55, 0.8], [0.4, 0.72], [0.5, 0.64], [0.28, 0.56]],
+  [[-0.95, 0.36], [-0.65, 0.31], [-0.72, 0.21], [-0.4, 0.12], [-0.46, 0.04]],
+  [[0.95, 0.26], [0.7, 0.21], [0.78, 0.1], [0.58, 0.02]],
+  [[-0.3, 0.82], [-0.42, 0.74], [-0.2, 0.67], [-0.34, 0.6]],
+  [[0.05, 0.38], [-0.12, 0.3], [0.1, 0.2], [-0.04, 0.12], [0.06, 0.03]],
+];
+
+/** Broken pieces at the foot of a crumbling grave, in its own space: across, out in front, and size. */
+export const walkRubble: readonly (readonly [number, number, number])[] = [
+  [-0.32, 0.18, 0.07],
+  [0.28, 0.24, 0.05],
+  [0.42, 0.06, 0.06],
+  [-0.12, 0.34, 0.04],
+];
 
 /** The flight's timing. */
 export const walkMotion = {
