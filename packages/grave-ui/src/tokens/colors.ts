@@ -168,6 +168,39 @@ export const palette = {
     emerald: '#10b981',
     gold: '#d4af37',
   },
+  /**
+   * Coven - the painted witch: sickly green skin, a near-black robe and hat
+   * with a violet sheen, a yellow eye, and an old wooden broom bound with straw.
+   */
+  coven: {
+    skin: '#7fae3e',
+    skinShade: '#4f7a24',
+    wart: '#5c8a2c',
+    eye: '#f2d64b',
+    pupil: '#2a0a06',
+    robe: '#120f1a',
+    robeSheen: '#2b2240',
+    wood: '#7a4a22',
+    woodShade: '#4a2a12',
+    straw: '#d9b65a',
+    strawShade: '#a07e32',
+    twine: '#5a3818',
+    ink: '#050407',
+  },
+  /**
+   * Haunt - the glow each grave gives off in the graveyard, by how serious its
+   * finding is. Always shown with weathering and a label, never on its own.
+   */
+  haunt: {
+    /** Serious: fresh blood. */
+    serious: '#ff2a3c',
+    /** Risky: witch-fire. */
+    risky: '#a66bff',
+    /** Unusual: a candle's curse-gold. */
+    unusual: '#f0b33a',
+    /** A note: a cold, pale ghost-light. */
+    note: '#8fe6ff',
+  },
   /** Bone - ivory through ash */
   bone: {
     100: '#f5f2eb',

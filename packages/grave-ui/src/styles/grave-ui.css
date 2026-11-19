@@ -26,6 +26,13 @@
   --grave-witch-emerald: #10b981;
   --grave-witch-gold: #d4af37;
 
+  /* Haunt Palette: each grave's glow by how serious its finding is (palette.haunt).
+     Always shown with weathering and a label, never on its own. */
+  --grave-haunt-serious: #ff2a3c;
+  --grave-haunt-risky: #a66bff;
+  --grave-haunt-unusual: #f0b33a;
+  --grave-haunt-note: #8fe6ff;
+
   /* Bone Palette */
   --grave-bone-100: #f5f2eb;
   --grave-bone-200: #e8e0d5;

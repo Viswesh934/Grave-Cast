@@ -42,7 +42,7 @@ export const walkYard = {
   /** One tree for every this many units of fence, outside it. */
   treeEvery: 2.4,
   /** Bare trees standing at the yard's edges. */
-  bareTrees: 6,
+  bareTrees: 12,
 } as const;
 
 /** The witch: how big she is and how she flies. */
@@ -152,8 +152,16 @@ export const walkColors = {
   path: palette.grove[750],
 } as const;
 
-/** Fog: how near it starts and how far it hides everything. */
-export const walkFog = { near: 8, far: 32 } as const;
+/** Fog: how near it starts and how far it hides everything. Haunted, it closes in. */
+export const walkFog = { near: 8, far: 32, haunted: { near: 4, far: 24 } } as const;
+
+/** The haunted yard's extras: where the eyes watch from, and where the clouds hang in front of the moon. */
+export const walkHaunt = {
+  /** The eyes watch from this far beyond the fence, among the trees. */
+  eyesBeyond: 3.5,
+  /** The clouds hang this much nearer than the moon, so they pass in front of it. */
+  cloudsBefore: 3,
+} as const;
 
 /** The yard's surroundings: the iron fence and gate, the trees, the path, mist and moon. */
 export const walkScenery = {
@@ -185,14 +193,14 @@ export const walkScenery = {
     sides: 6,
   },
   bareTree: {
-    height: 3.4,
-    trunk: 0.11,
+    height: 4.4,
+    trunk: 0.12,
     /** Branches: how long, how far up the trunk they start, and how steeply they rise. */
     branch: 1.3,
     branchRadius: 0.045,
     branchesFrom: 0.45,
     rise: 0.75,
-    count: 4,
+    count: 6,
     /** Stands this far outside the fence. */
     offset: 1.2,
   },

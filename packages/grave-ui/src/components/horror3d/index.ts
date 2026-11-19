@@ -17,6 +17,8 @@ export * from './CobwebCorner3D';
 export * from './BestiaryCharacter3D';
 export * from './GraveyardScene3D';
 export * from './GraveyardWalk3D';
+export * from './Haunting';
+export { seeded } from './seeded';
 export * from './ChickenLegStepper3D';
 export * from './horror3d.config';
 

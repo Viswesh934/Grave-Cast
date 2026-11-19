@@ -33,6 +33,10 @@
   --color-grave-grove-glow: var(--grave-grove-glow);
   --color-grave-grove-sage: var(--grave-grove-sage);
   --color-grave-grove-brass: var(--grave-grove-brass);
+  --color-grave-haunt-serious: var(--grave-haunt-serious);
+  --color-grave-haunt-risky: var(--grave-haunt-risky);
+  --color-grave-haunt-unusual: var(--grave-haunt-unusual);
+  --color-grave-haunt-note: var(--grave-haunt-note);
 }
 
 /* Groove UI's grove theme swaps the --grave-* values; the colour variables are

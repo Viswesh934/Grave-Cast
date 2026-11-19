@@ -7,6 +7,8 @@ import { useFrame } from '@react-three/fiber';
 import { ExtrudeGeometry, Shape, Vector3, type Group, type Mesh, type PointLight } from 'three';
 import { palette } from '../../tokens/colors';
 import { BestiaryCharacter3D } from './BestiaryCharacter3D';
+import { DriftingClouds, HauntEffects, NightSky, WatchingEyes } from './Haunting/Haunting';
+import { seeded } from './seeded';
 
 /** Where the camera stands and what it looks at. */
 export interface GraveyardCameraPose {
@@ -106,6 +108,13 @@ export interface GraveyardScene3DProps {
   creatureScale?: number;
   /** Stop the camera drifting and the mist moving, for reduced motion. */
   still?: boolean;
+  /**
+   * Make the yard frightening: a black sky with stars, clouds over the moon,
+   * eyes watching from the trees, and glow, grain and a vignette over the
+   * picture. Adds its own effect composer, so leave it off if the canvas
+   * already has one. @default false
+   */
+  haunted?: boolean;
   /** Extra things to place in the yard. */
   children?: ReactNode;
 }
@@ -120,14 +129,24 @@ const STONES_PER_ROW = 6;
 const MOON = [10, 8.5, -30] as const;
 const ROW_GAP = 3.1;
 
-/** A small seeded random, so the yard is laid out the same on every visit. */
-export const seeded = (seed: number) => {
-  let s = seed >>> 0;
-  return () => {
-    s = (s * 1664525 + 1013904223) >>> 0;
-    return s / 4294967296;
-  };
-};
+/** The tree line stands this far behind the back row of the yard. */
+const TREE_LINE_GAP = 8;
+
+/**
+ * Where the haunting sits in this yard. The eyes watch from the sides and
+ * from just past the tree line. The near edge is behind the camera, so no
+ * eyes hang between the camera and the stones.
+ */
+const HAUNT = {
+  bounds: { minX: -YARD.width / 2, maxX: YARD.width / 2, minZ: YARD.back - TREE_LINE_GAP + 2, maxZ: 6 },
+  eyesBeyond: 3.5,
+  /** How far in front of the moon the clouds hang. */
+  cloudsBefore: 3,
+} as const;
+const YARD_MIDDLE: [number, number, number] = [0, 0, YARD.back / 2];
+
+// Still exported from here, where it used to live.
+export { seeded };
 
 /** The shapes of headstone in the yard. */
 export type StoneKind = 'arch' | 'cross' | 'slab';
@@ -263,7 +282,7 @@ function TreeLine({ color }: { color: string }) {
     }));
   }, []);
   return (
-    <group position={[0, 0, -22]}>
+    <group position={[0, 0, YARD.back - TREE_LINE_GAP]}>
       {trees.map((tree, i) => (
         <mesh key={i} position={[tree.x, tree.height / 2, 0]}>
           <coneGeometry args={[tree.width, tree.height, 5]} />
@@ -323,6 +342,7 @@ export function GraveyardScene3D({
   creature = 'wisp',
   creatureScale = 0.45,
   still = false,
+  haunted = false,
   children,
 }: GraveyardScene3DProps) {
   const colors: GraveyardSceneColors = GRAVEYARD_SCENE_THEMES[theme];
@@ -386,7 +406,15 @@ export function GraveyardScene3D({
           <BestiaryCharacter3D characterId={creature} hauntMode="whisper" accentColor={colors.wisp} scale={creatureScale} ownLights={false} />
         </group>
       )}
+      {haunted && (
+        <>
+          <NightSky center={YARD_MIDDLE} />
+          <DriftingClouds at={[MOON[0], MOON[1], MOON[2] + HAUNT.cloudsBefore]} still={still} />
+          <WatchingEyes bounds={HAUNT.bounds} beyond={HAUNT.eyesBeyond} watching={YARD_MIDDLE} still={still} />
+        </>
+      )}
       {children}
+      {haunted && <HauntEffects still={still} />}
     </>
   );
 }

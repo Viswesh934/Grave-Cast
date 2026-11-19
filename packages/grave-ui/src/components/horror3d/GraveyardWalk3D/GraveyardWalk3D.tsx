@@ -10,6 +10,8 @@ import { zLayers } from '../../../tokens/layers';
 import type { TombstoneWeathering } from '../../crypt/TombstoneCard/TombstoneCard';
 import { GRAVEYARD_SCENE_THEMES, Stone, type GraveyardSceneColors, type GraveyardSceneTheme, type YardStone } from '../GraveyardScene3D';
 import { layoutWalkYard, routeTo, steer, turnToward, walkSeed, yawOf, type WalkGraveSpot, type WalkPoint, type WalkYardLayout } from './layout';
+import { GraveAura, HauntEffects } from '../Haunting/Haunting';
+import { graveGlow } from '../Haunting/tokens';
 import { WalkScenery } from './Scenery';
 import { walkCamera, walkColors, walkCracks, walkFog, walkMotion, walkRender, walkStone, walkWeathering, walkWitch } from './tokens';
 import { useWitchTexture, WITCH_ASPECT } from './witchTexture';
@@ -50,6 +52,13 @@ export interface GraveyardWalk3DProps {
   still?: boolean;
   /** Turn the view with the left and right arrow keys. @default true */
   turnKeys?: boolean;
+  /**
+   * Make the yard frightening: each grave glows in the colour of how serious it
+   * is, with a candle at its foot; a black sky with stars, clouds over the moon,
+   * eyes in the trees, closer fog, and glow, grain and a vignette over the picture.
+   * @default true
+   */
+  haunted?: boolean;
 }
 
 /** What the flight keeps between frames. Kept out of React, so a frame never re-renders anything. */
@@ -110,11 +119,15 @@ interface FindingGraveProps {
   current: boolean;
   onHover: (index: number | null) => void;
   onPick: (index: number) => void;
+  haunted: boolean;
+  still: boolean;
 }
 
 /** One finding's grave: a stone worn to its weathering, with its words carved on the face. */
-function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, onPick }: FindingGraveProps) {
+function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, onPick, haunted, still }: FindingGraveProps) {
   const look = walkWeathering[grave.weathering];
+  // Haunted, the grave's own colour marks it: its carved title, and the ring round it.
+  const marked = haunted ? graveGlow[grave.weathering].color : walkColors.ring;
   // Worn stones lean, each its own way.
   const lean = look.lean * (index % 2 === 0 ? 1 : -1);
   const stone: YardStone = { kind: spot.kind, position: [0, 0, 0], rotation: [0, 0, 0], scale: 1 };
@@ -147,7 +160,7 @@ function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, o
           textAlign="center"
           anchorX="center"
           anchorY="middle"
-          color={walkColors.text}
+          color={haunted ? marked : walkColors.text}
           outlineWidth={walkStone.titleSize * walkRender.outlineShare}
           outlineColor={walkColors.textOutline}
         >
@@ -176,10 +189,11 @@ function FindingGrave({ grave, spot, index, colors, hovered, current, onHover, o
           </mesh>
         ))}
       </group>
+      {haunted && <GraveAura weathering={grave.weathering} lit={hovered || current} still={still} />}
       {(hovered || current) && (
         <mesh position={[0, ring.lift, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[ring.inner, ring.outer, ring.segments]} />
-          <meshBasicMaterial color={walkColors.ring} transparent opacity={current ? ring.current : ring.hover} depthWrite={false} />
+          <meshBasicMaterial color={marked} transparent opacity={current ? ring.current : ring.hover} depthWrite={false} />
         </mesh>
       )}
     </group>
@@ -222,6 +236,7 @@ export function GraveyardWalk3D({
   theme = 'grove',
   still = false,
   turnKeys = true,
+  haunted = true,
 }: GraveyardWalk3DProps) {
   const colors: GraveyardSceneColors = GRAVEYARD_SCENE_THEMES[theme];
   const ids = graves.map((grave) => grave.id).join('\n');
@@ -431,8 +446,8 @@ export function GraveyardWalk3D({
 
   return (
     <>
-      <fog attach="fog" args={[colors.sky, walkFog.near, walkFog.far]} />
-      <WalkScenery layout={layout} colors={colors} seed={seed} still={still} />
+      <fog attach="fog" args={[colors.sky, haunted ? walkFog.haunted.near : walkFog.near, haunted ? walkFog.haunted.far : walkFog.far]} />
+      <WalkScenery layout={layout} colors={colors} seed={seed} still={still} haunted={haunted} />
       {graves.map((grave, index) =>
         layout.graves[index] ? (
           <FindingGrave
@@ -445,6 +460,8 @@ export function GraveyardWalk3D({
             current={arrived === index || goal === index}
             onHover={hover}
             onPick={pick}
+            haunted={haunted}
+            still={still}
           />
         ) : null
       )}
@@ -471,6 +488,7 @@ export function GraveyardWalk3D({
           <div style={{ transform: 'translate(-50%, -100%)' }}>{renderArrived(arrived)}</div>
         </Html>
       )}
+      {haunted && <HauntEffects still={still} />}
     </>
   );
 }

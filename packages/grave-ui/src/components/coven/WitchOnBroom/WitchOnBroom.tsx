@@ -1,5 +1,5 @@
 /**
- * WitchOnBroom - A line-art witch flying across the moon
+ * WitchOnBroom - A witch on her broom, flying across the moon: painted, or in fine lines
  * @module components/coven/WitchOnBroom
  */
 
@@ -13,10 +13,12 @@ import {
   witchMotion,
   witchSizes,
   type WitchFlightSpeed,
+  type WitchLook,
   type WitchSize,
 } from './tokens';
+import { PaintedMoon, PaintedWitch } from './PaintedWitch';
 
-export type { WitchFlightSpeed, WitchSize };
+export type { WitchFlightSpeed, WitchLook, WitchSize };
 
 /** Class names used by the drawing's stylesheet. */
 const CLASS = {
@@ -112,6 +114,11 @@ const witchStyles = `
  * Props for {@link WitchOnBroom}.
  */
 export interface WitchOnBroomProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'onClick' | 'color'> {
+  /**
+   * How she is drawn: a filled, inked cartoon witch, or the original fine line art.
+   * @default 'painted'
+   */
+  look?: WitchLook;
   /** How fast she flies. @default 'hunt' */
   flightSpeed?: WitchFlightSpeed;
   /** Color of the sparks and the spell ring. @default witchLine.spell */
@@ -135,9 +142,11 @@ export interface WitchOnBroomProps extends Omit<HTMLAttributes<HTMLButtonElement
 }
 
 /**
- * WitchOnBroom - A line-art witch on her broomstick, flying across the moon.
+ * WitchOnBroom - A witch on her broomstick, flying across the moon.
  *
- * Drawn in fine lines that suit dark interfaces. She bobs through the air,
+ * Painted by default: a green-skinned hag with a hooked nose, a tall bent hat,
+ * a ragged black robe and a straw broom. `look="line"` draws her in fine lines
+ * that suit quiet, dark interfaces instead. She bobs through the air,
  * her cloak and hair snap in the wind, and sparks trail behind the broom.
  * She leans toward the pointer, and casts a spell when clicked or when
  * Enter or Space is pressed. All motion stops for people who ask their
@@ -151,6 +160,7 @@ export interface WitchOnBroomProps extends Omit<HTMLAttributes<HTMLButtonElement
 export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
   (
     {
+      look = 'painted',
       flightSpeed = 'hunt',
       spellColor = witchLine.spell,
       onCastSpell,
@@ -232,6 +242,10 @@ export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
         >
           {scenery && (
             <>
+          {look === 'painted' ? (
+            <PaintedMoon />
+          ) : (
+            <>
           {/* The moon */}
           <circle cx="178" cy="46" r="30" fill={witchLine.moon} fillOpacity={witchLine.moonFill} stroke={witchLine.moon} strokeWidth={witchLine.stroke} />
           {/* Craters, placed unevenly so they never read as a face */}
@@ -240,6 +254,8 @@ export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
             <circle cx="190" cy="59" r="2.5" />
             <circle cx="160" cy="57" r="1.8" />
           </g>
+            </>
+          )}
 
           {/* Stars */}
           <g fill="none" stroke={witchLine.faint} strokeWidth={witchLine.thin} strokeLinecap="round">
@@ -278,6 +294,10 @@ export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
                 />
               ))}
 
+              {look === 'painted' ? (
+                <PaintedWitch flutterClass={CLASS.flutter} />
+              ) : (
+                <>
               {/* Broom: shaft, binding, and bristles */}
               <path {...line} d="M 52 104 C 100 98, 150 92, 206 84" />
               <path {...line} strokeWidth={witchLine.thin} d="M 51 99 L 53 110 M 56 98 L 58 109" />
@@ -314,6 +334,8 @@ export const WitchOnBroom = forwardRef<HTMLButtonElement, WitchOnBroomProps>(
               {/* Pointed hat with its tip bent back by the wind */}
               <path {...line} d="M 124 56 Q 138 50 154 54" />
               <path {...line} d="M 131 54 Q 130 42 128 35 Q 124 28 115 27 Q 126 26 134 32 Q 140 42 147 52" />
+                </>
+              )}
 
               {/* The spell, when cast */}
               {spell > 0 && (

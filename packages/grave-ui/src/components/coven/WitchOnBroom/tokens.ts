@@ -15,6 +15,44 @@ export type WitchFlightSpeed = 'glide' | 'hunt' | 'warp';
 /** Preset widths of the drawing. */
 export type WitchSize = 'sm' | 'md' | 'lg';
 
+/**
+ * How she is drawn: `painted` is a filled, inked cartoon witch (green skin,
+ * tall hat, ragged robe, straw broom); `line` is the original fine line art.
+ */
+export type WitchLook = 'painted' | 'line';
+
+/** Colors and ink of the painted witch. */
+export const witchPaint = {
+  skin: palette.coven.skin,
+  skinShade: palette.coven.skinShade,
+  wart: palette.coven.wart,
+  eye: palette.coven.eye,
+  pupil: palette.coven.pupil,
+  teeth: palette.bone.decayed,
+  robe: palette.coven.robe,
+  robeSheen: palette.coven.robeSheen,
+  hatBand: palette.witch.fire,
+  buckle: palette.witch.gold,
+  wood: palette.coven.wood,
+  woodShade: palette.coven.woodShade,
+  straw: palette.coven.straw,
+  strawShade: palette.coven.strawShade,
+  twine: palette.coven.twine,
+  ink: palette.coven.ink,
+  /** The moon behind her, filled and glowing. */
+  moon: palette.witch.gold,
+  moonFill: 0.85,
+  moonGlow: 0.18,
+  /** Ink line widths, in drawing units. */
+  outline: 1.1,
+  fine: 0.6,
+  /** The broom handle: the inked edge, then the wood inside it. */
+  handleEdge: 5,
+  handle: 3.4,
+  /** How strongly shading shows over a fill, from 0 to 1. */
+  shade: 0.55,
+} as const;
+
 /** Line and glow colors of the drawing. */
 export const witchLine = {
   /** The witch, her broom, and the stars. */
