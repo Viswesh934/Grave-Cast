@@ -21,6 +21,7 @@ import { DIARY_ENTRIES, DIARY_SILENT_TEXT, DIARY_STORAGE_KEY, DIARY_WRONG_REPLIE
 import { checkLinkOnDevice, SEVERITY_ORDER, type Grave, type LinkSummary } from '../linkscan/deviceChecks'
 import { scanOnServer } from '../linkscan/serverScan'
 import { checkRepoInput, scanRepo } from '../repograve/repoScan'
+import { usePenSlot } from '../site/penSlot'
 import { SoundStatus } from '../site/SoundStatus'
 import { issueVoices, useAmbience, type AmbienceState } from '../site/useAmbience'
 import { useSmoothScroll } from '../site/useSmoothScroll'
@@ -110,6 +111,7 @@ export function HomePage() {
   const [step, setStep] = useState(0)
   const [summary, setSummary] = useState<ScanSummary | null>(null)
   const [walkOpen, setWalkOpen] = useState(false)
+  const penSlot = usePenSlot()
   /** The last scan started but couldn't finish. */
   const [brokeOff, setBrokeOff] = useState(false)
 
@@ -377,12 +379,11 @@ export function HomePage() {
       {/* A pen fired across the screen: catch it to draw on the page. */}
       {/* The home page's cursor is a skeletal hand that grips on click. Every other page keeps the normal cursor. */}
       <HorrorCursor variant="skeletal-hand" />
-      {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar. It is fired on every visit, can't be turned off, and stays on screen, even while drawing. */}
+      {/* The pen always sits in its slot at the right end of the top bar. The cannon fires a ghost that flies home into it on every visit. */}
       <ScribbleCannon
         paused={diary.open || walkOpen}
-        dockInset={{ x: 24, y: 8 }}
+        dockTo={penSlot}
         dismissible={false}
-        stayVisible
         scribbleProps={{ storageKey: 'gravecast-scribble' }}
       />
     </div>

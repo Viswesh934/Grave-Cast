@@ -2,12 +2,15 @@
  * ScribbleCannon - A pen fired across the screen into the top corner. Click it to draw.
  * @module components/effects/Scribble/ScribbleCannon
  */
-import { useRef, useState } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { useSpookyAudio } from '../../../audio';
 import { useRafLoop } from '../../../hooks/useRafLoop';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { zLayers } from '../../../tokens/layers';
+import { Character } from '../../bestiary/Character';
+import { ghostSpec } from '../../bestiary/characters';
+import { palette } from '../../../tokens/colors';
 import { Scribble, SCRIBBLE_TOOL_INFO, type ScribbleProps } from './Scribble';
 
 /** How the shot flies and where it lands. Distances in px, times in ms. */
@@ -30,6 +33,16 @@ export const SCRIBBLE_CANNON = {
   iconStroke: 2,
   /** Line width of the close mark, in icon units. */
   closeStroke: 2,
+  /** How solid the phantom shot is when it leaves the barrel; it fades to nothing as it reaches the pen. */
+  phantomOpacity: 0.6,
+  /** How sharply the phantom fades: higher keeps it solid longer, then fades it near the end. */
+  phantomFade: 3,
+  /** The ghost's pale glow, in px. */
+  phantomGlowPx: 10,
+  phantomGlow: palette.bone[100],
+  /** The ghost sways side to side as it flies, instead of spinning: how many times, and how far, in degrees. */
+  ghostSways: 3,
+  ghostSwayDeg: 14,
 } as const;
 
 type CannonMode = 'waiting' | 'flying' | 'landed' | 'off';
@@ -54,6 +67,30 @@ const writeOff = (key: string | undefined) => {
     // Storage blocked: it stays off until the page closes.
   }
 };
+
+/** The ball with the pen drawn on it: the same in flight, docked, and as a phantom. */
+function PenFace({ ballRef }: { ballRef?: RefObject<HTMLSpanElement | null> }) {
+  return (
+    <span
+      ref={ballRef}
+      className="grid size-full place-items-center rounded-full border-2 border-grave-sanguine-plasma bg-grave-dark-800 text-grave-bone-100 shadow-lg transition-colors group-hover:bg-grave-dark-700 group-focus-visible:outline-2 group-focus-visible:outline-grave-bone-100"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="50%"
+        height="50%"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={SCRIBBLE_CANNON.iconStroke}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d={SCRIBBLE_TOOL_INFO.pen.icon} />
+      </svg>
+    </span>
+  );
+}
 
 /** Fast out of the barrel, slowing as it reaches the corner. */
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -83,6 +120,15 @@ export interface ScribbleCannonProps {
    * shot. @default false
    */
   stayVisible?: boolean;
+  /**
+   * Keep the pen in this element, such as a slot kept for it in a top bar. The
+   * pen is there from the start and never leaves; the shot becomes the
+   * bestiary's ghost, which flies into it swaying and fades, like a soul
+   * returning, and then the pen's glow lights. The phantom can't be clicked. Pass `null` while the element
+   * isn't mounted yet. With `dockTo`, `dockInset`, `stayVisible` and the turn-off
+   * button are not used.
+   */
+  dockTo?: HTMLElement | null;
 }
 
 /**
@@ -99,7 +145,7 @@ export interface ScribbleCannonProps {
  * <ScribbleCannon dockInset={{ x: 24, y: 8 }} storageKey="my-page-cannon" />
  * ```
  */
-export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCatch, paused = false, dockInset, storageKey, dismissible = true, stayVisible = false }: ScribbleCannonProps) {
+export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCatch, paused = false, dockInset, storageKey, dismissible = true, stayVisible = false, dockTo }: ScribbleCannonProps) {
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<CannonMode>(() => (dismissible && readOff(storageKey) ? 'off' : 'waiting'));
@@ -111,7 +157,8 @@ export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCa
   const { ball: flightSize, dockBall, margin } = SCRIBBLE_CANNON;
   const insetX = dockInset?.x ?? margin;
   const insetY = dockInset?.y ?? margin;
-  const current: CannonMode = reduced && (mode === 'waiting' || mode === 'flying') ? 'landed' : mode;
+  const docked = dockTo !== undefined;
+  const current: CannonMode = reduced && (mode === 'waiting' || mode === 'flying') ? 'landed' : docked && mode === 'off' ? 'landed' : mode;
 
   useRafLoop(
     ({ delta }) => {
@@ -130,13 +177,18 @@ export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCa
       const height = window.innerHeight;
       const x0 = margin;
       const y0 = height - flightSize - margin;
-      const x1 = width - insetX - dockBall;
-      const y1 = insetY;
+      // Docked, it flies to wherever the pen's slot is right now.
+      const slot = docked ? dockTo?.getBoundingClientRect() : null;
+      const x1 = slot ? slot.left + (slot.width - dockBall) / 2 : width - insetX - dockBall;
+      const y1 = slot ? slot.top + (slot.height - dockBall) / 2 : insetY;
       const x = x0 + (x1 - x0) * e;
       const y = y0 + (y1 - y0) * e - Math.sin(Math.PI * e) * height * SCRIBBLE_CANNON.arc;
       const scale = 1 + (dockBall / flightSize - 1) * e;
       if (holder.current) holder.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
-      if (ball.current) ball.current.style.transform = `rotate(${e * SCRIBBLE_CANNON.spinTurns * TURN}deg)`;
+      // The ball spins; the ghost sways upright.
+      const turn = docked ? Math.sin(e * Math.PI * SCRIBBLE_CANNON.ghostSways) * SCRIBBLE_CANNON.ghostSwayDeg : e * SCRIBBLE_CANNON.spinTurns * TURN;
+      if (ball.current) ball.current.style.transform = `rotate(${turn}deg)`;
+      if (docked && holder.current) holder.current.style.opacity = String(SCRIBBLE_CANNON.phantomOpacity * (1 - Math.pow(e, SCRIBBLE_CANNON.phantomFade)));
       if (t >= 1) {
         playSound('stoneDrop', 0.3);
         setMode('landed');
@@ -158,6 +210,60 @@ export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCa
   };
 
   const landed = current === 'landed';
+
+  if (docked) {
+    const pen = (
+      <span className="relative block" style={{ width: dockBall, height: dockBall }}>
+        {/* The glow lights once the phantom has come home. */}
+        {landed && (
+          <span aria-hidden="true" className="pointer-events-none absolute -inset-1.5 rounded-full bg-grave-sanguine-crimson/45 blur-md motion-safe:animate-pulse" />
+        )}
+        <button
+          type="button"
+          aria-label={label}
+          aria-pressed={open}
+          title={label}
+          onClick={open ? () => setOpen(false) : draw}
+          className="group relative block size-full cursor-pointer border-0 bg-transparent p-0"
+        >
+          <PenFace />
+        </button>
+      </span>
+    );
+    const phantom =
+      current === 'flying' && !paused ? (
+        <div
+          ref={holder}
+          aria-hidden="true"
+          className="pointer-events-none fixed"
+          style={{
+            left: 0,
+            top: 0,
+            width: flightSize,
+            height: flightSize,
+            zIndex: zLayers.overlay,
+            transformOrigin: '0 0',
+            transform: `translate3d(${-flightSize * 2}px, 0, 0)`,
+            opacity: SCRIBBLE_CANNON.phantomOpacity,
+            willChange: 'transform, opacity',
+            filter: `drop-shadow(0 0 ${SCRIBBLE_CANNON.phantomGlowPx}px ${SCRIBBLE_CANNON.phantomGlow})`,
+          }}
+        >
+          {/* A real ghost from the bestiary, carrying the pen's soul home. */}
+          <span ref={ball} className="block size-full">
+            <Character spec={ghostSpec} size="sm" sound={false} tilt={false} growable={false} showLabel={false} />
+          </span>
+        </div>
+      ) : null;
+    return (
+      <>
+        {dockTo ? createPortal(pen, dockTo) : null}
+        {phantom && typeof document !== 'undefined' ? createPortal(phantom, document.body) : null}
+        <Scribble {...scribbleProps} open={open} onOpenChange={setOpen} showLauncher={false} />
+      </>
+    );
+  }
+
   const visible = current === 'flying' ? !paused && !open : landed && (stayVisible || (!open && !paused));
   // Kept on screen, it sits with the drawing layer; rendered after it, it stays clickable above the drawing.
   const dockLayer = stayVisible ? zLayers.annotation : zLayers.overlay;
@@ -194,24 +300,7 @@ export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCa
           disabled={!landed}
           className="group relative block size-full cursor-pointer border-0 bg-transparent p-0 disabled:cursor-default"
         >
-          <span
-            ref={ball}
-            className="grid size-full place-items-center rounded-full border-2 border-grave-sanguine-plasma bg-grave-dark-800 text-grave-bone-100 shadow-lg transition-colors group-hover:bg-grave-dark-700 group-focus-visible:outline-2 group-focus-visible:outline-grave-bone-100"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="50%"
-              height="50%"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={SCRIBBLE_CANNON.iconStroke}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d={SCRIBBLE_TOOL_INFO.pen.icon} />
-            </svg>
-          </span>
+          <PenFace ballRef={ball} />
         </button>
         {landed && dismissible && (
           <button
