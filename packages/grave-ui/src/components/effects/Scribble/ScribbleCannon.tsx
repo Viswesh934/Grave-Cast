@@ -77,6 +77,12 @@ export interface ScribbleCannonProps {
    * then ignored. @default true
    */
   dismissible?: boolean;
+  /**
+   * Keep the landed ball on screen all the time: while drawing (clicking it
+   * then stops drawing) and while `paused`, which then only holds back the
+   * shot. @default false
+   */
+  stayVisible?: boolean;
 }
 
 /**
@@ -93,7 +99,7 @@ export interface ScribbleCannonProps {
  * <ScribbleCannon dockInset={{ x: 24, y: 8 }} storageKey="my-page-cannon" />
  * ```
  */
-export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCatch, paused = false, dockInset, storageKey, dismissible = true }: ScribbleCannonProps) {
+export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCatch, paused = false, dockInset, storageKey, dismissible = true, stayVisible = false }: ScribbleCannonProps) {
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<CannonMode>(() => (dismissible && readOff(storageKey) ? 'off' : 'waiting'));
@@ -152,14 +158,17 @@ export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCa
   };
 
   const landed = current === 'landed';
+  const visible = current === 'flying' ? !paused && !open : landed && (stayVisible || (!open && !paused));
+  // Kept on screen, it sits with the drawing layer; rendered after it, it stays clickable above the drawing.
+  const dockLayer = stayVisible ? zLayers.annotation : zLayers.overlay;
   const cannon =
-    !open && !paused && (current === 'flying' || landed) ? (
+    visible ? (
       <div
         ref={holder}
         className="fixed"
         style={
           landed
-            ? { right: insetX, top: insetY, width: dockBall, height: dockBall, zIndex: zLayers.overlay }
+            ? { right: insetX, top: insetY, width: dockBall, height: dockBall, zIndex: dockLayer }
             : // Placed by the first frame of the flight.
               {
                 left: 0,
@@ -178,9 +187,10 @@ export function ScribbleCannon({ label = 'Draw on the page', scribbleProps, onCa
         )}
         <button
           type="button"
-          aria-label={label}
-          title={label}
-          onClick={draw}
+          aria-label={stayVisible && open ? 'Stop drawing' : label}
+          aria-pressed={stayVisible ? open : undefined}
+          title={stayVisible && open ? 'Stop drawing' : label}
+          onClick={stayVisible && open ? () => setOpen(false) : draw}
           disabled={!landed}
           className="group relative block size-full cursor-pointer border-0 bg-transparent p-0 disabled:cursor-default"
         >

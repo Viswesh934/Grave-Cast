@@ -377,11 +377,12 @@ export function HomePage() {
       {/* A pen fired across the screen: catch it to draw on the page. */}
       {/* The home page's cursor is a skeletal hand that grips on click. Every other page keeps the normal cursor. */}
       <HorrorCursor variant="skeletal-hand" />
-      {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar. It is fired on every visit and can't be turned off. */}
+      {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar. It is fired on every visit, can't be turned off, and stays on screen, even while drawing. */}
       <ScribbleCannon
         paused={diary.open || walkOpen}
         dockInset={{ x: 24, y: 8 }}
         dismissible={false}
+        stayVisible
         scribbleProps={{ storageKey: 'gravecast-scribble' }}
       />
     </div>
