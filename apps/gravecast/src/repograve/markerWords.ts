@@ -29,5 +29,3 @@ export const REPO_NOT_CHECKED: readonly string[] = [
 /** The last part of a path, for labels with little room. */
 export const fileName = (path: string): string => path.slice(path.lastIndexOf('/') + 1)
 
-/** Stones in the 3D scene. Every grave is also in the list, so the scene can stay small and smooth. */
-export const STONES_IN_SCENE = 6

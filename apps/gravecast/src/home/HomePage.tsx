@@ -25,7 +25,7 @@ import { issueVoices, useAmbience, type AmbienceState } from '../site/useAmbienc
 import { useSmoothScroll } from '../site/useSmoothScroll'
 import { GravePreview } from './GravePreview'
 import { GraveRow } from './GraveRow'
-import { GraveStories } from './GraveStories'
+import { GraveyardWalkView } from './GraveyardWalkView'
 import { summariseLink, summariseRepo, type CheckedLink, type Mode, type ScanSummary } from './graves'
 import { Ritual } from './Ritual'
 import { RITUAL, type RitualStep } from './ritualSteps'
@@ -94,7 +94,7 @@ function SideNotes({ ambience, onToggle }: { ambience: AmbienceState; onToggle: 
 /**
  * The one page: check a link, or switch on dev mode and read a repo. The diary
  * keeps you company while it runs, then the graveyard rises in the left
- * column, right under the form, and plays as stories when opened.
+ * column, right under the form, and opens as a walk through the yard.
  */
 export function HomePage() {
   const [params, setParams] = useSearchParams()
@@ -108,7 +108,7 @@ export function HomePage() {
   const [typing, setTyping] = useState(false)
   const [step, setStep] = useState(0)
   const [summary, setSummary] = useState<ScanSummary | null>(null)
-  const [storiesOpen, setStoriesOpen] = useState(false)
+  const [walkOpen, setWalkOpen] = useState(false)
   /** The last scan started but couldn't finish. */
   const [brokeOff, setBrokeOff] = useState(false)
 
@@ -147,7 +147,7 @@ export function HomePage() {
     playSound(done.graves.length > 0 ? 'shovelScrape' : 'wispBlip')
   })
   // Scrolling the panel walks the camera into the yard.
-  const { scrollTo } = useSmoothScroll(panel, panelContent, wide, diary.open || storiesOpen, (p) => {
+  const { scrollTo } = useSmoothScroll(panel, panelContent, wide, diary.open || walkOpen, (p) => {
     scroll.current = p
   })
 
@@ -204,8 +204,8 @@ export function HomePage() {
     diary.finish(outcome)
   }
 
-  const closeStories = () => {
-    setStoriesOpen(false)
+  const closeWalk = () => {
+    setWalkOpen(false)
     opener.current?.focus()
   }
 
@@ -220,7 +220,7 @@ export function HomePage() {
           <HorrorBackground variant="fog" intensity="ghastly" />
         ) : (
           <Suspense fallback={null}>
-            <HeroScene focus={steps[Math.min(step, steps.length - 1)].pose} getScroll={() => scroll.current} still={reduced} />
+            <HeroScene focus={steps[Math.min(step, steps.length - 1)].pose} getScroll={() => scroll.current} still={reduced} paused={walkOpen} />
           </Suspense>
         )}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,transparent_35%,var(--color-grave-dark-950)_100%)]" />
@@ -319,7 +319,7 @@ export function HomePage() {
                 <h2 id="graveyard-heading" className="m-0 text-xs tracking-[0.3em] text-grave-grove-glow uppercase">
                   The graveyard
                 </h2>
-                <GravePreview ref={opener} summary={summary} onOpen={() => setStoriesOpen(true)} />
+                <GravePreview ref={opener} summary={summary} onOpen={() => setWalkOpen(true)} />
                 <ul className="m-0 list-none space-y-1 p-0 text-sm text-grave-mist-300">
                   {summary.facts.map((fact) => (
                     <li key={fact}>{fact}</li>
@@ -371,12 +371,12 @@ export function HomePage() {
         storageKey={DIARY_STORAGE_KEY}
       />
 
-      {storiesOpen && summary && <GraveStories summary={summary} onClose={closeStories} />}
+      {walkOpen && summary && <GraveyardWalkView summary={summary} onClose={closeWalk} />}
 
       {/* A pen fired across the screen: catch it to draw on the page. */}
       {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar, and remembers being turned off. */}
       <ScribbleCannon
-        paused={diary.open || storiesOpen}
+        paused={diary.open || walkOpen}
         dockInset={{ x: 24, y: 8 }}
         storageKey="gravecast-cannon"
         scribbleProps={{ storageKey: 'gravecast-scribble' }}

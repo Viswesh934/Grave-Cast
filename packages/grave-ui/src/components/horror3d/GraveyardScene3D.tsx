@@ -121,7 +121,7 @@ const MOON = [10, 8.5, -30] as const;
 const ROW_GAP = 3.1;
 
 /** A small seeded random, so the yard is laid out the same on every visit. */
-const seeded = (seed: number) => {
+export const seeded = (seed: number) => {
   let s = seed >>> 0;
   return () => {
     s = (s * 1664525 + 1013904223) >>> 0;
@@ -129,18 +129,20 @@ const seeded = (seed: number) => {
   };
 };
 
-type StoneKind = 'arch' | 'cross' | 'slab';
+/** The shapes of headstone in the yard. */
+export type StoneKind = 'arch' | 'cross' | 'slab';
 
-interface Headstone {
+/** One headstone: its shape, where it stands, and how it leans. */
+export interface YardStone {
   kind: StoneKind;
   position: [number, number, number];
   rotation: [number, number, number];
   scale: number;
 }
 
-const layoutYard = (count: number): Headstone[] => {
+const layoutYard = (count: number): YardStone[] => {
   const random = seeded(1847);
-  const stones: Headstone[] = [];
+  const stones: YardStone[] = [];
   for (let i = 0; i < count; i++) {
     const row = Math.floor(i / STONES_PER_ROW);
     const column = i % STONES_PER_ROW;
@@ -175,12 +177,13 @@ const archGeometry = (): ExtrudeGeometry => {
   return archShape;
 };
 
-function Stone({ stone, colors }: { stone: Headstone; colors: GraveyardSceneColors }) {
+/** One headstone with its mound. `tint` replaces the theme's stone colour, so a stone can look more or less worn. */
+export function Stone({ stone, colors, tint }: { stone: YardStone; colors: GraveyardSceneColors; tint?: string }) {
   return (
     <group position={stone.position} rotation={stone.rotation} scale={stone.scale}>
       {stone.kind === 'arch' && (
         <mesh geometry={archGeometry()}>
-          <meshStandardMaterial color={colors.stone} roughness={0.92} />
+          <meshStandardMaterial color={tint ?? colors.stone} roughness={0.92} />
         </mesh>
       )}
       {stone.kind === 'cross' && (
@@ -198,7 +201,7 @@ function Stone({ stone, colors }: { stone: Headstone; colors: GraveyardSceneColo
       {stone.kind === 'slab' && (
         <mesh position={[0, 0.42, 0]}>
           <boxGeometry args={[0.7, 0.84, 0.18]} />
-          <meshStandardMaterial color={colors.stone} roughness={0.9} />
+          <meshStandardMaterial color={tint ?? colors.stone} roughness={0.9} />
         </mesh>
       )}
       {/* The mound in front of the stone. */}
@@ -210,7 +213,8 @@ function Stone({ stone, colors }: { stone: Headstone; colors: GraveyardSceneColo
   );
 }
 
-function Lantern({ position, still, colors }: { position: [number, number, number]; still: boolean; colors: GraveyardSceneColors }) {
+/** A post with a lantern that flickers and lights the ground around it. */
+export function Lantern({ position, still, colors }: { position: [number, number, number]; still: boolean; colors: GraveyardSceneColors }) {
   const light = useRef<PointLight>(null);
   const seed = position[0] * 13.1 + position[2] * 7.7;
   useFrame(({ clock }) => {
