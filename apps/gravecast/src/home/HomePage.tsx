@@ -375,8 +375,8 @@ export function HomePage() {
       {walkOpen && summary && <GraveyardWalkView summary={summary} onClose={closeWalk} />}
 
       {/* A pen fired across the screen: catch it to draw on the page. */}
-      {/* A haunted cursor for each mode: a candle for checking a link, a dagger for dev mode, a bony hand that grips while you walk the yard. */}
-      <HorrorCursor variant={walkOpen ? 'skeletal-hand' : mode === 'dev' ? 'bloody-dagger' : 'ritual-candle'} />
+      {/* The home page's cursor is a skeletal hand that grips on click. Every other page keeps the normal cursor. */}
+      <HorrorCursor variant="skeletal-hand" />
       {/* It lands at the right end of the top bar: 40px ball centred in the 56px (3.5rem) bar. It is fired on every visit and can't be turned off. */}
       <ScribbleCannon
         paused={diary.open || walkOpen}
