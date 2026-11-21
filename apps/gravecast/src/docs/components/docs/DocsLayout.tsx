@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { GRIMOIRE_PATH, documentedRites, ritePath } from '../../pages/docs/grimoire/paths';
 
@@ -189,7 +189,10 @@ export function DocsLayout() {
 
         {/* Center Main Content Page (Unobstructed, full breathing room) */}
         <main className="flex-1 min-w-0 py-8 px-4 sm:px-10">
-          <Outlet />
+          {/* Each docs page loads when it is opened; the sidebar stays while it arrives. */}
+          <Suspense fallback={<p className="m-0 py-10 font-serif text-lg text-grave-mist-300 italic">Opening the page{'\u2026'}</p>}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

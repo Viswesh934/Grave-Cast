@@ -1,42 +1,46 @@
+import { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 
-import { IntroductionPage } from '../pages/docs/IntroductionPage';
-import { InstallationPage } from '../pages/docs/InstallationPage';
-import { TokensShowcase } from '../pages/docs/TokensShowcase';
+// Every docs page loads only when it is opened. Many of them show 3D components,
+// so importing them up front would put three.js on the home page's first load.
+const IntroductionPage = lazy(() => import('../pages/docs/IntroductionPage').then((m) => ({ default: m.IntroductionPage })));
+const InstallationPage = lazy(() => import('../pages/docs/InstallationPage').then((m) => ({ default: m.InstallationPage })));
+const TokensShowcase = lazy(() => import('../pages/docs/TokensShowcase').then((m) => ({ default: m.TokensShowcase })));
 
 // Component Docs
-import { TombstoneDoc } from '../pages/docs/TombstoneDoc';
-import { ExcavationDoc } from '../pages/docs/ExcavationDoc';
-import { BoneOssuaryDoc } from '../pages/docs/BoneOssuaryDoc';
-import { MausoleumDrawerDoc } from '../pages/docs/MausoleumDrawerDoc';
-import { CoffinAccordionDoc } from '../pages/docs/CoffinAccordionDoc';
-import { CauldronDoc } from '../pages/docs/CauldronDoc';
-import { RunicButtonDoc } from '../pages/docs/RunicButtonDoc';
-import { BloodVialDoc } from '../pages/docs/BloodVialDoc';
-import { LunarPhaseDoc } from '../pages/docs/LunarPhaseDoc';
-import { ChickenLegDoc } from '../pages/docs/ChickenLegDoc';
-import { CobwebDoc } from '../pages/docs/CobwebDoc';
-import { HorrorCursorDoc } from '../pages/docs/HorrorCursorDoc';
-import { HauntedKeyboardDoc } from '../pages/docs/HauntedKeyboardDoc';
-import { SoundLibraryDoc } from '../pages/docs/SoundLibraryDoc';
-import { HorrorBackgroundDoc } from '../pages/docs/HorrorBackgroundDoc';
-import { SoundTriggerDoc } from '../pages/docs/SoundTriggerDoc';
-import { AsciiDoc } from '../pages/docs/AsciiDoc';
-import { SurveillanceCamDoc } from '../pages/docs/SurveillanceCamDoc';
-import { VoiceDoc } from '../pages/docs/VoiceDoc';
-import { ScribbleDoc } from '../pages/docs/ScribbleDoc';
-import { DoodleDoc } from '../pages/docs/DoodleDoc';
-import { GrimoireDoc } from '../pages/docs/GrimoireDoc';
-import { RiteDocRoute } from '../pages/docs/grimoire/RiteDocRoute';
-import { BestiaryDoc } from '../pages/docs/BestiaryDoc';
-import { BestiaryCharacterDoc } from '../pages/docs/BestiaryCharacterDoc';
-import { ButtonDoc } from '../pages/docs/ButtonDoc';
-import { CardDoc } from '../pages/docs/CardDoc';
-import { BadgeDoc } from '../pages/docs/BadgeDoc';
+const TombstoneDoc = lazy(() => import('../pages/docs/TombstoneDoc').then((m) => ({ default: m.TombstoneDoc })));
+const ExcavationDoc = lazy(() => import('../pages/docs/ExcavationDoc').then((m) => ({ default: m.ExcavationDoc })));
+const BoneOssuaryDoc = lazy(() => import('../pages/docs/BoneOssuaryDoc').then((m) => ({ default: m.BoneOssuaryDoc })));
+const MausoleumDrawerDoc = lazy(() => import('../pages/docs/MausoleumDrawerDoc').then((m) => ({ default: m.MausoleumDrawerDoc })));
+const CoffinAccordionDoc = lazy(() => import('../pages/docs/CoffinAccordionDoc').then((m) => ({ default: m.CoffinAccordionDoc })));
+const CauldronDoc = lazy(() => import('../pages/docs/CauldronDoc').then((m) => ({ default: m.CauldronDoc })));
+const RunicButtonDoc = lazy(() => import('../pages/docs/RunicButtonDoc').then((m) => ({ default: m.RunicButtonDoc })));
+const BloodVialDoc = lazy(() => import('../pages/docs/BloodVialDoc').then((m) => ({ default: m.BloodVialDoc })));
+const LunarPhaseDoc = lazy(() => import('../pages/docs/LunarPhaseDoc').then((m) => ({ default: m.LunarPhaseDoc })));
+const ChickenLegDoc = lazy(() => import('../pages/docs/ChickenLegDoc').then((m) => ({ default: m.ChickenLegDoc })));
+const CobwebDoc = lazy(() => import('../pages/docs/CobwebDoc').then((m) => ({ default: m.CobwebDoc })));
+const HorrorCursorDoc = lazy(() => import('../pages/docs/HorrorCursorDoc').then((m) => ({ default: m.HorrorCursorDoc })));
+const HauntedKeyboardDoc = lazy(() => import('../pages/docs/HauntedKeyboardDoc').then((m) => ({ default: m.HauntedKeyboardDoc })));
+const SoundLibraryDoc = lazy(() => import('../pages/docs/SoundLibraryDoc').then((m) => ({ default: m.SoundLibraryDoc })));
+const HorrorBackgroundDoc = lazy(() => import('../pages/docs/HorrorBackgroundDoc').then((m) => ({ default: m.HorrorBackgroundDoc })));
+const SoundTriggerDoc = lazy(() => import('../pages/docs/SoundTriggerDoc').then((m) => ({ default: m.SoundTriggerDoc })));
+const AsciiDoc = lazy(() => import('../pages/docs/AsciiDoc').then((m) => ({ default: m.AsciiDoc })));
+const SurveillanceCamDoc = lazy(() => import('../pages/docs/SurveillanceCamDoc').then((m) => ({ default: m.SurveillanceCamDoc })));
+const VoiceDoc = lazy(() => import('../pages/docs/VoiceDoc').then((m) => ({ default: m.VoiceDoc })));
+const ScribbleDoc = lazy(() => import('../pages/docs/ScribbleDoc').then((m) => ({ default: m.ScribbleDoc })));
+const DoodleDoc = lazy(() => import('../pages/docs/DoodleDoc').then((m) => ({ default: m.DoodleDoc })));
+const GrimoireDoc = lazy(() => import('../pages/docs/GrimoireDoc').then((m) => ({ default: m.GrimoireDoc })));
+const RiteDocRoute = lazy(() => import('../pages/docs/grimoire/RiteDocRoute').then((m) => ({ default: m.RiteDocRoute })));
+const BestiaryDoc = lazy(() => import('../pages/docs/BestiaryDoc').then((m) => ({ default: m.BestiaryDoc })));
+const BestiaryCharacterDoc = lazy(() => import('../pages/docs/BestiaryCharacterDoc').then((m) => ({ default: m.BestiaryCharacterDoc })));
+const ButtonDoc = lazy(() => import('../pages/docs/ButtonDoc').then((m) => ({ default: m.ButtonDoc })));
+const CardDoc = lazy(() => import('../pages/docs/CardDoc').then((m) => ({ default: m.CardDoc })));
+const BadgeDoc = lazy(() => import('../pages/docs/BadgeDoc').then((m) => ({ default: m.BadgeDoc })));
 
 /**
  * All documentation-site routes for the Grave-UI showcase, as a fragment of
  * `<Route>` elements that render inside the `DocsLayout` route in {@link App}.
+ * `DocsLayout` wraps its outlet in `Suspense`, so each page shows once its code arrives.
  *
  * Kept in a dedicated module so route registration stays decoupled from the
  * app shell — adding a new component doc is a single edit here.
@@ -91,7 +95,7 @@ export function docsRoutes() {
       <Route path="docs/components/surveillance-cam" element={<SurveillanceCamDoc />} />
       <Route path="docs/components/voice" element={<VoiceDoc />} />
       <Route path="docs/components/scribble" element={<ScribbleDoc />} />
-        <Route path="docs/components/doodle" element={<DoodleDoc />} />
+      <Route path="docs/components/doodle" element={<DoodleDoc />} />
 
       {/* The Grimoire */}
       <Route path="docs/components/grimoire" element={<GrimoireDoc />} />
