@@ -71,13 +71,12 @@ The API deploys with a GitHub Actions workflow: OIDC role, a Docker image in ECR
 3. Amazon Location key: allow only the production domain, plus `localhost` for development.
    - Preview deployments get other addresses, so Help near you won't work on previews.
    - Allowing all of `*.vercel.app` would let any Vercel site use the key, so don't.
-4. **Forward the API through Vercel and stamp each request with the origin secret.** After the Function URL exists, add two entries to `routes` in `apps/gravecast/vercel.json` (Vercel allows `routes` alongside `rewrites`, `redirects` and `headers`):
-   - `/api/(.*)` to `https://<function-url-host>/api/$1`
-   - `/health` to `https://<function-url-host>/health`
-   - Each entry has a `transforms` item: `type` `request.headers`, `op` `set`, `target` `{ "key": "x-origin-secret" }`, `args` `"$ORIGIN_SECRET"`, and `"env": ["ORIGIN_SECRET"]`. `set` replaces any value a visitor sends, so they can't supply their own. Source: Vercel docs, "Restricting your origin to Vercel traffic" (vercel.com/docs/routing/rewrites).
-   - Keep the `/api` prefix in the destination. Vercel's own example drops it.
-   - `vercel.json` can't read environment variables in a destination, so the Function URL is written into the file. It is public, so that is fine.
-   - Not yet verified: how `routes` rank against the existing catch-all `/(.*)` rewrite. Test on a preview deployment before relying on it: `/api/...` through the site must reach the API, and `/lantern/` must still open.
+4. **Forward the API through Vercel and stamp each request with the origin secret (written in `apps/gravecast/vercel.json`).**
+   - One entry in `routes`: `/api/(.*)` to `https://t5hjk3xhvbtlwr35mrpfr6q3hy0xrqxa.lambda-url.ap-south-1.on.aws/api/$1`, with a `request.headers` transform that sets `x-origin-secret` from the `ORIGIN_SECRET` environment variable (listed in the transform's `env`). `set` replaces any value a visitor sends. Source: Vercel docs, "Restricting your origin to Vercel traffic" (vercel.com/docs/routing/rewrites).
+   - The app never calls `/health`, so there is no route for it. The workflow checks the Function URL's `/health` directly.
+   - The catch-all rewrite now excludes `api/` (`/:path((?!api/).*)`), so the single-page fallback can never answer an API path, whatever order Vercel applies `routes` and `rewrites` in.
+   - The Function URL is written into the file because a destination can't read environment variables. It is public, so that is fine.
+   - **Not yet verified, test on the first preview deployment:** (1) `/api/channel/echoes/DEMO?since=1` through the site keeps its query string (the app's echo reads need it); (2) a POST to `/api/channel/mailrun` through the site returns JSON, not the app's HTML; (3) `/lantern/` still opens and the site's other pages still load.
    - Lantern's service worker already ignores `/api/` paths for caching, and its mail runs use the page's own address, so Chat and Background Sync keep working.
    - Vercel sends the visitor's address in `x-forwarded-for`. The API doesn't read it (`client_key` uses the socket address, which behind the Web Adapter is the adapter itself), so rate limits are one shared bucket per Lambda instance whether or not the proxy is used.
    - Proxied requests count toward Vercel's data transfer and request limits. They are small JSON calls, but check the Hobby allowances again before launch.
@@ -116,6 +115,6 @@ Known limit to state plainly: rate limits are kept in memory, so each running La
 4. DynamoDB table `gravecast-channel`, the policy on the execution role, then the two `GRAVECAST_CHANNEL_*` variables on the function (section 1, steps 5 to 7).
 5. Add the GitHub secrets `AWS_ROLE_ARN` and `ECR_REPOSITORY` (section 2, step 1). The workflow has no fallbacks, so it fails without them. Then push the workflow on `main` (or run it by hand). The first run pushes the image.
 6. Generate the origin secret and keep it. Create the function with `GRAVECAST_ORIGIN_SECRET` set, since the API refuses to start without it, then its Function URL and log retention (section 1, steps 7 to 9). Add the GitHub secrets `LAMBDA_FUNCTION_NAME` and `LAMBDA_FUNCTION_URL`.
-7. Set `ORIGIN_SECRET` on Vercel to the same value. Add the two `routes` to `vercel.json` with the Function URL (section 3, step 4), then create the Vercel project and set its other environment variables (section 3).
+7. Set `ORIGIN_SECRET` on Vercel to the same value. The `/api` route in `vercel.json` already holds the Function URL (section 3, step 4), then create the Vercel project and set its other environment variables (section 3).
 8. Run the workflow again. Check `/health`, a link scan, a Chat mail run and Help near you on the live site.
 9. Check the lock: a direct call to `<Function URL>/api/channel/echoes/EMERGENCY` returns 403, the same path through the Vercel site returns 200, and `<Function URL>/health` still answers (the workflow's health check calls it directly).

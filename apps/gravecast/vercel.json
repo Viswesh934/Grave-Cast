@@ -12,6 +12,21 @@
   ],
   "rewrites": [
     { "source": "/lantern/:path*", "destination": "/lantern/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/:path((?!api/).*)", "destination": "/index.html" }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://t5hjk3xhvbtlwr35mrpfr6q3hy0xrqxa.lambda-url.ap-south-1.on.aws/api/$1",
+      "transforms": [
+        {
+          "type": "request.headers",
+          "op": "set",
+          "target": { "key": "x-origin-secret" },
+          "args": "$ORIGIN_SECRET",
+          "env": ["ORIGIN_SECRET"]
+        }
+      ]
+    }
   ]
 }
