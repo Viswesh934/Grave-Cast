@@ -49,9 +49,9 @@ const COPY: Record<Mode, { lead: string; accent: string; sub: string; label: str
     thing: 'link',
   },
   dev: {
-    lead: 'Every TODO leaves a',
+    lead: 'Every weak spot leaves a',
     accent: 'grave.',
-    sub: 'Paste a public GitHub repo. Every TODO and FIXME rises as a grave.',
+    sub: 'Paste a public GitHub repo. Leaked keys, vulnerable dependencies and risky code rise as graves.',
     label: 'Public GitHub repo',
     placeholder: 'owner/name',
     action: 'Dig',

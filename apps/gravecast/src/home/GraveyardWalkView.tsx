@@ -11,7 +11,7 @@ import {
   type TombstoneWeathering,
 } from 'groove-ui'
 import { fileName } from '../repograve/markerWords'
-import { GraveRow } from './GraveRow'
+import { GraveDetails, GraveRow } from './GraveRow'
 import type { ScanSummary, StoryGrave } from './graves'
 
 const GraveyardWalkScene = lazy(() => import('./GraveyardWalkScene'))
@@ -27,12 +27,13 @@ const ARRIVE_SOUND: Record<TombstoneWeathering, SpookySound> = {
 }
 
 /** What is carved under a stone's title: the file for a repo, the kind of finding for a link. */
-const engraving = (summary: ScanSummary, grave: StoryGrave): string => (summary.mode === 'dev' ? fileName(grave.evidence) : grave.label)
+const engraving = (summary: ScanSummary, grave: StoryGrave): string =>
+  grave.engraving ?? (summary.mode === 'dev' ? fileName(grave.evidence) : grave.label)
 
 /** What the person reads above a grave once the witch is beside it: which file, and what is wrong there. */
 function GraveCard({ summary, grave, index, count }: { summary: ScanSummary; grave: StoryGrave; index: number; count: number }) {
   return (
-    <div className="mb-3 w-[min(22rem,80vw)] rounded-xl border border-grave-grove-glow/50 bg-grave-dark-950/90 p-4 text-left shadow-lg shadow-black/60 backdrop-blur-sm">
+    <div className="mb-3 max-h-[60vh] w-[min(24rem,85vw)] overflow-y-auto rounded-xl border border-grave-grove-glow/50 bg-grave-dark-950/90 p-4 text-left shadow-lg shadow-black/60 backdrop-blur-sm">
       <p className="m-0 text-[0.65rem] tracking-[0.25em] text-grave-grove-glow uppercase">
         Grave {index + 1} of {count} {'\u00b7'} {grave.label}
       </p>
@@ -52,6 +53,7 @@ function GraveCard({ summary, grave, index, count }: { summary: ScanSummary; gra
       )}
       <p className="mt-3 mb-0 text-[0.65rem] tracking-[0.25em] text-grave-mist-400 uppercase">The problem</p>
       <p className="m-0 text-base leading-relaxed text-grave-mist-200">{grave.detail}</p>
+      <GraveDetails grave={grave} />
     </div>
   )
 }
@@ -204,7 +206,7 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
           <h2 className="m-0 font-serif text-3xl leading-tight text-grave-bone-100 italic">{summary.verdict}</h2>
           {count > 0 && !flat ? (
             <p className="m-0 text-base leading-relaxed text-grave-mist-200">
-              You stand at the gate. Each grave is one problem. Hold the left mouse button and drag to look around, then click a grave to fly to it.
+              You stand at the gate. Each grave is one kind of problem{summary.mode === 'dev' ? ', with every place it was found' : ''}. Hold the left mouse button and drag to look around, then click a grave to fly to it.
             </p>
           ) : (
             count === 0 && <p className="m-0 text-base leading-relaxed text-grave-mist-200">There are no graves to visit.</p>
