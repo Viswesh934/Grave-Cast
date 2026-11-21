@@ -106,3 +106,41 @@ def test_settings_default_to_no_guard(monkeypatch: pytest.MonkeyPatch) -> None:
     settings = Settings.from_env()
     assert settings.origin_secrets == ()
     assert settings.require_origin_secret is False
+
+@pytest.mark.parametrize(
+    "path",
+    ["/health/", "//health", "/HEALTH", "/health/x", "/health/../api/thing", "/health%2f..%2fapi", "/ health", "/health\x00", "/api/thing"],
+)
+async def test_only_the_exact_health_path_is_open(path: str) -> None:
+    # Called with a raw ASGI scope, so no HTTP client tidies the path first.
+    reached: list[str] = []
+
+    async def inner(scope, receive, send) -> None:
+        reached.append(scope["path"])
+
+    sent: list[dict] = []
+
+    async def send(message: dict) -> None:
+        sent.append(message)
+
+    async def receive() -> dict:
+        return {"type": "http.request"}
+
+    guard = OriginGuard(inner, secrets=(SECRET,))
+    await guard({"type": "http", "path": path, "headers": [], "query_string": b"/health"}, receive, send)
+    assert reached == []
+    assert sent[0]["status"] == 403
+
+
+async def test_a_query_string_cannot_open_a_path() -> None:
+    response = await _get(_app(SECRET), "/api/thing?x=/health")
+    assert response.status_code == 403
+
+
+async def test_a_second_secret_header_cannot_sneak_past() -> None:
+    # Only the first x-origin-secret counts; a wrong first value is refused even with the right one after it.
+    app = _app(SECRET)
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        request = client.build_request("GET", "/api/thing", headers=[("x-origin-secret", "wrong"), ("x-origin-secret", SECRET)])
+        response = await client.send(request)
+    assert response.status_code == 403
