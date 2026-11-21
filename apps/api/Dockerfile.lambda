@@ -1,0 +1,31 @@
+# The Gravecast API as an AWS Lambda container image.
+# uvicorn runs FastAPI as usual; the Lambda Web Adapter turns Lambda invocations
+# into HTTP requests to it. Built from apps/api: docker build -f Dockerfile.lambda .
+FROM python:3.12-slim
+
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:1.1.0 /lambda-adapter /opt/extensions/lambda-adapter
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /var/task
+
+COPY pyproject.toml ./
+COPY app ./app
+RUN pip install .
+
+# Lambda can only write under /tmp.
+ENV GRAVECAST_WORKSPACE_ROOT=/tmp/repositories \
+    GRAVECAST_CHANNEL_DB_PATH=/tmp/channel.sqlite3
+
+# The API refuses to start without GRAVECAST_ORIGIN_SECRET, so a missing
+# setting can never leave the public Function URL open.
+ENV GRAVECAST_REQUIRE_ORIGIN_SECRET=true
+
+# The adapter forwards requests to this port and waits for /health before serving.
+ENV AWS_LWA_PORT=8080 \
+    AWS_LWA_READINESS_CHECK_PATH=/health
+
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

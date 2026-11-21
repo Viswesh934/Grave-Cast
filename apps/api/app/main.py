@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.common.errors import ChannelRateLimitedError
+from app.common.origin_guard import OriginGuard, check_origin_config
 from app.common.rate_limit import RateLimiter
 from app.config import get_settings
 from app.modules.channel import router as channel_router
@@ -60,6 +61,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Added last, so it is the outermost layer and refuses a request before anything else sees it.
+check_origin_config(
+    _settings.origin_secrets,
+    required=_settings.require_origin_secret,
+    min_chars=_settings.origin_secret_min_chars,
+)
+if _settings.origin_secrets:
+    app.add_middleware(OriginGuard, secrets=_settings.origin_secrets)
 
 app.include_router(github_router)
 app.include_router(linkscan_router)

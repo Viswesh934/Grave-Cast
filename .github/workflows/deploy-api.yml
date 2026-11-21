@@ -1,0 +1,136 @@
+name: Deploy API
+
+# Builds the API image, pushes it to ECR and points the Lambda function at it.
+# Runs on every push to main that touches the API, or by hand.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+# One deploy at a time, and never cancel one that is half way through.
+concurrency:
+  group: deploy-api
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-south-1
+
+jobs:
+  test:
+    name: API tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: apps/api/pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Test
+        run: python -m pytest -q
+
+  deploy:
+    name: Build, push and update
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # lets GitHub request an OIDC token for AWS
+    steps:
+      - uses: actions/checkout@v7
+
+      # No fallbacks on purpose: a missing secret must stop the run, never
+      # deploy to some other project's function.
+      - name: Require secrets
+        env:
+          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+        run: |
+          missing=0
+          for name in AWS_ROLE_ARN ECR_REPOSITORY LAMBDA_FUNCTION_NAME; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository secret $name is not set."
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Lambda rejects the multi-platform index that provenance attestations
+      # create, so they are off. The function runs on x86_64.
+      - name: Build and push image
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          TAG: ${{ github.sha }}
+        run: |
+          image="$REGISTRY/$ECR_REPOSITORY:$TAG"
+          docker build \
+            --platform linux/amd64 \
+            --provenance=false \
+            --file apps/api/Dockerfile.lambda \
+            --tag "$image" \
+            apps/api
+          docker push "$image"
+
+      # Output of the Lambda calls is not printed: it includes the function's
+      # environment variables, and only GitHub secrets are masked in logs.
+      - name: Update Lambda function
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          FUNCTION: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+          TAG: ${{ github.sha }}
+        run: |
+          if ! lookup=$(aws lambda get-function --function-name "$FUNCTION" --query 'Configuration.FunctionArn' --output text 2>&1); then
+            if grep -q ResourceNotFoundException <<< "$lookup"; then
+              echo "::warning::The Lambda function does not exist yet. The image was pushed; create the function from it, then run this workflow again."
+              exit 0
+            fi
+            echo "::error::Could not look up the Lambda function."
+            echo "$lookup"
+            exit 1
+          fi
+          aws lambda update-function-code \
+            --function-name "$FUNCTION" \
+            --image-uri "$REGISTRY/$ECR_REPOSITORY:$TAG" \
+            --query 'FunctionArn' --output text > /dev/null
+          aws lambda wait function-updated --function-name "$FUNCTION"
+          echo "Function updated to $TAG."
+
+      - name: Health check
+        env:
+          FUNCTION_URL: ${{ secrets.LAMBDA_FUNCTION_URL }}
+        run: |
+          if [ -z "$FUNCTION_URL" ]; then
+            echo "::warning::LAMBDA_FUNCTION_URL is not set, so the health check was skipped."
+            exit 0
+          fi
+          # The first request after an update can be a cold start.
+          curl --fail --silent --show-error \
+            --retry 6 --retry-delay 5 --retry-all-errors --max-time 20 \
+            "${FUNCTION_URL%/}/health"
+          echo
