@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import json
 import re
-import tomllib
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from pathlib import PurePosixPath
 
+from app.common.toml_compat import tomllib
 from app.modules.github.scan.catalog import finding
 from app.modules.github.scan.files import OTHER_LOCKFILE_NAMES, TREE_SITTER_LANGUAGES, ScanFile, is_lockfile, is_test_path
 from app.modules.github.scan.findings import Finding

@@ -3,12 +3,12 @@ from __future__ import annotations
 
 import json
 import re
-import tomllib
 from dataclasses import dataclass, field
 from pathlib import PurePosixPath
 
 import yaml
 
+from app.common.toml_compat import tomllib
 from app.modules.github.scan.files import ScanFile
 
 
