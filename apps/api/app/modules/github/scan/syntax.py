@@ -59,6 +59,36 @@ def parse(path: str, text: str) -> Node | None:
     return _parser(grammar).parse(text.encode("utf-8")).root_node
 
 
+@lru_cache(maxsize=None)
+def _query(grammar: str, types: tuple[str, ...]) -> tuple[tree_sitter.Query | None, tuple[str, ...]]:
+    """One query capturing every node of the given types, leaving out types the grammar doesn't have."""
+    language = _language(grammar)
+    valid: list[str] = []
+    for kind in types:
+        try:
+            tree_sitter.Query(language, f"({kind}) @{kind}")
+        except tree_sitter.QueryError:
+            continue
+        valid.append(kind)
+    if not valid:
+        return None, ()
+    return tree_sitter.Query(language, " ".join(f"({kind}) @{kind}" for kind in valid)), tuple(valid)
+
+
+def nodes_of(root: Node, grammar: str, types: tuple[str, ...]) -> list[Node]:
+    """Every node of the given types under `root`, in source order.
+
+    Found by a tree-sitter query, which searches in C: much faster than
+    visiting every node from Python.
+    """
+    query, _ = _query(grammar, types)
+    if query is None:
+        return []
+    found = [node for nodes in tree_sitter.QueryCursor(query).captures(root).values() for node in nodes]
+    found.sort(key=lambda node: (node.start_byte, -node.end_byte))
+    return found
+
+
 def text(node: Node | None) -> str:
     return node.text.decode("utf-8", "replace") if node is not None and node.text is not None else ""
 
@@ -69,12 +99,19 @@ def line(node: Node) -> int:
 
 
 def walk(root: Node) -> Iterator[Node]:
-    """Every node under `root`, depth first. Iterative, so deep trees can't overflow the stack."""
-    stack = [root]
-    while stack:
-        node = stack.pop()
-        yield node
-        stack.extend(reversed(node.children))
+    """Every node under `root`, depth first, in source order.
+
+    Uses a tree cursor, which is several times faster than building each node's
+    child list, and is iterative, so deep trees can't overflow the stack.
+    """
+    cursor = root.walk()
+    while True:
+        yield cursor.node  # type: ignore[misc]
+        if cursor.goto_first_child():
+            continue
+        while not cursor.goto_next_sibling():
+            if not cursor.goto_parent():
+                return
 
 
 def contains(node: Node, *types: str) -> bool:
@@ -111,6 +148,11 @@ _NAMES: dict[str, frozenset[str]] = {
 # A Python route handler's decorator: @app.route(...), @router.get(...), @bp.post(...), @app.api_route(...).
 _ROUTE_DECORATOR = re.compile(r"^@[\w.]+\.(route|get|post|put|patch|delete|api_route|websocket)\s*\(")
 _ROOT_SCOPE = (-1, -1)
+# The nodes that bind a name, or mark a route handler, by language.
+_BINDING_NODES: dict[str, tuple[str, ...]] = {
+    "python": ("assignment", "decorated_definition"),
+    "js": ("variable_declarator", "assignment_expression"),
+}
 
 
 def _key(node: Node) -> tuple[int, int]:
@@ -136,14 +178,15 @@ class Flow:
 
     MAX_DEPTH = 4
 
-    def __init__(self, root: Node, language: str, user_input: re.Pattern[str]) -> None:
+    def __init__(self, root: Node, language: str, user_input: re.Pattern[str], grammar: str | None = None) -> None:
         self._language = language
         self._functions = _FUNCTIONS[language]
         self._names = _NAMES[language]
         self._user_input = user_input
         self._bindings: dict[tuple[int, int], dict[str, list[_Binding]]] = {}
         self._route_params: dict[tuple[int, int], set[str]] = {}
-        for node in walk(root):
+        grammar = grammar or ("python" if language == "python" else "javascript")
+        for node in nodes_of(root, grammar, _BINDING_NODES[language]):
             self._collect(node)
 
     # ---- collecting assignments ----

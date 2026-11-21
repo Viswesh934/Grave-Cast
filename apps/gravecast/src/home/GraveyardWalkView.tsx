@@ -27,7 +27,8 @@ const ARRIVE_SOUND: Record<TombstoneWeathering, SpookySound> = {
 }
 
 /** What is carved under a stone's title: the file for a repo, the kind of finding for a link. */
-const engraving = (summary: ScanSummary, grave: StoryGrave): string => (summary.mode === 'dev' ? fileName(grave.evidence) : grave.label)
+const engraving = (summary: ScanSummary, grave: StoryGrave): string =>
+  grave.engraving ?? (summary.mode === 'dev' ? fileName(grave.evidence) : grave.label)
 
 /** What the person reads above a grave once the witch is beside it: which file, and what is wrong there. */
 function GraveCard({ summary, grave, index, count }: { summary: ScanSummary; grave: StoryGrave; index: number; count: number }) {
@@ -205,7 +206,7 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
           <h2 className="m-0 font-serif text-3xl leading-tight text-grave-bone-100 italic">{summary.verdict}</h2>
           {count > 0 && !flat ? (
             <p className="m-0 text-base leading-relaxed text-grave-mist-200">
-              You stand at the gate. Each grave is one problem. Hold the left mouse button and drag to look around, then click a grave to fly to it.
+              You stand at the gate. Each grave is one kind of problem{summary.mode === 'dev' ? ', with every place it was found' : ''}. Hold the left mouse button and drag to look around, then click a grave to fly to it.
             </p>
           ) : (
             count === 0 && <p className="m-0 text-base leading-relaxed text-grave-mist-200">There are no graves to visit.</p>

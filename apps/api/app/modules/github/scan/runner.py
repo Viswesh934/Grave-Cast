@@ -28,7 +28,7 @@ from app.modules.github.scan.rules_js import js_findings
 from app.modules.github.scan.rules_project import project_findings
 from app.modules.github.scan.rules_python import python_findings
 from app.modules.github.scan.secrets import find_secrets
-from app.modules.github.scan.syntax import Node, grammar_for, parse, walk
+from app.modules.github.scan.syntax import Node, grammar_for, nodes_of, parse
 from app.modules.github.scan.syntax import text as node_text
 
 logger = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ def _hide_values(line: str) -> str:
 def _comments_by_line(root: Node, grammar: str) -> dict[int, str]:
     """The comment text on each line, from the syntax tree. Python docstrings count as comments."""
     lines: dict[int, str] = {}
-    for node in walk(root):
+    for node in nodes_of(root, grammar, ("comment", "string") if grammar == "python" else ("comment",)):
         docstring = grammar == "python" and node.type == "string" and node.parent is not None and node.parent.type == "expression_statement"
         if node.type != "comment" and not docstring:
             continue
@@ -91,9 +91,13 @@ def _comments_by_line(root: Node, grammar: str) -> dict[int, str]:
 
 def _markers(file: ScanFile, root: Node | None, grammar: str | None) -> list[Finding]:
     """Code notes inside comments only: a TODO in a string, such as a page's text, is not a grave."""
+    # Most files hold no marker word at all; they skip the line-by-line search.
+    markers = find_markers(file.path, file.text) if any(word in file.text for word in _MARKER_SEVERITY) else []
+    if not markers:
+        return []
     comments = _comments_by_line(root, grammar or "") if root is not None else None
     out: list[Finding] = []
-    for marker in find_markers(file.path, file.text):
+    for marker in markers:
         if comments is not None:
             if not re.search(rf"\b{marker.kind}\b", comments.get(marker.line, "")):
                 continue

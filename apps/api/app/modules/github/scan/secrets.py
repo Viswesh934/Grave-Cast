@@ -21,31 +21,37 @@ class _Pattern:
     severity: Severity | None = None
     # The capture group holding the secret, when the pattern also matches its name.
     group: int = 0
+    # Text the match must contain. A file without any of these is skipped without running the pattern.
+    hints: tuple[str, ...] = ()
+    # Whether the hints are matched against the lower-cased text.
+    nocase: bool = False
 
 
 _PROVIDER_PATTERNS: tuple[_Pattern, ...] = (
-    _Pattern("secret.aws-access-key", re.compile(r"\b(?:AKIA|ABIA|ACCA)[A-Z0-9]{16}\b"), 4),
-    _Pattern("secret.aws-access-key", re.compile(r"\bASIA[A-Z0-9]{16}\b"), 4, severity="high"),
+    _Pattern("secret.aws-access-key", re.compile(r"\b(?:AKIA|ABIA|ACCA)[A-Z0-9]{16}\b"), 4, hints=("AKIA", "ABIA", "ACCA")),
+    _Pattern("secret.aws-access-key", re.compile(r"\bASIA[A-Z0-9]{16}\b"), 4, severity="high", hints=("ASIA",)),
     _Pattern(
         "secret.aws-secret-key",
         re.compile(r"(?i)aws.{0,20}?secret.{0,20}?['\"]?\s*[:=]\s*['\"]?([A-Za-z0-9/+=]{40})(?![A-Za-z0-9/+=])"),
         0,
         group=1,
+        hints=("aws",),
+        nocase=True,
     ),
-    _Pattern("secret.github-token", re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36}\b"), 4),
-    _Pattern("secret.github-token", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{82}\b"), 11),
-    _Pattern("secret.gitlab-token", re.compile(r"\bglpat-[A-Za-z0-9_-]{20}\b"), 6),
-    _Pattern("secret.slack-token", re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,72}\b"), 5),
-    _Pattern("secret.slack-webhook", re.compile(r"https://hooks\.slack\.com/services/T[A-Z0-9]+/B[A-Z0-9]+/[A-Za-z0-9]{24}"), 35),
-    _Pattern("secret.stripe-live-key", re.compile(r"\b(?:sk|rk)_live_[0-9a-zA-Z]{24,99}\b"), 8),
-    _Pattern("secret.openai-key", re.compile(r"\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}T3BlbkFJ[A-Za-z0-9_-]{20,}\b"), 3),
-    _Pattern("secret.anthropic-key", re.compile(r"\bsk-ant-(?:api03|admin01)-[A-Za-z0-9_-]{80,100}AA\b"), 14),
-    _Pattern("secret.sendgrid-key", re.compile(r"\bSG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}\b"), 3),
-    _Pattern("secret.npm-token", re.compile(r"\bnpm_[A-Za-z0-9]{36}\b"), 4),
-    _Pattern("secret.pypi-token", re.compile(r"\bpypi-AgEIcHlwaS5vcmc[A-Za-z0-9_-]{50,}"), 5),
-    _Pattern("secret.google-api-key", re.compile(r"\bAIza[0-9A-Za-z_-]{35}(?![0-9A-Za-z_-])"), 4),
-    _Pattern("secret.private-key", re.compile(r"-----BEGIN (?:RSA |EC |DSA |OPENSSH |PGP |)PRIVATE KEY(?: BLOCK)?-----"), 0),
-    _Pattern("secret.private-key", re.compile(r"-----BEGIN ENCRYPTED PRIVATE KEY-----"), 0, severity="high"),
+    _Pattern("secret.github-token", re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36}\b"), 4, hints=("ghp_", "gho_", "ghu_", "ghs_", "ghr_")),
+    _Pattern("secret.github-token", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{82}\b"), 11, hints=("github_pat_",)),
+    _Pattern("secret.gitlab-token", re.compile(r"\bglpat-[A-Za-z0-9_-]{20}\b"), 6, hints=("glpat-",)),
+    _Pattern("secret.slack-token", re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,72}\b"), 5, hints=("xox",)),
+    _Pattern("secret.slack-webhook", re.compile(r"https://hooks\.slack\.com/services/T[A-Z0-9]+/B[A-Z0-9]+/[A-Za-z0-9]{24}"), 35, hints=("hooks.slack.com",)),
+    _Pattern("secret.stripe-live-key", re.compile(r"\b(?:sk|rk)_live_[0-9a-zA-Z]{24,99}\b"), 8, hints=("_live_",)),
+    _Pattern("secret.openai-key", re.compile(r"\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}T3BlbkFJ[A-Za-z0-9_-]{20,}\b"), 3, hints=("T3BlbkFJ",)),
+    _Pattern("secret.anthropic-key", re.compile(r"\bsk-ant-(?:api03|admin01)-[A-Za-z0-9_-]{80,100}AA\b"), 14, hints=("sk-ant-",)),
+    _Pattern("secret.sendgrid-key", re.compile(r"\bSG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}\b"), 3, hints=("SG.",)),
+    _Pattern("secret.npm-token", re.compile(r"\bnpm_[A-Za-z0-9]{36}\b"), 4, hints=("npm_",)),
+    _Pattern("secret.pypi-token", re.compile(r"\bpypi-AgEIcHlwaS5vcmc[A-Za-z0-9_-]{50,}"), 5, hints=("pypi-AgEIcHlwaS5vcmc",)),
+    _Pattern("secret.google-api-key", re.compile(r"\bAIza[0-9A-Za-z_-]{35}(?![0-9A-Za-z_-])"), 4, hints=("AIza",)),
+    _Pattern("secret.private-key", re.compile(r"-----BEGIN (?:RSA |EC |DSA |OPENSSH |PGP |)PRIVATE KEY(?: BLOCK)?-----"), 0, hints=("PRIVATE KEY-----", "PRIVATE KEY BLOCK-----")),
+    _Pattern("secret.private-key", re.compile(r"-----BEGIN ENCRYPTED PRIVATE KEY-----"), 0, severity="high", hints=("ENCRYPTED PRIVATE KEY",)),
 )
 
 _DATABASE_URL = re.compile(
@@ -76,6 +82,18 @@ _PLACEHOLDER = re.compile(
     r"(?i)^(\*+|x+|\.+|-+|#+)$|^change.?me$|your[_-]|replace|example|sample|dummy|placeholder|redacted|insert|enter[_ ]|"
     r"<[^>]*>|\$\{|\{\{|\{[\w.\[\]'\"]*\}|%\(|^\$|process\.env|os\.environ|getenv|env\(|^password$|^secret$|^hashed[_-]|"
     r"test|fake|todo|^null$|^none$|^undefined$|^true$|^false$"
+)
+# A line that can hold a credential: its name must end in one of these words, so other lines are never read.
+_SECRET_WORD = re.compile(r"(?i)passw|pwd|secret|token|api_?key|apikey|access_?key|private_?key|auth_?key|encryption_?key|signing_?key")
+# The same words in lower case, found with plain substring search, which is much faster than the pattern.
+# Every name `_SECRET_NAME` accepts, after `-` and `.` become `_`, contains one of them.
+_SECRET_WORDS: tuple[str, ...] = (
+    "passw",
+    "pwd",
+    "secret",
+    "token",
+    "apikey",
+    *(f"{word}{sep}key" for word in ("api", "access", "private", "auth", "secret", "encryption", "signing") for sep in ("_", "-", ".", "")),
 )
 # Words that name a kind of value (form fields, schemas), not a value.
 _NOT_SECRETS = frozenset({"string", "text", "hidden", "required", "optional", "number", "boolean", "value", "empty", "password", "secret", "none"})
@@ -113,7 +131,11 @@ class _Hit:
 
 
 def _provider(file: ScanFile) -> Iterator[_Hit]:
+    lower = file.text.lower()
     for pattern in _PROVIDER_PATTERNS:
+        haystack = lower if pattern.nocase else file.text
+        if pattern.hints and not any(hint in haystack for hint in pattern.hints):
+            continue
         for match in pattern.regex.finditer(file.text):
             value = match.group(pattern.group)
             # The provider's public prefix is left out, so ghp_xxxx… counts as the placeholder it is.
@@ -126,7 +148,13 @@ def _provider(file: ScanFile) -> Iterator[_Hit]:
             yield _Hit(pattern.rule, file.line_at(start), start, end, replacement, severity=pattern.severity)
 
 
+_DATABASE_SCHEMES = ("postgres", "mysql", "mariadb", "mongodb", "redis", "amqp", "mssql", "sqlserver")
+
+
 def _database_urls(file: ScanFile) -> Iterator[_Hit]:
+    lower = file.text.lower()
+    if "://" not in lower or not any(scheme in lower for scheme in _DATABASE_SCHEMES):
+        return
     for match in _DATABASE_URL.finditer(file.text):
         password = match.group("password")
         if _PLACEHOLDER.search(password) or password.lower() in {"pass", "user", "root", "admin"}:
@@ -149,10 +177,36 @@ def _database_urls(file: ScanFile) -> Iterator[_Hit]:
         )
 
 
+def _secret_lines(text: str) -> list[tuple[int, int]]:
+    """The start and end of each line that mentions a secret word, each once."""
+    lower = text.lower()
+    spans: dict[int, int] = {}
+    if len(lower) != len(text):
+        # A few letters change length when lower-cased, which would shift the offsets: use the pattern instead.
+        for word in _SECRET_WORD.finditer(text):
+            start = text.rfind("\n", 0, word.start()) + 1
+            end = text.find("\n", word.end())
+            spans[start] = len(text) if end < 0 else end
+        return sorted(spans.items())
+    for word in _SECRET_WORDS:
+        at = lower.find(word)
+        while at >= 0:
+            start = lower.rfind("\n", 0, at) + 1
+            end = lower.find("\n", at)
+            end = len(lower) if end < 0 else end
+            spans[start] = end
+            at = lower.find(word, end)  # the rest of this line is already in
+    return sorted(spans.items())
+
+
 def _credentials(file: ScanFile, min_entropy: float) -> Iterator[_Hit]:
-    matches = list(_QUOTED_ASSIGNMENT.finditer(file.text))
-    if _BARE_VALUE_FILES.search(file.name):
-        matches += list(_BARE_ASSIGNMENT.finditer(file.text))
+    # Only lines that mention a secret word can match, so the patterns run on those lines alone.
+    bare = bool(_BARE_VALUE_FILES.search(file.name))
+    matches: list[re.Match[str]] = []
+    for start, end in _secret_lines(file.text):
+        matches += _QUOTED_ASSIGNMENT.finditer(file.text, start, end)
+        if bare:
+            matches += _BARE_ASSIGNMENT.finditer(file.text, start, end)
     if file.name.lower().endswith(".tf"):
         matches += list(_TF_VARIABLE.finditer(file.text))
     in_tests = is_test_path(file.path)

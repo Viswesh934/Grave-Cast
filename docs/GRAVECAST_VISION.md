@@ -56,7 +56,7 @@ For site owners: security headers, HTTPS setup, third-party scripts, outdated fr
 
 ### 3.3 Repo graveyard (developer mode, website)
 
-Paste a public GitHub repo and see its dead code, old TODOs, vulnerable dependencies, and leaked secrets as a graveyard. Ingestion already exists in `apps/api/app/modules/github`. The full design is in [BUILD_SPEC.md](./BUILD_SPEC.md).
+Paste a public GitHub repo and see its security problems as a graveyard, one grave per finding. The server downloads the repo pinned to its commit and reads it in memory; nothing in it is run. Six checks run: known vulnerable dependencies (lockfiles checked against OSV.dev), leaked keys and passwords (always redacted), dangerous Python, JavaScript and TypeScript code (read with tree-sitter), Docker, CI workflow, Kubernetes and Terraform settings, missing protections (rate limiting, security headers, lockfiles), and TODO, FIXME, HACK and XXX notes. Each grave has a severity, a confidence, the CWE and, where its official list contains that CWE, the OWASP Top 10:2025 category, a fix, and links. The rule list and the response schema are in [REPO_SCAN_DESIGN.md](./REPO_SCAN_DESIGN.md). Dead code is not checked yet.
 
 ### 3.4 Lantern (installable)
 
@@ -257,7 +257,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 ### Later
 
 - Site health checks; Google Safe Browsing.
-- Repo graveyard per BUILD_SPEC (TODOs, OSV.dev, secrets, dead code).
+- Repo graveyard: dead code, the git history (secrets removed in old commits), and code rules for more languages.
 - Chat:
   - area echoes, such as one per city
   - moderation: read-only announcement echoes, rate limits
@@ -309,6 +309,9 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Link scan starts with checks the browser can run on the device (address form, http, bare IP, `@` disguise, punycode, unusual port). Server checks are added with the backend, and the result always lists what was not checked. | Agreed |
 | The security headers check (from §3.2 Site health) joins the link scan now: the server opens the link once, passively, and each missing header becomes a grave. Missing headers are labelled "Missing protection", not as signs of a harmful link. | Agreed |
 | Developer mode is built now: the repo graveyard reads TODO, FIXME, HACK and XXX comments from the existing GitHub ingestion and shows them as a 3D graveyard with a plain list alongside | Agreed |
+| The repo graveyard is a security scan (replaces "reads only TODO, FIXME, HACK and XXX"), as specified in REPO_SCAN_DESIGN.md: tree-sitter rules for Python, JavaScript and TypeScript, OSV.dev for dependencies, provider and generic secret patterns (redacted before they leave the scanner), Docker, Actions, Kubernetes and Terraform rules, and project-wide checks for rate limiting, security headers and lockfiles. Code notes stay, as the least serious graves. Severity sets weathering; OWASP Top 10:2025 is named only when its official CWE list holds the rule's CWE. Each check reports ran, partial, skipped or failed, and the page lists every one that did not fully run. robots.txt and the 404 page are not checked: they are not security issues. Semgrep, Bandit and ESLint were not used: Semgrep is too heavy for Lambda and its rule licence needs review; the other two cover one language each | Agreed |
+| After testing on five deliberately vulnerable repos, the repo scan follows values through variables inside one function and treats route-handler parameters as user input (replaces "user input only inside one call"); hides every secret on a line; checks only exact `requirements.txt` versions; catches short default passwords and unquoted YAML secrets; groups test-file passwords to one grave per file; counts code notes only inside comments; and never leaves out a critical or high grave under the per-rule cap. Details in REPO_SCAN_DESIGN.md | Agreed |
+| The repo graveyard shows at most 10 graves (replaces "one grave stands for each finding" for repos): each grave is one kind of finding, such as SQL injection or vulnerable dependencies, and its card lists every place it was found. The most serious kinds get their own grave; past nine, the rest share one "Other findings" grave. A real repo gave 156 findings, and 86 graves were too many to walk smoothly or read. Nothing is dropped, and the verdict still counts every finding. The link scan keeps one grave per finding | Agreed |
 | Sound is on from the start. A small control shows Sound ready, on or off, and a quiet ambient drone starts after the first click or key (replaces "no sound switch") | Agreed |
 | One page for both checks: a Dev mode switch turns the link check into the repo graveyard (`/dev` redirects to it). The page fits one screen: the form, a vial showing how far the scan has come, and the graveyard sit in the left column, with the 3D yard behind | Agreed |
 | The graveyard is a 3D walk in third person, like a third-person game (replaces "graves play as stories" and the side-on strip). One grave stands for each finding, so 5 findings show 5 graves, scattered through a fenced yard at night with room to walk between them, worn to their weathering; nothing else in the yard looks like a grave. The person is the witch on a broom (the `WitchOnBroom` drawing, standing in the scene and turned to the camera), at the height of the graves, starting outside the gate and facing in, with the camera behind her shoulder. Holding the left mouse button and dragging turns the camera (the arrow keys turn it too); clicking a grave flies her through the gate and round the other stones to it, and once she is beside it the file and the problem show above the grave. Clicking the gate, or Back to the gate, puts her outside it again, as at the start. A list of the graves does the same from the keyboard, and replaces the 3D yard when WebGL or motion is off | Agreed |
@@ -369,7 +372,7 @@ Use these terms everywhere: code, UI, and docs.
 
 | Term | Meaning |
 | --- | --- |
-| **Grave** | One finding, with evidence and a severity |
+| **Grave** | One finding, with evidence and a severity. In the repo graveyard, one kind of finding with every place it was found |
 | **Graveyard** | All graves from one scan |
 | **Weathering** | How serious a grave looks: pristine, aged, cracked, crumbling |
 | **Grave card** | A small shareable message (finding or note), about 200 bytes |

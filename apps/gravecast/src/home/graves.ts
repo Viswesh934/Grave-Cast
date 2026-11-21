@@ -5,10 +5,25 @@
 import type { TombstoneWeathering } from 'groove-ui'
 import { CHECKED_ON_SERVER, DOMAIN_AGE, NOT_CHECKED_YET, verdictFor, type Grave, type GraveSeverity, type LinkSummary } from '../linkscan/deviceChecks'
 import { hostOf, type ServerScan } from '../linkscan/serverScan'
-import { CATEGORY_WORD, CONFIDENCE_WORD, REPO_STANDING_LIMITS, SEVERITY_WEATHERING, SEVERITY_WORD as REPO_SEVERITY_WORD } from '../repograve/markerWords'
-import { lineUrl, SEVERITIES, type RepoGrave, type RepoGraveyard } from '../repograve/repoScan'
+import { groupRepoGraves } from '../repograve/groupGraves'
+import { REPO_STANDING_LIMITS, SEVERITY_WORD as REPO_SEVERITY_WORD } from '../repograve/markerWords'
+import { SEVERITIES, type RepoGraveyard } from '../repograve/repoScan'
 
 export type Mode = 'link' | 'dev'
+
+/** One place a grave's finding was found, when a grave gathers several. */
+export interface GravePlace {
+  /** What it is, when the grave holds findings of different kinds. */
+  title?: string
+  /** The file and line, or the package and version. */
+  where: string
+  href?: string
+  /** The line it was found on (secrets already hidden). */
+  snippet?: string
+  /** A short fact about this place, such as the version that fixes a package. */
+  note?: string
+  links?: { label: string; url: string }[]
+}
 
 export interface StoryGrave {
   id: string
@@ -31,6 +46,10 @@ export interface StoryGrave {
   tags?: string[]
   /** Advisories and standards to read more. */
   refs?: { label: string; url: string }[]
+  /** Carved under the title on the stone, such as the file or "3 places". */
+  engraving?: string
+  /** Every place, when one grave gathers several findings of a kind. */
+  places?: GravePlace[]
 }
 
 /** Everything the page shows about one finished scan. */
@@ -137,25 +156,6 @@ const repoVerdict = (graveyard: RepoGraveyard): string => {
   return `${plural(graveyard.total, 'finding', 'findings')}: ${list}.`
 }
 
-const repoGrave = (graveyard: RepoGraveyard, g: RepoGrave): StoryGrave => {
-  const where = g.path ? `${g.path}${g.line ? `:${g.line}` : ''}` : 'The whole repo'
-  const tags = [g.cwe, g.owasp, g.category === 'code-note' ? null : `${CONFIDENCE_WORD[g.confidence]} finding`].filter((t): t is string => t !== null)
-  if (g.package) tags.unshift(`${g.package.name} ${g.package.version}${g.package.dev ? ' (development only)' : ''}`)
-  return {
-    id: g.id,
-    title: g.title,
-    label: `${REPO_SEVERITY_WORD[g.severity]} \u00b7 ${CATEGORY_WORD[g.category]}`,
-    detail: g.detail,
-    evidence: where,
-    weathering: SEVERITY_WEATHERING[g.severity],
-    href: lineUrl(graveyard, g),
-    snippet: g.snippet ?? undefined,
-    fix: g.fix,
-    tags,
-    refs: g.references,
-  }
-}
-
 export function summariseRepo(graveyard: RepoGraveyard): ScanSummary {
   const facts = [
     `Read ${graveyard.filesRead} out of ${plural(graveyard.filesDiscovered, 'file', 'files')} in the repo${
@@ -166,7 +166,11 @@ export function summariseRepo(graveyard: RepoGraveyard): ScanSummary {
     facts.push(`Checked ${plural(graveyard.packagesChecked, 'package version', 'package versions')} from ${graveyard.lockfiles.join(', ')} against OSV.dev.`)
   }
   facts.push(`${graveyard.openIssues} open ${graveyard.openIssues === 1 ? 'issue or pull request' : 'issues and pull requests'} on GitHub.`)
-  if (graveyard.truncated) facts.push(`Showing ${graveyard.graves.length} of ${graveyard.total}, most serious first.`)
+  const stones = groupRepoGraves(graveyard)
+  if (stones.length < graveyard.graves.length) {
+    facts.push(`${plural(graveyard.graves.length, 'finding', 'findings')} gathered into ${plural(stones.length, 'grave', 'graves')}, one for each kind, most serious first.`)
+  }
+  if (graveyard.truncated) facts.push(`The server sent ${graveyard.graves.length} of ${graveyard.total} findings: every critical and high one, and the rest up to its limit.`)
 
   // Every check that did not fully run, with its reason, then what the scan never looks at.
   const notChecked = graveyard.checks.filter((c) => c.status !== 'ran').map((c) => `${c.name}: ${c.detail}`)
@@ -176,7 +180,7 @@ export function summariseRepo(graveyard: RepoGraveyard): ScanSummary {
     subject: graveyard.fullName,
     verdict: repoVerdict(graveyard),
     facts,
-    graves: graveyard.graves.map((g) => repoGrave(graveyard, g)),
+    graves: stones,
     notChecked: [...notChecked, ...REPO_STANDING_LIMITS],
     note: 'Each grave is found by reading the files. Check it in the code before you change anything.',
     openIssues: graveyard.openIssues,

@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from app.modules.github.scan.catalog import RULES, finding
 from app.modules.github.scan.files import ScanFile
 from app.modules.github.scan.findings import Finding, worst
-from app.modules.github.scan.syntax import PASSWORD_CONTEXT, SQL_TEXT, Flow, Node, ancestor, line, text, walk
+from app.modules.github.scan.syntax import PASSWORD_CONTEXT, SQL_TEXT, Flow, Node, ancestor, line, nodes_of, text, walk
 
 # User input, read straight from the request (Flask, Django, Starlette and FastAPI request objects).
 USER_INPUT = re.compile(
@@ -331,8 +331,8 @@ def _check_assignment(node: Node, emit: Emitter, file: ScanFile) -> None:
 
 def python_findings(file: ScanFile, root: Node) -> Iterator[Finding]:
     """Every Python rule over one file's syntax tree."""
-    emit = Emitter(file, Flow(root, "python", USER_INPUT))
-    for node in walk(root):
+    emit = Emitter(file, Flow(root, "python", USER_INPUT, "python"))
+    for node in nodes_of(root, "python", ("call", "assignment", "keyword_argument", "decorator")):
         if node.type == "call":
             call = _call(node)
             if call is not None:

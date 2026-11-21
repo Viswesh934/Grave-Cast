@@ -3,11 +3,12 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
+from dataclasses import dataclass
 
 from app.modules.github.scan.files import ScanFile
 from app.modules.github.scan.findings import Finding
 from app.modules.github.scan.rules_python import Emitter
-from app.modules.github.scan.syntax import PASSWORD_CONTEXT, SQL_TEXT, Flow, Node, ancestor, line, text, walk
+from app.modules.github.scan.syntax import PASSWORD_CONTEXT, SQL_TEXT, Flow, Node, ancestor, grammar_for, line, nodes_of, text, walk
 
 # User input, read straight from the request (Express, Koa, Fastify and Next.js request objects).
 USER_INPUT = re.compile(r"\b(req|request)\.(query|params|body|headers|cookies|files)\b|\bctx\.(query|params|request\.(query|body|params))\b")
@@ -167,7 +168,27 @@ def _all_escaped(node: Node) -> bool:
     return _escaped(node)
 
 
-def _check_call(node: Node, emit: Emitter, file: ScanFile, shells: frozenset[str]) -> None:
+@dataclass(frozen=True)
+class _Facts:
+    """What a file uses, read once per file instead of once per call."""
+
+    vm: bool
+    mongo: bool
+    jwt: bool
+    shelljs: bool
+
+    @staticmethod
+    def of(file: ScanFile) -> _Facts:
+        text = file.text
+        return _Facts(
+            vm=bool(re.search(r"require\(\s*['\"](node:)?vm['\"]|from\s+['\"](node:)?vm['\"]", text)),
+            mongo=bool(re.search(r"mongo|mongoose", text, re.IGNORECASE)),
+            jwt="jsonwebtoken" in text,
+            shelljs="shelljs" in text,
+        )
+
+
+def _check_call(node: Node, emit: Emitter, file: ScanFile, shells: frozenset[str], facts: _Facts) -> None:
     flow = emit.flow
     callee = node.child_by_field_name("function")
     args = _args(node)
@@ -193,7 +214,7 @@ def _check_call(node: Node, emit: Emitter, file: ScanFile, shells: frozenset[str
             emit("js.command-injection", node, user_input=flow.tainted(first))
         if last in _SPAWN and bound and _is(_pairs(options).get("shell"), "true") and first is not None and not is_literal(value):
             emit("js.command-injection", node, user_input=flow.tainted(first))
-    if target == "shell" and last == "exec" and "shelljs" in file.text and first is not None and not is_literal(value):
+    if target == "shell" and last == "exec" and facts.shelljs and first is not None and not is_literal(value):
         emit("js.command-injection", node, user_input=flow.tainted(first))
 
     # Strings run as code.
@@ -201,14 +222,14 @@ def _check_call(node: Node, emit: Emitter, file: ScanFile, shells: frozenset[str
         emit("js.code-injection", node, user_input=flow.tainted(first))
     if name in {"setTimeout", "setInterval"} and value is not None and is_dynamic_string(value):
         emit("js.code-injection", node, user_input=flow.tainted(first))
-    uses_vm = target in {"vm", "node:vm"} or re.search(r"require\(\s*['\"](node:)?vm['\"]|from\s+['\"](node:)?vm['\"]", file.text)
+    uses_vm = target in {"vm", "node:vm"} or facts.vm
     if last in _VM and uses_vm and first is not None and not is_literal(value):
         emit("js.code-injection", node, user_input=flow.tainted(first))
 
     # HTML written straight into the page, or user input sent back as the response.
     if name in {"document.write", "document.writeln"} and first is not None and not is_literal(value) and not _SANITIZED.search(text(value)):
         emit("js.xss", node, user_input=flow.tainted(first))
-    html = _value(flow, second)
+    html = _value(flow, second) if last == "insertAdjacentHTML" else None
     if last == "insertAdjacentHTML" and html is not None and not is_literal(html) and not _SANITIZED.search(text(html)):
         emit("js.xss", node, user_input=flow.tainted(second))
     if _RESPONSE_SENDS.match(name) and last in {"send", "write", "end"} and any(_user_input(arg) for arg in args):
@@ -220,9 +241,10 @@ def _check_call(node: Node, emit: Emitter, file: ScanFile, shells: frozenset[str
 
     # Request data into a database query, a file path, an outgoing request, or a redirect.
     # Operators are injected through the filter; the whole request body as an update document counts too.
-    whole_body = any(re.fullmatch(r"(req|request|ctx\.request)\.body", text(unwrap(arg))) for arg in args)
-    if last in _MONGO and (flow.tainted(first, NOSQL_INPUT) or whole_body) and re.search(r"mongo|mongoose", file.text, re.IGNORECASE):
-        emit("js.nosql-injection", node)
+    if last in _MONGO and facts.mongo:
+        whole_body = any(re.fullmatch(r"(req|request|ctx\.request)\.body", text(unwrap(arg))) for arg in args)
+        if whole_body or flow.tainted(first, NOSQL_INPUT):
+            emit("js.nosql-injection", node)
     if last in _FILE_READS and first is not None and flow.tainted(first):
         emit("js.path-traversal", node)
     fetches = (callee.type == "identifier" and name in _FETCHERS) or (target in _FETCH_CLIENTS and last in _FETCH_VERBS)
@@ -232,7 +254,7 @@ def _check_call(node: Node, emit: Emitter, file: ScanFile, shells: frozenset[str
         emit("js.open-redirect", node)
 
     # Tokens. The options object may be kept in a variable.
-    if name in {"jwt.verify", "verify"} and "jsonwebtoken" in file.text:
+    if name in {"jwt.verify", "verify"} and facts.jwt:
         settings = _pairs(options)
         if "algorithms" in settings and _NONE_ALGORITHM.search(text(_value(flow, settings["algorithms"]))):
             emit("js.jwt-none-algorithm", node)
@@ -331,12 +353,14 @@ def _check_jsx(node: Node, emit: Emitter) -> None:
 
 def js_findings(file: ScanFile, root: Node) -> Iterator[Finding]:
     """Every JavaScript and TypeScript rule over one file's syntax tree."""
-    emit = Emitter(file, Flow(root, "js", USER_INPUT))
+    grammar = grammar_for(file.path) or "javascript"
+    emit = Emitter(file, Flow(root, "js", USER_INPUT, grammar))
     shells = _child_process_names(file)
-    for node in walk(root):
+    facts = _Facts.of(file)
+    for node in nodes_of(root, grammar, ("call_expression", "new_expression", "assignment_expression", "pair", "jsx_attribute")):
         t = node.type
         if t == "call_expression":
-            _check_call(node, emit, file, shells)
+            _check_call(node, emit, file, shells, facts)
         elif t == "new_expression":
             _check_new(node, emit)
         elif t == "assignment_expression":
