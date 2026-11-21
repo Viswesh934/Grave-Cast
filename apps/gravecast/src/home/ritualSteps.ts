@@ -44,14 +44,14 @@ export const RITUAL: Record<Mode, readonly RitualStep[]> = {
       where: 'Our server',
       pose: 3,
       detail:
-        'Gravecast\u2019s server downloads the repo as it is now and reads its source files. Nothing in the repo is run, and the copy is deleted afterwards.',
+        'Gravecast\u2019s server downloads the repo as it is now and reads it in memory: leaked keys, dangerous code, Docker and CI settings, and lockfiles checked against OSV.dev. Nothing in the repo is run or kept.',
     },
     {
       id: 'rise',
       label: 'Rise',
       where: 'The yard',
       pose: 4,
-      detail: 'Every TODO, FIXME, HACK and XXX rises as a grave, most serious first, each with a link to its line. Open issues deepen the drone.',
+      detail: 'Each finding rises as a grave, most serious first, with its line, how to fix it and where to read more. Open issues deepen the drone.',
     },
   ],
 }

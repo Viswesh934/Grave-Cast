@@ -97,29 +97,95 @@ class GraveyardRequest(BaseModel):
     )
 
 
+GraveSeverity = Literal["critical", "high", "medium", "low", "info"]
+GraveConfidence = Literal["confirmed", "likely", "possible"]
+GraveCategory = Literal[
+    "vulnerable-dependency",
+    "secret",
+    "injection",
+    "access-control",
+    "crypto",
+    "authentication",
+    "misconfiguration",
+    "supply-chain",
+    "exposure",
+    "code-note",
+]
+
+
+class RepoReference(BaseModel):
+    label: str
+    url: str
+
+
+class RepoPackage(BaseModel):
+    """The package a vulnerable-dependency grave is about."""
+
+    ecosystem: str
+    name: str
+    version: str
+    fixed_in: str | None = Field(default=None, serialization_alias="fixedIn")
+    dev: bool = False
+
+    model_config = {"populate_by_name": True}
+
+
 class RepoGrave(BaseModel):
-    """One marker comment, with where it is and what it says."""
+    """One finding in the repo (docs/REPO_SCAN_DESIGN.md §4). Secrets in the snippet are redacted."""
 
     id: str
-    kind: Literal["FIXME", "XXX", "HACK", "TODO"]
-    path: str
-    line: int
-    note: str
+    rule: str
+    category: GraveCategory
+    severity: GraveSeverity
+    confidence: GraveConfidence
+    title: str
+    detail: str
+    fix: str
+    path: str | None
+    line: int | None
+    snippet: str | None
+    owasp: str | None
+    cwe: str | None
+    references: list[RepoReference]
+    package: RepoPackage | None = None
+
+
+class GraveyardSummary(BaseModel):
+    total: int = Field(description="Every finding, before the cap.")
+    by_severity: dict[str, int] = Field(serialization_alias="bySeverity")
+    by_category: dict[str, int] = Field(serialization_alias="byCategory")
+
+    model_config = {"populate_by_name": True}
+
+
+class ScanCheck(BaseModel):
+    id: Literal["dependencies", "secrets", "code", "config", "project", "markers"]
+    name: str
+    status: Literal["ran", "partial", "skipped", "failed"]
+    detail: str
 
 
 class GraveyardStats(BaseModel):
     files_read: int = Field(serialization_alias="filesRead")
     files_discovered: int = Field(serialization_alias="filesDiscovered")
-    marker_count: int = Field(serialization_alias="markerCount")
+    files_skipped: int = Field(default=0, serialization_alias="filesSkipped")
     languages: list[str]
+    lockfiles: list[str] = Field(default_factory=list)
+    packages_checked: int = Field(default=0, serialization_alias="packagesChecked")
+    marker_count: int = Field(serialization_alias="markerCount")
 
     model_config = {"populate_by_name": True}
 
 
 class GraveyardResponse(BaseModel):
+    schema_version: Literal[2] = Field(default=2, serialization_alias="schemaVersion")
     repository: RepositoryInfo
     graves: list[RepoGrave]
+    summary: GraveyardSummary
     stats: GraveyardStats
+    checks: list[ScanCheck]
     truncated: bool = Field(
-        description="True when there were more markers than the graves returned."
+        description="True when there were more findings than the graves returned."
     )
+
+    model_config = {"populate_by_name": True}

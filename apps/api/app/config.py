@@ -75,6 +75,22 @@ class Settings:
 
     # Repo graveyard: how many graves one scan returns at most.
     graveyard_max_graves: int = 300
+    # Repo graveyard scan (docs/REPO_SCAN_DESIGN.md sections 6 and 10): what it reads, and for how long.
+    graveyard_max_files: int = 2000
+    graveyard_max_total_bytes: int = 40_000_000
+    graveyard_max_per_rule: int = 40
+    graveyard_time_budget_seconds: float = 35.0
+    lockfile_max_bytes: int = 10_000_000
+    # Known vulnerable dependencies, from OSV.dev.
+    osv_api_base_url: str = "https://api.osv.dev"
+    osv_timeout_seconds: float = 15.0
+    osv_retries: int = 2
+    osv_batch_size: int = 1000
+    osv_max_packages: int = 5000
+    osv_max_advisories: int = 200
+    osv_concurrency: int = 8
+    # How random a hard-coded value must look (Shannon entropy, bits per character) to count as a credential.
+    secret_min_entropy: float = 3.0
 
     # Link scan: one passive request per hop, never reading the page body.
     link_max_redirects: int = 5
@@ -170,6 +186,19 @@ class Settings:
                 "GRAVECAST_WORKSPACE_TTL_SECONDS", 3600
             ),
             graveyard_max_graves=_env_int("GRAVECAST_GRAVEYARD_MAX_GRAVES", 300),
+            graveyard_max_files=_env_int("GRAVECAST_GRAVEYARD_MAX_FILES", 2000),
+            graveyard_max_total_bytes=_env_int("GRAVECAST_GRAVEYARD_MAX_TOTAL_BYTES", 40_000_000),
+            graveyard_max_per_rule=_env_int("GRAVECAST_GRAVEYARD_MAX_PER_RULE", 40),
+            graveyard_time_budget_seconds=_env_float("GRAVECAST_GRAVEYARD_TIME_BUDGET_SECONDS", 35.0),
+            lockfile_max_bytes=_env_int("GRAVECAST_LOCKFILE_MAX_BYTES", 10_000_000),
+            osv_api_base_url=os.getenv("GRAVECAST_OSV_API_BASE_URL", "https://api.osv.dev").rstrip("/"),
+            osv_timeout_seconds=_env_float("GRAVECAST_OSV_TIMEOUT_SECONDS", 15.0),
+            osv_retries=_env_int("GRAVECAST_OSV_RETRIES", 2),
+            osv_batch_size=_env_int("GRAVECAST_OSV_BATCH_SIZE", 1000),
+            osv_max_packages=_env_int("GRAVECAST_OSV_MAX_PACKAGES", 5000),
+            osv_max_advisories=_env_int("GRAVECAST_OSV_MAX_ADVISORIES", 200),
+            osv_concurrency=_env_int("GRAVECAST_OSV_CONCURRENCY", 8),
+            secret_min_entropy=_env_float("GRAVECAST_SECRET_MIN_ENTROPY", 3.0),
             link_max_redirects=_env_int("GRAVECAST_LINK_MAX_REDIRECTS", 5),
             link_connect_timeout_seconds=_env_float(
                 "GRAVECAST_LINK_CONNECT_TIMEOUT_SECONDS", 8.0

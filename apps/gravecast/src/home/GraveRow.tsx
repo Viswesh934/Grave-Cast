@@ -57,7 +57,46 @@ export function GraveRow({ grave, index }: { grave: StoryGrave; index: number })
         ) : (
           <p className="mt-1 mb-0 font-mono text-xs break-all text-grave-mist-400">{grave.evidence}</p>
         )}
+        <GraveDetails grave={grave} />
       </div>
     </li>
+  )
+}
+
+/** The line it was found on, how to fix it, its CWE and OWASP tags, and where to read more. Shown only when the grave has them. */
+export function GraveDetails({ grave }: { grave: StoryGrave }) {
+  return (
+    <>
+      {grave.snippet ? (
+        <pre className="mt-2 mb-0 overflow-x-auto rounded-md bg-grave-dark-950/80 px-2 py-1 font-mono text-xs whitespace-pre-wrap break-all text-grave-mist-300">
+          {grave.snippet}
+        </pre>
+      ) : null}
+      {grave.fix ? (
+        <>
+          <p className="mt-3 mb-0 text-[0.65rem] tracking-[0.25em] text-grave-mist-400 uppercase">How to fix</p>
+          <p className="m-0 text-sm leading-relaxed text-grave-mist-200">{grave.fix}</p>
+        </>
+      ) : null}
+      {grave.tags && grave.tags.length > 0 ? (
+        <p className="mt-2 mb-0 text-xs text-grave-mist-400">{grave.tags.join(' \u00b7 ')}</p>
+      ) : null}
+      {grave.refs && grave.refs.length > 0 ? (
+        <ul className="mt-1 mb-0 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs">
+          {grave.refs.map((ref) => (
+            <li key={ref.url}>
+              <a
+                href={ref.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-grave-mist-300 underline decoration-grave-dark-600 underline-offset-4 hover:text-grave-bone-100"
+              >
+                {ref.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </>
   )
 }
