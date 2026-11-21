@@ -28,6 +28,13 @@ def _env_float(name: str, default: float) -> float:
     return float(raw)
 
 
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None or raw.strip() == "":
+        return default
+    return raw.strip().lower() in ("1", "true", "yes", "on")
+
+
 def _env_list(name: str, default: tuple[str, ...], *, upper: bool = False) -> tuple[str, ...]:
     """A comma-separated environment variable as a tuple, or `default` when unset."""
     raw = os.getenv(name)
@@ -108,6 +115,13 @@ class Settings:
 
     # Which websites may call the API from a browser.
     cors_origins: tuple[str, ...] = ("http://localhost:5173", "http://127.0.0.1:5173")
+    # Requests must carry one of these in `x-origin-secret`, which our website's proxy adds.
+    # Comma-separated, so a new secret can be added before the old one is removed.
+    # Empty turns the check off, which is only for local development.
+    origin_secrets: tuple[str, ...] = ()
+    # True in the Lambda image: startup fails when no secret is set, so the API never runs open.
+    require_origin_secret: bool = False
+    origin_secret_min_chars: int = 32
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -185,7 +199,9 @@ class Settings:
             cors_origins=_env_list(
                 "GRAVECAST_CORS_ORIGINS", ("http://localhost:5173", "http://127.0.0.1:5173")
             ),
-        )
+            origin_secrets=_env_list("GRAVECAST_ORIGIN_SECRET", ()),
+            require_origin_secret=_env_bool("GRAVECAST_REQUIRE_ORIGIN_SECRET", False),
+            origin_secret_min_chars=_env_int("GRAVECAST_ORIGIN_SECRET_MIN_CHARS", 32),        )
 
 
 @lru_cache

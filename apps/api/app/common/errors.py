@@ -231,3 +231,7 @@ class EchoExistsError(AppError):
 class TooManyEchoesError(AppError):
     def __init__(self, message: str = "There are as many channels as this server can hold. Use one of them.") -> None:
         super().__init__(code="TOO_MANY_ECHOES", message=message, status_code=422)
+
+class OriginNotAllowedError(AppError):
+    def __init__(self, message: str = "This request is not allowed.") -> None:
+        super().__init__(code="ORIGIN_NOT_ALLOWED", message=message, status_code=403)
