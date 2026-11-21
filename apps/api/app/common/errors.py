@@ -235,3 +235,7 @@ class TooManyEchoesError(AppError):
 class OriginNotAllowedError(AppError):
     def __init__(self, message: str = "This request is not allowed.") -> None:
         super().__init__(code="ORIGIN_NOT_ALLOWED", message=message, status_code=403)
+
+class ChannelBusyError(AppError):
+    def __init__(self, message: str = "Chat is busy right now. Try again in a moment.") -> None:
+        super().__init__(code="CHANNEL_BUSY", message=message, status_code=503)

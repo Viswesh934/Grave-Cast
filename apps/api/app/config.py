@@ -112,6 +112,16 @@ class Settings:
     # The most echoes one mail run reads, so a run stays one small request.
     channel_max_followed_echoes: int = 30
     channel_creates_per_minute: int = 3
+    # Where Chat is stored: "sqlite" (a local file, for development) or "dynamodb" (when deployed).
+    channel_store: str = "sqlite"
+    # The DynamoDB table and region, used when channel_store is "dynamodb". An empty region uses the environment's.
+    channel_table: str = ""
+    channel_region: str | None = None
+    # A write retries when another write got there first, up to this many times.
+    channel_write_attempts: int = 8
+    # How long a stored msgid is remembered, so a late retry still posts once. Needs the table's TTL on `expires_at`.
+    channel_dedupe_days: int = 30
+    channel_aws_timeout_seconds: float = 5.0
 
     # Which websites may call the API from a browser.
     cors_origins: tuple[str, ...] = ("http://localhost:5173", "http://127.0.0.1:5173")
@@ -196,6 +206,12 @@ class Settings:
             channel_max_echo_about_chars=_env_int("GRAVECAST_CHANNEL_MAX_ECHO_ABOUT_CHARS", 80),
             channel_max_followed_echoes=_env_int("GRAVECAST_CHANNEL_MAX_FOLLOWED_ECHOES", 30),
             channel_creates_per_minute=_env_int("GRAVECAST_CHANNEL_CREATES_PER_MINUTE", 3),
+            channel_store=os.getenv("GRAVECAST_CHANNEL_STORE", "sqlite").strip().lower() or "sqlite",
+            channel_table=os.getenv("GRAVECAST_CHANNEL_TABLE", "").strip(),
+            channel_region=os.getenv("GRAVECAST_CHANNEL_REGION", "").strip() or None,
+            channel_write_attempts=_env_int("GRAVECAST_CHANNEL_WRITE_ATTEMPTS", 8),
+            channel_dedupe_days=_env_int("GRAVECAST_CHANNEL_DEDUPE_DAYS", 30),
+            channel_aws_timeout_seconds=_env_float("GRAVECAST_CHANNEL_AWS_TIMEOUT_SECONDS", 5.0),
             cors_origins=_env_list(
                 "GRAVECAST_CORS_ORIGINS", ("http://localhost:5173", "http://127.0.0.1:5173")
             ),
