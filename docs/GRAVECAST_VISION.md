@@ -197,7 +197,7 @@ The list of doodles needed comes from the kit card content. Each doodle illustra
 | Channel (mail runs, echoes) | New module | `apps/api/app/modules/channel` |
 | App | React + Vite + TypeScript website; Lantern is the installable PWA | `apps/gravecast` (new) |
 | Look and sound | Groove UI | `packages/grave-ui` |
-| Echo storage | DynamoDB, provisioned mode at 25 read / 25 write units (the free tier) | Behind Lambda |
+| Echo storage | DynamoDB, on-demand capacity (billed per request) | Behind Lambda |
 | Access content | Built into Lantern (phrases, kit captions) | Cached offline with Lantern |
 | Docs site | Groove UI docs, under `/docs` in the same app (moved from `apps/web`) | `apps/gravecast/src/docs` |
 
@@ -221,10 +221,10 @@ Nothing runs while idle. There is no always-on server, no domain to manage, and 
 | --- | --- | --- |
 | Vercel Hobby | 1M function invocations, 100 GB data transfer, 1M CDN requests per month | Mostly static files. Going over pauses the feature for 30 days; nothing is charged. |
 | AWS Lambda | 1M requests and 400,000 GB-seconds per month | Short mail runs and scans. Reserved concurrency caps how many run at once. |
-| DynamoDB | 25 read and 25 write capacity units, 25 GB storage (Standard table class) | Provisioned mode fixed at 25/25, with no auto scaling. It throttles instead of billing. |
+| DynamoDB | 25 GB storage. The 25 read and 25 write units are free only for provisioned tables, which we no longer use | On-demand: it never throttles, and is billed per request. At our size the cost should be small; the $1 billing alert, rate limits and reserved concurrency watch it. |
 | API Gateway | Free for the first 12 months only | Not used. Lambda Function URLs give Lambda a public address. |
 
-Our AWS account is on the **Paid plan**. Always-free allowances still apply, but usage beyond them is billed, not paused. So the guardrails are required: DynamoDB fixed at 25/25 with no auto scaling, Lambda reserved concurrency, rate limits on scans and mail runs, no API Gateway, and a billing alert at $1.
+Our AWS account is on the **Paid plan**. Always-free allowances still apply, but usage beyond them is billed, not paused. So the guardrails are required: Lambda reserved concurrency, rate limits on scans and mail runs, the origin secret, no API Gateway, and a billing alert at $1. DynamoDB is on-demand, so it is billed per request instead of throttling.
 
 ## 8. Iterations
 
@@ -292,7 +292,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Access (renamed from the Board) has two modes, chosen by the person: a braille pad (blind or low vision) and a dial pad of messages (deaf or hard of hearing). Talk's turn-taking and saved own phrases are dropped for now; the dial pad's 0 key writes anything. Help near you is last in the side menu | Agreed |
 | Access tiles are named by the problem: "Can't see and can't speak" (braille pad) and "Can't hear or can't speak" (dial pad). A distress signal (shake or five taps, off by default; or the pads' SOS) speaks and sounds for help or vibrates silently, and opens the SMS app to a saved help contact with the GPS position. Loud is the default; Silent is offered because noise can be dangerous, for example when hiding | Agreed |
 | Only Vercel and Lambda: no always-on server, no Lightsail, no DNS | Agreed |
-| Zero-cost deploy inside free tiers: Vercel Hobby, Lambda with Function URLs, DynamoDB provisioned at 25/25, a $1 billing alert | Agreed |
+| Near-zero-cost deploy: Vercel Hobby, Lambda with Function URLs, DynamoDB on-demand, ECR for the API image, a $1 billing alert | Agreed |
 | Demo with a real tester group in a `DEMO` echo (§12) | Agreed |
 | Haunted radio uses ggwave | Agreed |
 | Kit drawings come from a doodle system (skeleton, poses, props as data), not hand-drawn one by one | Agreed |
@@ -328,6 +328,8 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | A live demo page at `/demo` is for judges: what Gravecast is, a QR code that opens Chat on the DEMO echo, and the DEMO echo live, with an option to show each message's FidoNet-style headers. It only reads, through `GET /api/channel/echoes/{area}` | Agreed |
 | Prototype hosting: the app on Vercel, the API on AWS Lambda | Agreed |
 | Chat storage sits behind one interface: SQLite for local development, DynamoDB when deployed. A GitHub Action deploys, and its secrets hold the AWS credentials | Agreed |
+| Chat's DynamoDB table is on-demand, replacing provisioned 25/25: the account is on the Paid plan and the team accepts per-request billing, so a busy room never throttles | Agreed |
+| Chat on DynamoDB is one table (`pk`, `sk`). Each message is one transaction: it moves a global `seq` counter (checked in the same transaction, so seq follows commit order), stores the message, stores a msgid marker that expires after 30 days (so a retry never posts twice), and drops the echo's oldest message once it holds 500. Reads are strongly consistent. A failed or overloaded call answers 503 "busy", and the phone's outbox retries | Agreed |
 | The remaining kit card strips are built around Chat (before or after), in batches from the doodle scripts | Agreed |
 | All 31 kit cards are drawn as drafts from the doodle scripts, with captions word for word. Close-ups and scenes in the scripts are Groove UI props (shape data), not poses; a placement label can override a badge's text | Agreed |
 | Cut for the hackathon: grave card (QR and sharing), the `/demo` page, haunted radio with ggwave, and the streams-based Radio dial. The vision's other sections stay as the plan for later | Agreed |

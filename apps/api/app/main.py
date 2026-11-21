@@ -13,10 +13,10 @@ from pydantic import BaseModel
 from app.common.errors import ChannelRateLimitedError
 from app.common.origin_guard import OriginGuard, check_origin_config
 from app.common.rate_limit import RateLimiter
-from app.config import get_settings
+from app.config import Settings, get_settings
 from app.modules.channel import router as channel_router
 from app.modules.channel.service import ChannelService
-from app.modules.channel.store import SqliteChannelStore
+from app.modules.channel.store import ChannelStore, SqliteChannelStore
 from app.modules.github import router as github_router
 from app.modules.github.service import GitHubIngestionService
 from app.modules.linkscan import router as linkscan_router
@@ -25,13 +25,25 @@ from app.modules.linkscan.service import LinkScanService
 logger = logging.getLogger(__name__)
 
 
+def build_channel_store(settings: Settings) -> ChannelStore:
+    """Chat's storage: SQLite for development, DynamoDB when deployed."""
+    if settings.channel_store == "dynamodb":
+        # Imported here so local development never loads boto3.
+        from app.modules.channel.dynamo_store import DynamoChannelStore
+
+        return DynamoChannelStore.from_settings(settings)
+    if settings.channel_store == "sqlite":
+        return SqliteChannelStore(settings.channel_db_path)
+    raise RuntimeError("GRAVECAST_CHANNEL_STORE must be sqlite or dynamodb.")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
     service = GitHubIngestionService(settings=settings)
     app.state.ingestion_service = service
     app.state.link_scan_service = LinkScanService(settings=settings)
-    app.state.channel_service = ChannelService(SqliteChannelStore(settings.channel_db_path), settings)
+    app.state.channel_service = ChannelService(build_channel_store(settings), settings)
     # Fallback cleanup for abandoned snapshot workspaces.
     try:
         deleted = service.cleanup_abandoned()

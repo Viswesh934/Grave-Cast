@@ -14,7 +14,7 @@ The API deploys with a GitHub Actions workflow: OIDC role, a Docker image in ECR
    - With a 100–200 MB image and a lifecycle rule that keeps the last 2 images, that is about $0.02–0.04 a month.
    - We accept this small cost. The vision doc's "zero cost" goal becomes "near zero": update its §7 and §9 when building.
 2. **Decided: reuse the existing `OIDC` role as Gravecast's deploy role.** Nothing else uses it. Edit its trust policy and add the Gravecast permissions (section 1, steps 2 and 3). Replace any old Fuel Check repo in the `sub` condition rather than adding to it.
-3. **DynamoDB's free capacity (25 read and 25 write units) is shared by every table in the account.** AWS's pages don't say whether regions are counted separately, so count every table in every region. Whatever tables already exist (Fuel Check's included) use up part of it, and Gravecast's table (and any index on it) must fit in what is left, or it gets billed. Deleting the old tables would free it; that is your call, not part of this plan.
+3. **Decided: DynamoDB on-demand.** The account is on the Paid plan and per-request billing is accepted, so there is no 25/25 free-capacity limit to fit inside, and a busy room never throttles. The $1 billing alert, rate limits and reserved concurrency stay as the guardrails. Vision doc §9 has the row.
 
 ## 1. AWS console (manual, once)
 
@@ -26,11 +26,11 @@ The API deploys with a GitHub Actions workflow: OIDC role, a Docker image in ECR
    - Lambda's docs also list `ecr:GetRepositoryPolicy` and `ecr:SetRepositoryPolicy` for whoever creates the function from an image. If the ECR repository has no policy letting Lambda read images, Lambda tries to add one, and can only do so with those two. Either give them to whoever creates the function (you, in the console) or add the repository policy yourself in step 4 (`lambda.amazonaws.com` allowed `ecr:BatchGetImage` and `ecr:GetDownloadUrlForLayer`).
    - on the `gravecast-api` function: `lambda:GetFunction`, `lambda:GetFunctionConfiguration`, `lambda:UpdateFunctionCode`
 4. **ECR repository** `gravecast-api`, private, with the lifecycle rule "keep last 2 images". The workflow does not create the repository (so it never needs `ecr:CreateRepository`), and it fails if the repository is missing. Make the rule apply to images of any tag status: pushing the same tag again leaves the old image untagged, and a rule limited to tagged images would never delete it.
-5. **DynamoDB table** for Chat echoes:
-   - provisioned mode, auto scaling off, at the units left from step 0.3 (at most 25/25)
-   - Standard table class
-   - Create it after the next session fixes the key design in code.
-6. **Lambda execution role:** reuse the old role from the abandoned Fuel Check function, picked as "Use an existing role" when creating the function. It needs the `lambda.amazonaws.com` trust, `AWSLambdaBasicExecutionRole` (logs), and later read and write on Gravecast's one table. Check its other permissions first: anything left over from Fuel Check (DynamoDB on `*`, other tables, S3) is also available to this function, so remove what isn't needed.
+5. **DynamoDB table** for Chat (the store is written; this is the console part):
+   - Table name `gravecast-channel`. Partition key `pk` (String), sort key `sk` (String).
+   - Capacity mode: on-demand. Table class: Standard.
+   - After it is created, turn on time to live (Additional settings, Time to Live) with the attribute name `expires_at`. It clears the msgid markers after 30 days. Without it everything still works; the markers just stay.
+6. **Lambda execution role:** reuse the old role from the abandoned Fuel Check function, picked as "Use an existing role" when creating the function. It needs the `lambda.amazonaws.com` trust and `AWSLambdaBasicExecutionRole` (logs). Add an inline policy for Gravecast's table, with `dynamodb:GetItem`, `dynamodb:Query`, `dynamodb:PutItem`, `dynamodb:UpdateItem` and `dynamodb:DeleteItem` on `arn:aws:dynamodb:ap-south-1:136172187126:table/gravecast-channel` only. (A transaction needs the Put, Update and Delete permissions; there is no separate transaction permission.) Check the role's other permissions first: anything left over from Fuel Check (DynamoDB on `*`, other tables, S3) is also available to this function, so remove what isn't needed.
 7. **Lambda function** `gravecast-api`:
    - Create it from the container image after the first image is pushed. The workflow only updates an existing function; on the first run it pushes the image and warns.
    - Memory 512 MB.
@@ -39,14 +39,14 @@ The API deploys with a GitHub Actions workflow: OIDC role, a Docker image in ECR
    - **Reserved concurrency** of about 5, which the vision doc requires. Lambda always keeps 100 units unreserved, so you can reserve at most the account limit minus 100. The documented default limit is 1,000, but a new account may have as little as 10, which leaves nothing to reserve. Run `aws lambda get-account-settings` first, and request an increase if `UnreservedConcurrentExecutions` is below 5.
    - Environment variables:
      - `GRAVECAST_WORKSPACE_ROOT=/tmp/repositories`. Lambda can only write under `/tmp`.
-     - the channel store choice and table name (names to be set in code)
+     - `GRAVECAST_CHANNEL_STORE=dynamodb` and `GRAVECAST_CHANNEL_TABLE=gravecast-channel`. Set them only once the table and the role's policy exist: the API starts on SQLite in `/tmp` until then. The region comes from Lambda's own `AWS_REGION`.
      - `GITHUB_TOKEN`, optional; read-only public access is enough
      - `GRAVECAST_ORIGIN_SECRET`: a long random value (for example `openssl rand -hex 32`), the same as Vercel's `ORIGIN_SECRET` (section 3). The API refuses `/api` requests that don't carry it (section 4, item 7).
 8. **Function URL:**
    - auth type `NONE`, invoke mode `BUFFERED`
    - The function needs a resource-based policy allowing `lambda:InvokeFunctionUrl` and `lambda:InvokeFunction` for everyone. The console adds it when it creates the URL. If you use the CLI, CloudFormation or the API, add both statements yourself with `aws lambda add-permission`, or every request gets 403 Forbidden. Add `lambda:InvokedViaFunctionUrl` to the second statement, as AWS recommends.
    - Leave the URL's own CORS setting off. The site calls the API on its own address and Vercel forwards the request (section 3, step 4), so the browser never makes a cross-origin call and CORS is not needed. CORS was never access control anyway: it only tells browsers what a page may read, and curl or a script ignores it. Locking the API to our site is done with the origin secret instead.
-9. **CloudWatch log retention:** 7 days on `/aws/lambda/gravecast-api`.
+9. **CloudWatch log retention: skipped by choice.** Lambda still writes its logs to `/aws/lambda/gravecast-api` while the execution role allows it, and they are kept forever. The volume is small. To stop logging entirely, remove the log permissions from the role, but then a failed start leaves no message.
 
 ## 2. GitHub (manual)
 
@@ -90,10 +90,11 @@ The API deploys with a GitHub Actions workflow: OIDC role, a Docker image in ECR
    - So: AWS Lambda Web Adapter. Add one `COPY` line to the Dockerfile; uvicorn runs FastAPI as it does today, with no code change. The `lifespan` startup still runs.
    - Image: `python:3.12-slim` plus `COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:1.1.0 /lambda-adapter /opt/extensions/lambda-adapter`. uvicorn listens on port 8080, the adapter's default. Set `AWS_LWA_READINESS_CHECK_PATH=/health`.
    - Move to Web Functions if it adds Python later.
-2. **`DynamoChannelStore`** behind the existing `ChannelStore` protocol in `app/modules/channel/store.py`, picked by an environment variable. SQLite stays for local work.
-   - Settings go in `config.py` with `GRAVECAST_*` names.
-   - Tests use a fake client, never real AWS.
-   - The design must keep MSGID retries from posting twice.
+2. **`DynamoChannelStore`** (written, with tests) in `app/modules/channel/dynamo_store.py`, behind the existing `ChannelStore` protocol. `GRAVECAST_CHANNEL_STORE` picks it; SQLite stays for local work.
+   - One table, keys `pk` and `sk`. Each message is one transaction: it moves a global `seq` counter (checked in the same transaction, so seq follows commit order), stores the message, stores a msgid marker (so a retry never posts twice), and drops the echo's oldest message once it holds `keep`. Reads are strongly consistent.
+   - Settings in `config.py` with `GRAVECAST_*` names: `CHANNEL_STORE`, `CHANNEL_TABLE`, `CHANNEL_REGION`, `CHANNEL_WRITE_ATTEMPTS`, `CHANNEL_DEDUPE_DAYS`, `CHANNEL_AWS_TIMEOUT_SECONDS`.
+   - Tests run against moto, an in-memory fake of DynamoDB, never real AWS. They cover seq order, repeats (also all at once), pruning, many writers at once, created channels and their cap, and AWS failures answering 503 "busy" with no details.
+   - Not tested against real DynamoDB. Moto does not check reserved words or the real cancellation-reason format; the first live mail run is the real test.
 3. **`apps/api/Dockerfile.lambda`** (written) on `python:3.12-slim` with the adapter (item 1; the adapter ships its own runtime client, so no AWS base image is needed), plus `apps/api/.dockerignore` (leave out `.venv`, `tests`, `.env`, caches).
 4. **`.github/workflows/deploy-api.yml`** (written, in `.github/workflows/`):
    - `paths`: `apps/api/**` and the workflow file. Build context: `apps/api`.
@@ -112,7 +113,7 @@ Known limit to state plainly: rate limits are kept in memory, so each running La
 1. Settle the three decisions in section 0.
 2. Section 1, steps 1 to 4 (alert, role, ECR repository).
 3. Section 4 code on branch `feat/ci-deploy`, tested locally with the Docker image.
-4. DynamoDB table and Lambda execution role (section 1, steps 5 and 6).
+4. DynamoDB table `gravecast-channel`, the policy on the execution role, then the two `GRAVECAST_CHANNEL_*` variables on the function (section 1, steps 5 to 7).
 5. Add the GitHub secrets `AWS_ROLE_ARN` and `ECR_REPOSITORY` (section 2, step 1). The workflow has no fallbacks, so it fails without them. Then push the workflow on `main` (or run it by hand). The first run pushes the image.
 6. Generate the origin secret and keep it. Create the function with `GRAVECAST_ORIGIN_SECRET` set, since the API refuses to start without it, then its Function URL and log retention (section 1, steps 7 to 9). Add the GitHub secrets `LAMBDA_FUNCTION_NAME` and `LAMBDA_FUNCTION_URL`.
 7. Set `ORIGIN_SECRET` on Vercel to the same value. Add the two `routes` to `vercel.json` with the Function URL (section 3, step 4), then create the Vercel project and set its other environment variables (section 3).
