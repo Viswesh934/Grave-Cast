@@ -3,8 +3,10 @@ import { ComponentDocPage } from '../../components/docs/ComponentDocPage';
 import {
   HauntedDiary,
   Button,
+  useAriaAnnounce,
   type DiaryEntry,
 } from 'groove-ui';
+import { markGamesFound } from '../../../site/gamesFound';
 
 const SAMPLE_ENTRIES: DiaryEntry[] = [
   {
@@ -63,6 +65,7 @@ export function CryptLibrary() {
 export function DiaryDoc() {
   const [open, setOpen] = useState(false);
   const [answeredCount, setAnsweredCount] = useState(0);
+  const { announce } = useAriaAnnounce();
 
   return (
     <ComponentDocPage
@@ -96,7 +99,13 @@ export function DiaryDoc() {
           <HauntedDiary
             open={open}
             entries={SAMPLE_ENTRIES}
-            onAnswer={() => setAnsweredCount((c) => c + 1)}
+            onAnswer={({ entry, wrong }) => {
+              setAnsweredCount((c) => c + 1);
+              // The easter egg: a right riddle answer reveals the games, here and on the home page.
+              if (entry.kind === 'riddle' && !wrong && markGamesFound()) {
+                announce('A new section has appeared in the sidebar: Games.');
+              }
+            }}
             onVanished={() => setOpen(false)}
           />
         </div>
@@ -115,7 +124,7 @@ export function DiaryDoc() {
         { name: 'onVanished', type: '() => void', description: 'Triggered after the book dissolves and unmounts' },
       ]}
       prevPage={{ title: 'Doodle', path: '/docs/components/doodle' }}
-      nextPage={{ title: 'GhostRun', path: '/docs/components/ghost-run' }}
+      nextPage={{ title: 'BitingFrame', path: '/docs/components/biting-frame' }}
     />
   );
 }

@@ -10,6 +10,8 @@ export {
   fillDiaryText,
   nextDiaryEntry,
   diaryCandidates,
+  shuffleDiaryOrder,
+  orderDiaryEntries,
   DIARY_PICK_FROM_DEFAULT,
   answerDiaryEntry,
   type DiaryEntry,

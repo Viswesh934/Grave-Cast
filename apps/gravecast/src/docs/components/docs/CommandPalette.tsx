@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchIcon, PumpkinIcon } from './DocsIcons';
+import { useGamesFound } from '../../../site/gamesFound';
 
 interface SearchItem {
   id: string;
@@ -55,10 +56,12 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: 'scribble', title: 'Scribble', category: 'The Effects', path: '/docs/components/scribble' },
   { id: 'doodle', title: 'Doodle', category: 'The Effects', path: '/docs/components/doodle' },
   { id: 'diary', title: 'HauntedDiary', category: 'The Effects', path: '/docs/components/diary' },
-  { id: 'ghostrun', title: 'GhostRun (Mini-Game)', category: 'The Effects', path: '/docs/components/ghost-run' },
   { id: 'bitingframe', title: 'BitingFrame', category: 'The Effects', path: '/docs/components/biting-frame' },
   { id: 'broomprogress', title: 'BroomProgress', category: 'The Effects', path: '/docs/components/broom-progress' },
   { id: 'scrollbar', title: 'HauntedScrollbar (Blob)', category: 'The Effects', path: '/docs/components/haunted-scrollbar' },
+  // Games
+  { id: 'ghostrun', title: 'GhostRun (Mini-Game)', category: 'The Games', path: '/docs/components/ghost-run' },
+  { id: 'backwards', title: 'Backwards (Reverse Typing)', category: 'The Games', path: '/docs/components/backwards' },
 
   // The Grimoire
   { id: 'grimoire', title: 'Grimoire Overview', category: 'The Grimoire', path: '/docs/components/grimoire' },
@@ -83,6 +86,8 @@ export interface CommandPaletteProps {
 }
 
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
+  // The games are an easter egg: they're only searchable once found.
+  const gamesFound = useGamesFound();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
@@ -104,6 +109,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   const filtered = SEARCH_ITEMS.filter(
     (item) =>
+      (gamesFound || item.category !== 'The Games') &&
       item.title.toLowerCase().includes(query.toLowerCase()) ||
       item.category.toLowerCase().includes(query.toLowerCase())
   );

@@ -438,6 +438,7 @@ export function HomePage() {
         silentText={DIARY_SILENT_TEXT}
         storageKey={DIARY_STORAGE_KEY}
         pickFrom={DIARY_PICK_FROM}
+        shuffle
         // A right riddle answer reveals the easter egg; a wrong one reveals nothing.
         onAnswer={({ entry, wrong }) => {
           if (entry.kind === 'riddle' && !wrong) egg.reveal()

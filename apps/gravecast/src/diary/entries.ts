@@ -1,8 +1,8 @@
 /**
- * What the diary writes while a scan runs, roughly in this order. Each scan asks
- * one of the next DIARY_PICK_FROM entries at random, so visits differ but the
- * diary still grows darker and more personal over the session. Entries with
- * `when` only appear once the diary remembers an answer.
+ * Everything the diary may write while a scan runs. The home page shuffles them
+ * into a new order each browser session (and again after every full round), so
+ * visits start differently. Entries with `when` only appear once the diary
+ * remembers the answer they need, and the one marked `last` closes the round.
  */
 import type { DiaryEntry } from 'groove-ui'
 
