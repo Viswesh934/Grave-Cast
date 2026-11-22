@@ -241,10 +241,9 @@ export function IntroductionPage() {
                 </span>
               </div>
               <p className="text-xs text-stone-300 leading-relaxed">
-                Atmospheric overlays, full-screen horror backgrounds, interactive games, custom cursed cursors, and tactile audio components.
+                Atmospheric overlays, full-screen horror backgrounds, custom cursed cursors, and tactile audio components. The games have their own section.
               </p>
               <div className="flex flex-wrap gap-1.5 pt-1">
-                <Link to="/docs/components/ghost-run" className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#10241b] text-emerald-300 border border-[#1a4430] hover:border-emerald-500">GhostRun (Arcade)</Link>
                 <Link to="/docs/components/diary" className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#10241b] text-emerald-300 border border-[#1a4430] hover:border-emerald-500">HauntedDiary</Link>
                 <Link to="/docs/components/biting-frame" className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#10241b] text-emerald-300 border border-[#1a4430] hover:border-emerald-500">BitingFrame</Link>
                 <Link to="/docs/components/broom-progress" className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#10241b] text-emerald-300 border border-[#1a4430] hover:border-emerald-500">BroomProgress</Link>

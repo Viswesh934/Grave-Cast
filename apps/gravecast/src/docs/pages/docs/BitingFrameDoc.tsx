@@ -83,7 +83,7 @@ export function BitingFrameDoc() {
         { name: 'children', type: 'ReactNode', description: 'The inner component or panel framed by the jaws' },
         { name: 'className', type: 'string', default: "''", description: 'Additional classes applied to the outer wrapper' },
       ]}
-      prevPage={{ title: 'GhostRun', path: '/docs/components/ghost-run' }}
+      prevPage={{ title: 'HauntedDiary', path: '/docs/components/diary' }}
       nextPage={{ title: 'BroomProgress', path: '/docs/components/broom-progress' }}
     />
   );

@@ -132,7 +132,7 @@ export function HauntedScrollbarDoc() {
         { name: 'className', type: 'string', default: "''", description: 'Custom CSS class for the track wrapper' },
       ]}
       prevPage={{ title: 'BroomProgress', path: '/docs/components/broom-progress' }}
-      nextPage={{ title: 'HorrorCursor', path: '/docs/components/horror-cursor' }}
+      nextPage={{ title: 'GhostRun', path: '/docs/components/ghost-run' }}
     />
   );
 }

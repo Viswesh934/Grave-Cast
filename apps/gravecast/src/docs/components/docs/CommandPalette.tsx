@@ -55,10 +55,12 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: 'scribble', title: 'Scribble', category: 'The Effects', path: '/docs/components/scribble' },
   { id: 'doodle', title: 'Doodle', category: 'The Effects', path: '/docs/components/doodle' },
   { id: 'diary', title: 'HauntedDiary', category: 'The Effects', path: '/docs/components/diary' },
-  { id: 'ghostrun', title: 'GhostRun (Mini-Game)', category: 'The Effects', path: '/docs/components/ghost-run' },
   { id: 'bitingframe', title: 'BitingFrame', category: 'The Effects', path: '/docs/components/biting-frame' },
   { id: 'broomprogress', title: 'BroomProgress', category: 'The Effects', path: '/docs/components/broom-progress' },
   { id: 'scrollbar', title: 'HauntedScrollbar (Blob)', category: 'The Effects', path: '/docs/components/haunted-scrollbar' },
+  // Games
+  { id: 'ghostrun', title: 'GhostRun (Mini-Game)', category: 'The Games', path: '/docs/components/ghost-run' },
+  { id: 'backwards', title: 'Backwards (Reverse Typing)', category: 'The Games', path: '/docs/components/backwards' },
 
   // The Grimoire
   { id: 'grimoire', title: 'Grimoire Overview', category: 'The Grimoire', path: '/docs/components/grimoire' },

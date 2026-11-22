@@ -115,7 +115,7 @@ export function DiaryDoc() {
         { name: 'onVanished', type: '() => void', description: 'Triggered after the book dissolves and unmounts' },
       ]}
       prevPage={{ title: 'Doodle', path: '/docs/components/doodle' }}
-      nextPage={{ title: 'GhostRun', path: '/docs/components/ghost-run' }}
+      nextPage={{ title: 'BitingFrame', path: '/docs/components/biting-frame' }}
     />
   );
 }

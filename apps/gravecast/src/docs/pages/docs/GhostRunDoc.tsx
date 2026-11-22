@@ -26,7 +26,7 @@ export function GhostRunDoc() {
   return (
     <ComponentDocPage
       title="GhostRun"
-      category="The Effects"
+      category="The Games"
       description="An interactive arcade mini-game built directly into the design system: a spectral wisp drifts through an endless moonlit graveyard, leaping over crumbling headstones, collecting soul coins, and defying mortal gravity with real-time procedural sound."
       packageName="ghost-run"
       preview={
@@ -66,8 +66,8 @@ export function GhostRunDoc() {
         { name: 'title', type: 'string', default: "'Ghost run'", description: 'Title banner displayed during the run' },
         { name: 'sounds', type: 'GhostRunSounds', description: 'Sound bindings for jump, coin pickup, and stone crash events' },
       ]}
-      prevPage={{ title: 'HauntedDiary', path: '/docs/components/diary' }}
-      nextPage={{ title: 'BitingFrame', path: '/docs/components/biting-frame' }}
+      prevPage={{ title: 'HauntedScrollbar', path: '/docs/components/haunted-scrollbar' }}
+      nextPage={{ title: 'Backwards', path: '/docs/components/backwards' }}
     />
   );
 }
