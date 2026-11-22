@@ -241,7 +241,7 @@ export function IntroductionPage() {
                 </span>
               </div>
               <p className="text-xs text-stone-300 leading-relaxed">
-                Atmospheric overlays, full-screen horror backgrounds, custom cursed cursors, and tactile audio components. The games have their own section.
+                Atmospheric overlays, full-screen horror backgrounds, custom cursed cursors, and tactile audio components.
               </p>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 <Link to="/docs/components/diary" className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#10241b] text-emerald-300 border border-[#1a4430] hover:border-emerald-500">HauntedDiary</Link>

@@ -1,3 +1,4 @@
+import { useGamesFound } from '../../../site/gamesFound';
 import { useRef, useState } from 'react';
 import { ComponentDocPage } from '../../components/docs/ComponentDocPage';
 import {
@@ -33,6 +34,7 @@ export function CursedScrollContainer() {
 }`;
 
 export function HauntedScrollbarDoc() {
+  const gamesFound = useGamesFound();
   const [variant, setVariant] = useState<HauntedScrollbarVariant>('ectoplasm');
   const [hasEye, setHasEye] = useState(true);
   const [autoHide, setAutoHide] = useState(false);
@@ -132,7 +134,7 @@ export function HauntedScrollbarDoc() {
         { name: 'className', type: 'string', default: "''", description: 'Custom CSS class for the track wrapper' },
       ]}
       prevPage={{ title: 'BroomProgress', path: '/docs/components/broom-progress' }}
-      nextPage={{ title: 'GhostRun', path: '/docs/components/ghost-run' }}
+      nextPage={gamesFound ? { title: 'GhostRun', path: '/docs/components/ghost-run' } : { title: 'Grimoire', path: '/docs/components/grimoire' }}
     />
   );
 }

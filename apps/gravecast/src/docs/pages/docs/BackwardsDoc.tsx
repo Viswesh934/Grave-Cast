@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { ComponentDocPage } from '../../components/docs/ComponentDocPage';
+import { LockedGame } from '../../components/docs/LockedGame';
+import { useGamesFound } from '../../../site/gamesFound';
 import { Backwards, Button } from 'groove-ui';
 
 const codeSnippet = `import { useState } from 'react';
@@ -22,6 +24,8 @@ export function ReverseTypingTest() {
 
 export function BackwardsDoc() {
   const [open, setOpen] = useState(false);
+  // An easter egg: the demo stays locked until a diary riddle is answered right.
+  const found = useGamesFound();
 
   return (
     <ComponentDocPage
@@ -30,7 +34,7 @@ export function BackwardsDoc() {
       description="A typing test with a twist: type each line with its words in reverse order. Thirty seconds from the first key, scored in words per minute and accuracy. Lines are generated from small themed word lists, so they rarely repeat."
       packageName="backwards"
       preview={
-        <div className="flex w-full max-w-xl flex-col items-center justify-center gap-6 rounded-2xl border border-grave-dark-600 bg-grave-dark-950 p-8 text-center">
+        !found ? <LockedGame /> : <div className="flex w-full max-w-xl flex-col items-center justify-center gap-6 rounded-2xl border border-grave-dark-600 bg-grave-dark-950 p-8 text-center">
           <div className="space-y-3">
             <p className="m-0 font-mono text-sm text-grave-mist-300">The raven watches the old gate quietly</p>
             <p className="m-0 font-mono text-sm text-grave-grove-glow">quietly gate old the watches raven The</p>

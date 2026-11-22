@@ -1,6 +1,7 @@
 import { Suspense, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { GRIMOIRE_PATH, documentedRites, ritePath } from '../../pages/docs/grimoire/paths';
+import { useGamesFound } from '../../../site/gamesFound';
 
 interface NavItem {
   title: string;
@@ -12,6 +13,9 @@ interface NavGroup {
   title: string;
   items: NavItem[];
 }
+
+/** The sidebar section that stays hidden until the games are found. */
+const GAMES_GROUP = 'GAMES';
 
 const NAV_GROUPS: NavGroup[] = [
   {
@@ -66,7 +70,7 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: 'GAMES',
+    title: GAMES_GROUP,
     items: [
       { title: 'GhostRun', path: '/docs/components/ghost-run', badge: 'Arcade' },
       { title: 'Backwards', path: '/docs/components/backwards', badge: 'New' },
@@ -98,6 +102,9 @@ export function DocsLayout() {
   const location = useLocation();
 
   const [bestiaryExpanded, setBestiaryExpanded] = useState(true);
+  // The Games section is an easter egg: it appears once a diary riddle is answered right.
+  const gamesFound = useGamesFound();
+  const navGroups = gamesFound ? NAV_GROUPS : NAV_GROUPS.filter((group) => group.title !== GAMES_GROUP);
 
   return (
     <div className="grave-docs flex-1 bg-[#08120e] text-[#e2ede6] flex flex-col font-sans selection:bg-emerald-900 selection:text-emerald-100">
@@ -106,7 +113,7 @@ export function DocsLayout() {
       <div className="w-full flex flex-1 pr-4 pl-3 sm:pr-8 sm:pl-6">
         {/* Left Sidebar */}
         <aside className="w-60 shrink-0 border-r border-[#162a1f] py-5 pr-3 pl-2 hidden md:block overflow-y-auto max-h-[calc(100vh-3.5rem)] sticky top-14 space-y-6 select-none">
-          {NAV_GROUPS.map((group, gIdx) => (
+          {navGroups.map((group, gIdx) => (
             <div key={gIdx} className="space-y-1.5">
               <h3 className="text-[11px] font-mono font-bold tracking-wider text-emerald-500/70 px-3 uppercase">
                 {group.title}

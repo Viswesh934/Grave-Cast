@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { ComponentDocPage } from '../../components/docs/ComponentDocPage';
+import { LockedGame } from '../../components/docs/LockedGame';
+import { useGamesFound } from '../../../site/gamesFound';
 import { GhostRun, Button } from 'groove-ui';
 
 const codeSnippet = `import { useState } from 'react';
@@ -22,6 +24,8 @@ export function GraveyardMiniGame() {
 
 export function GhostRunDoc() {
   const [open, setOpen] = useState(false);
+  // An easter egg: the demo stays locked until a diary riddle is answered right.
+  const found = useGamesFound();
 
   return (
     <ComponentDocPage
@@ -30,7 +34,7 @@ export function GhostRunDoc() {
       description="An interactive arcade mini-game built directly into the design system: a spectral wisp drifts through an endless moonlit graveyard, leaping over crumbling headstones, collecting soul coins, and defying mortal gravity with real-time procedural sound."
       packageName="ghost-run"
       preview={
-        <div className="w-full max-w-xl flex flex-col items-center justify-center p-8 rounded-2xl border border-[#1b3d2b] bg-[#091510] gap-6 text-center shadow-2xl">
+        !found ? <LockedGame /> : <div className="w-full max-w-xl flex flex-col items-center justify-center p-8 rounded-2xl border border-[#1b3d2b] bg-[#091510] gap-6 text-center shadow-2xl">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-600/50 text-xs font-mono text-emerald-300">
               <span>🎮 Built-in Easter Egg & Arcade Engine</span>

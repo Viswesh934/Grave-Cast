@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchIcon, PumpkinIcon } from './DocsIcons';
+import { useGamesFound } from '../../../site/gamesFound';
 
 interface SearchItem {
   id: string;
@@ -85,6 +86,8 @@ export interface CommandPaletteProps {
 }
 
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
+  // The games are an easter egg: they're only searchable once found.
+  const gamesFound = useGamesFound();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
@@ -106,6 +109,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   const filtered = SEARCH_ITEMS.filter(
     (item) =>
+      (gamesFound || item.category !== 'The Games') &&
       item.title.toLowerCase().includes(query.toLowerCase()) ||
       item.category.toLowerCase().includes(query.toLowerCase())
   );
