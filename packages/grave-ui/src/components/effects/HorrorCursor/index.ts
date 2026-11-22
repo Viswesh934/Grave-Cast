@@ -14,6 +14,7 @@ export {
   BloodyDaggerGlyph,
   SpectralWispGlyph,
   SkeletalHandGlyph,
+  ElectricZapGlyph,
   CURSOR_GLYPH_SIZE,
   type CursorGlyphProps,
 } from './CursorGlyphs';

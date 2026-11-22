@@ -7,7 +7,6 @@ import {
   HorrorBackground,
   RiteInput,
   RunicButton,
-  HorrorCursor,
   ScribbleCannon,
   useAriaAnnounce,
   useHauntedTyping,
@@ -17,7 +16,7 @@ import {
   useSpookyAudio,
   zLayers,
 } from 'groove-ui'
-import { DIARY_ENTRIES, DIARY_SILENT_TEXT, DIARY_STORAGE_KEY, DIARY_WRONG_REPLIES } from '../diary/entries'
+import { DIARY_ENTRIES, DIARY_PICK_FROM, DIARY_SILENT_TEXT, DIARY_STORAGE_KEY, DIARY_WRONG_REPLIES } from '../diary/entries'
 import { checkLinkOnDevice, SEVERITY_ORDER, type Grave, type LinkSummary } from '../linkscan/deviceChecks'
 import { scanOnServer } from '../linkscan/serverScan'
 import { checkRepoInput, scanRepo } from '../repograve/repoScan'
@@ -25,6 +24,8 @@ import { usePenSlot } from '../site/penSlot'
 import { SoundStatus } from '../site/SoundStatus'
 import { issueVoices, useAmbience, type AmbienceState } from '../site/useAmbience'
 import { useSmoothScroll } from '../site/useSmoothScroll'
+import { GamesEgg } from './GamesEgg'
+import { useGamesEgg } from './useGamesEgg'
 import { GravePreview } from './GravePreview'
 import { GraveRow } from './GraveRow'
 import { GraveyardWalkView } from './GraveyardWalkView'
@@ -43,7 +44,7 @@ const COPY: Record<Mode, { lead: string; accent: string; sub: string; label: str
     accent: 'grave.',
     sub: 'Paste a link. Whatever it hides rises as a grave.',
     label: 'Link',
-    placeholder: 'https://',
+    placeholder: 'e.g. https://badssl.com/ (or pick a sample below)',
     action: 'Check',
     busy: 'Still checking the link. The graves rise when the site answers.',
     thing: 'link',
@@ -53,11 +54,24 @@ const COPY: Record<Mode, { lead: string; accent: string; sub: string; label: str
     accent: 'grave.',
     sub: 'Paste a public GitHub repo. Leaked keys, vulnerable dependencies and risky code rise as graves.',
     label: 'Public GitHub repo',
-    placeholder: 'owner/name',
+    placeholder: 'e.g. psf/requests or bottlepy/bottle (pick a sample below)',
     action: 'Dig',
     busy: 'Still digging through the repo. Big repos take a little while.',
     thing: 'repo',
   },
+}
+
+const JUDGING_SAMPLES: Record<Mode, readonly { label: string; value: string; badge: string; hint: string }[]> = {
+  link: [
+    { label: 'BadSSL', value: 'https://badssl.com/', badge: 'SSL Test', hint: 'Renowned SSL/TLS certificate and security configuration testbed' },
+    { label: 'Disguised @ Link', value: 'https://google.com@login-verify.xyz', badge: 'Danger', hint: 'Phishing-style userinfo deception raising A Disguised Address danger grave' },
+    { label: 'Wikipedia', value: 'https://en.wikipedia.org', badge: 'Clean', hint: 'Safe encrypted encyclopedic domain with zero device flags' },
+  ],
+  dev: [
+    { label: 'Requests', value: 'psf/requests', badge: 'Python', hint: 'Standard Python HTTP library with dependency and codebase checks' },
+    { label: 'Bottle', value: 'bottlepy/bottle', badge: 'Micro', hint: 'Tiny single-file Python WSGI framework (~4k lines) that scans rapidly' },
+    { label: 'Click', value: 'pallets/click', badge: 'Fast Scan', hint: 'Compact Python CLI toolkit with fast archive download' },
+  ],
 }
 
 const delay = (seconds: number) => ({ ['--gc-delay' as string]: `${seconds}s` }) as CSSProperties
@@ -112,6 +126,7 @@ export function HomePage() {
   const [summary, setSummary] = useState<ScanSummary | null>(null)
   const [walkOpen, setWalkOpen] = useState(false)
   const penSlot = usePenSlot()
+  const egg = useGamesEgg()
   /** The last scan started but couldn't finish. */
   const [brokeOff, setBrokeOff] = useState(false)
 
@@ -223,7 +238,7 @@ export function HomePage() {
           <HorrorBackground variant="fog" intensity="ghastly" />
         ) : (
           <Suspense fallback={null}>
-            <HeroScene focus={steps[Math.min(step, steps.length - 1)].pose} getScroll={() => scroll.current} still={reduced} paused={walkOpen} />
+            <HeroScene focus={steps[Math.min(step, steps.length - 1)].pose} getScroll={() => scroll.current} still={reduced} paused={walkOpen || egg.open} />
           </Suspense>
         )}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,transparent_35%,var(--color-grave-dark-950)_100%)]" />
@@ -310,6 +325,30 @@ export function HomePage() {
               </form>
               </BitingFrame>
 
+              {/* Judging Quick-Picks Bar */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-mono">
+                <span className="text-grave-mist-400">Judging samples:</span>
+                {JUDGING_SAMPLES[mode].map((s) => (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => {
+                      setValue(s.value)
+                      if (error) setError(null)
+                      playSound('lockClick', 0.25)
+                    }}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-grave-dark-700 bg-grave-dark-900/80 px-2.5 py-1 text-xs font-mono text-grave-bone-200 shadow-sm transition-all hover:border-grave-grove-glow/70 hover:bg-grave-dark-800 hover:text-white"
+                    title={s.hint}
+                  >
+                    <span className="text-grave-grove-glow text-[11px]">↳</span>
+                    <span>{s.label}</span>
+                    <span className="rounded border border-grave-dark-700 bg-grave-dark-950 px-1 py-0.2 text-[10px] text-grave-mist-300">
+                      {s.badge}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
               {busy && !diary.open && (
                 <p role="status" className="m-0 font-serif text-lg text-grave-mist-300 italic">
                   {copy.busy}
@@ -318,16 +357,38 @@ export function HomePage() {
             </div>
 
             {summary && (
-              <section ref={results} aria-labelledby="graveyard-heading" className="gc-story-in space-y-6">
-                <h2 id="graveyard-heading" className="m-0 text-xs tracking-[0.3em] text-grave-grove-glow uppercase">
-                  The graveyard
-                </h2>
+              <section ref={results} aria-labelledby="graveyard-heading" className="gc-story-in space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 id="graveyard-heading" className="m-0 text-xs tracking-[0.3em] text-grave-grove-glow uppercase">
+                    The graveyard
+                  </h2>
+                  <span className="font-mono text-xs text-grave-mist-400">
+                    {summary.graves.length} {summary.graves.length === 1 ? 'grave' : 'graves'}
+                  </span>
+                </div>
+
                 <GravePreview ref={opener} summary={summary} onOpen={() => setWalkOpen(true)} />
-                <ul className="m-0 list-none space-y-1 p-0 text-sm text-grave-mist-300">
-                  {summary.facts.map((fact) => (
-                    <li key={fact}>{fact}</li>
-                  ))}
-                </ul>
+
+                {/* Compact Scan Diagnostics Bar with expandable details */}
+                {summary.facts.length > 0 && (
+                  <div className="rounded-xl border border-grave-dark-800 bg-grave-dark-950/60 p-3 text-xs font-mono text-grave-mist-300">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="text-grave-mist-300 truncate max-w-full sm:max-w-md">{summary.facts[0]}</span>
+                      {summary.facts.length > 1 && (
+                        <details className="group">
+                          <summary className="cursor-pointer text-grave-grove-glow hover:text-white select-none">
+                            +{summary.facts.length - 1} scan facts
+                          </summary>
+                          <ul className="mt-2 space-y-1 pl-3 text-grave-mist-400 border-l border-grave-dark-700">
+                            {summary.facts.slice(1).map((fact) => (
+                              <li key={fact}>{fact}</li>
+                            ))}
+                          </ul>
+                        </details>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {summary.graves.length > 0 && (
                   <ol className="m-0 list-none space-y-3 p-0" aria-label="Every grave">
@@ -337,15 +398,19 @@ export function HomePage() {
                   </ol>
                 )}
 
-                <div className="rounded-xl border border-grave-dark-700 bg-grave-dark-900/80 p-5">
-                  <h3 className="m-0 text-sm font-semibold text-grave-bone-100">Not checked</h3>
-                  <ul className="mt-3 mb-0 list-disc space-y-1 pl-5 text-sm text-grave-mist-300">
+                {/* Compact Not Checked Accordion */}
+                <details className="group rounded-xl border border-grave-dark-800 bg-grave-dark-950/40 p-3 text-xs">
+                  <summary className="cursor-pointer font-mono text-grave-mist-400 hover:text-grave-bone-100 flex items-center justify-between select-none">
+                    <span>Not checked ({summary.notChecked.length} checks)</span>
+                    <span className="text-grave-mist-500 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <ul className="mt-2 mb-0 list-disc space-y-1 pl-5 text-grave-mist-400">
                     {summary.notChecked.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
-                  {summary.note && <p className="mt-3 mb-0 text-sm text-grave-mist-400">{summary.note}</p>}
-                </div>
+                  {summary.note && <p className="mt-2 mb-0 text-grave-mist-500 italic">{summary.note}</p>}
+                </details>
               </section>
             )}
 
@@ -372,20 +437,25 @@ export function HomePage() {
         wrongReplies={DIARY_WRONG_REPLIES}
         silentText={DIARY_SILENT_TEXT}
         storageKey={DIARY_STORAGE_KEY}
+        pickFrom={DIARY_PICK_FROM}
+        // A right riddle answer reveals the easter egg; a wrong one reveals nothing.
+        onAnswer={({ entry, wrong }) => {
+          if (entry.kind === 'riddle' && !wrong) egg.reveal()
+        }}
       />
 
       {walkOpen && summary && <GraveyardWalkView summary={summary} onClose={closeWalk} />}
 
       {/* A pen fired across the screen: catch it to draw on the page. */}
-      {/* The home page's cursor is a skeletal hand that grips on click. Every other page keeps the normal cursor. */}
-      <HorrorCursor variant="skeletal-hand" />
       {/* The pen always sits in its slot at the right end of the top bar. The cannon fires a ghost that flies home into it on every visit. */}
       <ScribbleCannon
-        paused={diary.open || walkOpen}
+        paused={diary.open || walkOpen || egg.open}
         dockTo={penSlot}
         dismissible={false}
         scribbleProps={{ storageKey: 'gravecast-scribble' }}
       />
+      {/* The easter egg: a ghost button beside the pen, once a riddle is answered right. It opens a list of games. */}
+      <GamesEgg found={egg.found} game={egg.game} onPick={egg.pick} onClose={egg.close} />
     </div>
   )
 }

@@ -56,4 +56,6 @@ export * from './useAutopsy';
 export * from './useScribble';
 export * from './useFadingTrail';
 export * from './useDiary';
+export * from './useFocusTrap';
+export * from './useBestScore';
 export * from './useHauntedTyping';

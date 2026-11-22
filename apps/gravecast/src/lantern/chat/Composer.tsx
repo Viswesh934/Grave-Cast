@@ -73,6 +73,7 @@ export function Composer({ area, nick, changingNick, onNick, onCancelNick, onSen
             id={ids.nick}
             value={nickDraft}
             onChange={(e) => setNickDraft(e.target.value)}
+            placeholder="e.g. Judge Raven"
             maxLength={MAX_NICK_CHARS}
             autoComplete="off"
             aria-invalid={error ? true : undefined}

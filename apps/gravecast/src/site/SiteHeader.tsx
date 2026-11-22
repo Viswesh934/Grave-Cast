@@ -4,7 +4,7 @@ import { zLayers } from 'groove-ui'
 import { CommandPalette } from '../docs/components/docs/CommandPalette'
 import { SearchIcon } from '../docs/components/docs/DocsIcons'
 import { isCurrentSection, NAV_STYLE, SITE_SECTIONS } from '../shared/sections'
-import { PEN_SLOT_ID } from './penSlot'
+import { GAME_SLOT_ID, PEN_SLOT_ID } from './penSlot'
 
 /** The one top bar for the whole site. On a phone it wraps: the name on top, the sections below. */
 export function SiteHeader() {
@@ -48,6 +48,8 @@ export function SiteHeader() {
               <span className="hidden sm:inline">Find a component</span>
             </button>
           )}
+          {/* Beside the pen: where the Ghost run button appears, once someone has found it. Empty until then. */}
+          {pathname === '/' && <div id={GAME_SLOT_ID} className="flex shrink-0 items-center" />}
           {/* The home page's Scribble pen lives here, so it always has its place in the bar. */}
           {pathname === '/' && <div id={PEN_SLOT_ID} className="grid size-10 shrink-0 place-items-center" />}
         </div>

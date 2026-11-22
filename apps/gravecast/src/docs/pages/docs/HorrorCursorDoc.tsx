@@ -6,6 +6,7 @@ import {
   BloodyDaggerGlyph,
   SpectralWispGlyph,
   SkeletalHandGlyph,
+  ElectricZapGlyph,
   type HorrorCursorVariant,
 } from 'groove-ui';
 
@@ -14,6 +15,7 @@ const VARIANTS: { id: HorrorCursorVariant; label: string; blurb: string }[] = [
   { id: 'bloody-dagger', label: 'Bloody Dagger', blurb: 'Snappy blade, dripping tip' },
   { id: 'spectral-wisp', label: 'Spectral Wisp', blurb: 'Floaty orb with ecto-trail' },
   { id: 'skeletal-hand', label: 'Skeletal Hand', blurb: 'Grasps when you click' },
+  { id: 'electric-zap', label: 'Electric Zap', blurb: 'High-voltage arc crackling on click' },
 ];
 
 const GLYPHS: Record<HorrorCursorVariant, (c: string) => React.ReactNode> = {
@@ -21,6 +23,7 @@ const GLYPHS: Record<HorrorCursorVariant, (c: string) => React.ReactNode> = {
   'bloody-dagger': (c) => <BloodyDaggerGlyph size={34} color={c} accent="#bd081c" />,
   'spectral-wisp': (c) => <SpectralWispGlyph size={34} color={c} accent="#10b981" />,
   'skeletal-hand': (c) => <SkeletalHandGlyph size={34} color={c} accent="#b8a99a" />,
+  'electric-zap': (c) => <ElectricZapGlyph size={34} color={c} accent="#fef08a" />,
 };
 
 export function HorrorCursorDoc() {

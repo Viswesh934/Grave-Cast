@@ -5,7 +5,7 @@
  */
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from 'react';
 import { useSpookyAudio, type SpookySound } from '../../../audio';
-import { useDiary } from '../../../hooks/useDiary';
+import { useDiary, type DiaryAnswerEvent } from '../../../hooks/useDiary';
 import { useHauntedTyping } from '../../../hooks/useHauntedTyping';
 import { useLatest } from '../../../hooks/useLatest';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
@@ -68,6 +68,14 @@ export interface HauntedDiaryProps {
   silentText?: string;
   /** Keep its memory for the browser session under this key. */
   storageKey?: string;
+  /**
+   * Choose each entry at random from the next this many it may ask, so every
+   * visit goes a little differently. 1 asks strictly in order.
+   * @default 1
+   */
+  pickFrom?: number;
+  /** Called after each answer, once the diary has judged it. A right riddle answer has entry.kind === 'riddle' and wrong false. */
+  onAnswer?: (event: DiaryAnswerEvent) => void;
   /** Called when an exchange is over: a reply or a message has been written. */
   onSettled?: () => void;
   /** Called when the person asks to close it (the close button or Escape). */
@@ -197,6 +205,8 @@ export const HauntedDiary = ({
   wrongReplies,
   silentText = 'There is nothing left to ask. I already know enough.',
   storageKey,
+  pickFrom,
+  onAnswer,
   onSettled,
   onRequestClose,
   onVanished,
@@ -211,7 +221,7 @@ export const HauntedDiary = ({
   className,
   style,
 }: HauntedDiaryProps) => {
-  const diary = useDiary({ entries, wrongReplies, storageKey });
+  const diary = useDiary({ entries, wrongReplies, storageKey, pickFrom, onAnswer });
   const { playSound } = useSpookyAudio();
   const lessMotion = useReducedMotion();
   const animate = !lessMotion;

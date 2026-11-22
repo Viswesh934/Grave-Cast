@@ -9,6 +9,8 @@ export {
   meetsCondition,
   fillDiaryText,
   nextDiaryEntry,
+  diaryCandidates,
+  DIARY_PICK_FROM_DEFAULT,
   answerDiaryEntry,
   type DiaryEntry,
   type DiaryRiddle,

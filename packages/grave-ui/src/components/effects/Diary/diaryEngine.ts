@@ -22,6 +22,8 @@ interface DiaryEntryBase {
   text: string;
   /** Only ask this once memory matches. */
   when?: DiaryCondition;
+  /** Hold this back until nothing else is left to ask, such as a closing message. Matters when `pickFrom` is above 1. */
+  last?: boolean;
 }
 
 /** A riddle with accepted answers. */
@@ -99,9 +101,47 @@ export const meetsCondition = (condition: DiaryCondition | undefined, memory: Di
 export const fillDiaryText = (text: string, memory: DiaryMemory, answer = ''): string =>
   text.replace(/\{(\w+)\}/g, (_, key: string) => (key === 'answer' ? answer : memory[key] ?? ''));
 
-/** The first entry not yet asked whose condition memory allows, or `null` when there are none. */
-export const nextDiaryEntry = (entries: readonly DiaryEntry[], seen: readonly string[], memory: DiaryMemory): DiaryEntry | null =>
-  entries.find((entry) => !seen.includes(entry.id) && meetsCondition(entry.when, memory)) ?? null;
+/** By default the diary asks in order: the next entry is always the first one it may ask. */
+export const DIARY_PICK_FROM_DEFAULT = 1;
+
+/**
+ * The entries the diary may ask next, in order: not yet asked, allowed by memory,
+ * at most `limit`. Entries marked `last` only count once nothing else is left.
+ */
+export const diaryCandidates = (
+  entries: readonly DiaryEntry[],
+  seen: readonly string[],
+  memory: DiaryMemory,
+  limit: number = DIARY_PICK_FROM_DEFAULT
+): DiaryEntry[] => {
+  const open = entries.filter((entry) => !seen.includes(entry.id) && meetsCondition(entry.when, memory));
+  const rest = open.filter((entry) => !entry.last);
+  return (rest.length > 0 ? rest : open).slice(0, Math.max(1, Math.floor(limit)));
+};
+
+/**
+ * The next entry to ask, or `null` when there are none. With `pickFrom` above 1,
+ * it is chosen at random from the next `pickFrom` candidates, so the order
+ * changes from visit to visit but still moves through the list from start to end.
+ * An entry is never overtaken by more than `pickFrom - 1` later ones: then it is
+ * asked next, so nothing drifts far from its place.
+ */
+export const nextDiaryEntry = (
+  entries: readonly DiaryEntry[],
+  seen: readonly string[],
+  memory: DiaryMemory,
+  pickFrom: number = DIARY_PICK_FROM_DEFAULT,
+  random: () => number = Math.random
+): DiaryEntry | null => {
+  const candidates = diaryCandidates(entries, seen, memory, pickFrom);
+  if (candidates.length === 0) return null;
+  const [first] = candidates;
+  const place = entries.indexOf(first);
+  const overtaken = seen.filter((id) => entries.findIndex((entry) => entry.id === id) > place).length;
+  if (overtaken >= candidates.length - 1) return first;
+  const index = Math.min(candidates.length - 1, Math.floor(random() * candidates.length));
+  return candidates[index];
+};
 
 /** What the diary replies, and what it now remembers. */
 export interface DiaryOutcome {

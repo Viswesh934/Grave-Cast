@@ -21,7 +21,7 @@ const PARTS: readonly { name: string; what: string; to: string; label: string; p
     label: 'Open it',
     page: true,
   },
-  { name: 'Groove UI', what: 'The horror-themed component library behind every screen. It has its own docs.', to: '/docs/introduction', label: 'Read the docs' },
+  { name: 'Groove UI', what: 'The horror-themed component library behind every screen: 30+ components, 3D WebGL monoliths, zero-asset audio, and occult FX.', to: '/docs/introduction', label: 'Explore the docs' },
 ]
 
 const STEPS: readonly string[] = [
