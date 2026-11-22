@@ -8,6 +8,8 @@ import {
   DIARY_PICK_FROM_DEFAULT,
   fillDiaryText,
   nextDiaryEntry,
+  orderDiaryEntries,
+  shuffleDiaryOrder,
   type DiaryEntry,
   type DiaryMemory,
 } from '../components/effects/Diary/diaryEngine';
@@ -53,6 +55,13 @@ export interface DiaryOptions {
    * @default 1
    */
   pickFrom?: number;
+  /**
+   * Ask in a new random order each session, and again after every full round,
+   * instead of the order of entries. Entries with \when\ still wait for the
+   * answer they need, and entries marked \last\ still come last.
+   * @default false
+   */
+  shuffle?: boolean;
   /** Called after each answer, once the diary has judged it. A right riddle answer has entry.kind === 'riddle' and wrong false. */
   onAnswer?: (event: DiaryAnswerEvent) => void;
 }
@@ -81,18 +90,23 @@ interface Saved {
   seen: string[];
   memory: Record<string, string>;
   wrongCount: number;
+  /** The shuffled order of entry ids for this session, when \shuffle\ is on. */
+  order: string[];
 }
 
-const EMPTY: Saved = { seen: [], memory: {}, wrongCount: 0 };
+const EMPTY: Saved = { seen: [], memory: {}, wrongCount: 0, order: [] };
+
+const strings = (value: unknown): string[] => (Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : []);
 
 const read = (storageKey: string | undefined): Saved => {
   if (!storageKey || typeof sessionStorage === 'undefined') return EMPTY;
   try {
     const data: unknown = JSON.parse(sessionStorage.getItem(storageKey) ?? 'null');
     if (!data || typeof data !== 'object') return EMPTY;
-    const { seen, memory, wrongCount } = data as Partial<Saved>;
+    const { seen, memory, wrongCount, order } = data as Partial<Saved>;
     return {
-      seen: Array.isArray(seen) ? seen.filter((id): id is string => typeof id === 'string') : [],
+      seen: strings(seen),
+      order: strings(order),
       memory:
         memory && typeof memory === 'object'
           ? Object.fromEntries(
@@ -125,6 +139,7 @@ export const useDiary = ({
   storageKey,
   cycle = true,
   pickFrom = DIARY_PICK_FROM_DEFAULT,
+  shuffle = false,
   onAnswer,
 }: DiaryOptions): DiaryReturn => {
   const onAnswerRef = useRef(onAnswer);
@@ -149,12 +164,19 @@ export const useDiary = ({
   const awaken = useCallback(() => {
     const current = savedRef.current;
     let seen = current.seen;
-    let next = nextDiaryEntry(entries, seen, current.memory, pickFrom);
+    // A shuffled session keeps one order until the round is over.
+    let order = shuffle && current.order.length > 0 ? current.order : shuffle ? shuffleDiaryOrder(entries) : [];
+    let list = shuffle ? orderDiaryEntries(entries, order) : entries;
+    let next = nextDiaryEntry(list, seen, current.memory, pickFrom);
     if (!next && cycle && seen.length > 0) {
-      // A new round: ask again, but not the entry it just asked.
+      // A new round: ask again, but not the entry it just asked. A shuffled diary also gets a fresh order.
       const last = seen[seen.length - 1];
+      if (shuffle) {
+        order = shuffleDiaryOrder(entries);
+        list = orderDiaryEntries(entries, order);
+      }
       seen = [last];
-      next = nextDiaryEntry(entries, seen, current.memory, pickFrom) ?? nextDiaryEntry(entries, [], current.memory, pickFrom);
+      next = nextDiaryEntry(list, seen, current.memory, pickFrom) ?? nextDiaryEntry(list, [], current.memory, pickFrom);
       seen = [];
     }
     setEntry(next);
@@ -162,11 +184,11 @@ export const useDiary = ({
     setWrong(false);
     setStage(next ? 'asking' : 'silent');
     if (next) {
-      const updated = { ...current, seen: [...seen, next.id] };
+      const updated = { ...current, seen: [...seen, next.id], order };
       savedRef.current = updated;
       setSaved(updated);
     }
-  }, [entries, cycle, pickFrom]);
+  }, [entries, cycle, pickFrom, shuffle]);
 
   const answer = useCallback(
     (value: string) => {

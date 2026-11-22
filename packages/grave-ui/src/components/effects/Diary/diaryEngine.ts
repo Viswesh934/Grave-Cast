@@ -143,6 +143,27 @@ export const nextDiaryEntry = (
   return candidates[index];
 };
 
+/** A shuffled copy of the entries' ids (Fisher–Yates), for a diary that asks in a new order each session. */
+export const shuffleDiaryOrder = (entries: readonly DiaryEntry[], random: () => number = Math.random): string[] => {
+  const ids = entries.map((entry) => entry.id);
+  for (let i = ids.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+  return ids;
+};
+
+/**
+ * The entries in a saved order. Ids that are no longer in `entries` are dropped,
+ * and entries missing from `order` (added since it was made) go at the end.
+ */
+export const orderDiaryEntries = (entries: readonly DiaryEntry[], order: readonly string[]): DiaryEntry[] => {
+  const byId = new Map(entries.map((entry) => [entry.id, entry]));
+  const ordered = order.map((id) => byId.get(id)).filter((entry): entry is DiaryEntry => entry !== undefined);
+  const placed = new Set(ordered.map((entry) => entry.id));
+  return [...ordered, ...entries.filter((entry) => !placed.has(entry.id))];
+};
+
 /** What the diary replies, and what it now remembers. */
 export interface DiaryOutcome {
   reply: string;

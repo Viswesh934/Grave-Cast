@@ -74,6 +74,8 @@ export interface HauntedDiaryProps {
    * @default 1
    */
   pickFrom?: number;
+  /** Ask in a new random order each session, and again after every full round. @default false */
+  shuffle?: boolean;
   /** Called after each answer, once the diary has judged it. A right riddle answer has entry.kind === 'riddle' and wrong false. */
   onAnswer?: (event: DiaryAnswerEvent) => void;
   /** Called when an exchange is over: a reply or a message has been written. */
@@ -206,6 +208,7 @@ export const HauntedDiary = ({
   silentText = 'There is nothing left to ask. I already know enough.',
   storageKey,
   pickFrom,
+  shuffle,
   onAnswer,
   onSettled,
   onRequestClose,
@@ -221,7 +224,7 @@ export const HauntedDiary = ({
   className,
   style,
 }: HauntedDiaryProps) => {
-  const diary = useDiary({ entries, wrongReplies, storageKey, pickFrom, onAnswer });
+  const diary = useDiary({ entries, wrongReplies, storageKey, pickFrom, shuffle, onAnswer });
   const { playSound } = useSpookyAudio();
   const lessMotion = useReducedMotion();
   const animate = !lessMotion;
