@@ -13,6 +13,7 @@
 | 🪦 | **The graveyard** | Paste a link and every problem found rises as a grave, worn by how serious it is. Walk the yard in 3D or read it as a list. Dev mode does the same for a public GitHub repo. | [graveyard.md](docs/guide/graveyard.md) |
 | 🏮 | **Lantern** | An installable web app with 31 first aid and survival guides, emergency tools, Chat, Radio, accessibility pads and places nearby. Built for weak connections and usable fully offline. | [lantern.md](docs/guide/lantern.md) |
 | 📻 | **Dead tech** | FidoNet-style mail runs, radio teletype, Morse code and WHOIS, brought back where they fit. | [dead-tech.md](docs/guide/dead-tech.md) |
+| 👻 | **Games** | Two hidden games: **Ghost run**, the dino game reversed, and **Backwards**, a typing test where you type each line's words in reverse order. | [games.md](docs/guide/games.md) |
 | 🎃 | **Groove UI** | Our horror-themed React library behind the look and sound: 2D and 3D components, sixty-plus synthesized sounds, and a comic system for the kit. | [README](packages/grave-ui/README.md) |
 
 Why we built it is on the site's [Our story](https://grave-cast.vercel.app/story) page.
@@ -30,6 +31,17 @@ Why we built it is on the site's [Our story](https://grave-cast.vercel.app/story
 **Accessibility first in Lantern.** A braille pad for people who can't see or speak. A dial pad of ready messages for people who can't hear or speak. A distress signal that can be loud or silent. Kit guides can be read aloud, and every visual control has a plain list beside it.
 
 **Performance.** Docs pages and every 3D scene load lazily, and Groove UI is tree-shakeable. That cut the home page's first load from 2,193 KB to 781 KB of JavaScript. Lantern loads 699 KB, with no three.js at all.
+
+## Games
+
+Answer one of the diary's riddles right while a scan runs, and a ghost appears beside the Scribble pen. Click it to pick a game. It stays found on that browser.
+
+| Game | How it plays |
+| --- | --- |
+| **Ghost run** | The dino game, the other way round. A ghost drifts left, jumps tombstones and collects coins as the world speeds up. Space, Up arrow or tap to jump, P to pause. |
+| **Backwards** | A 30-second typing test: type each line with its words in reverse order, so *The raven watches the gate* becomes *gate the watches raven The*. It scores words per minute and accuracy. |
+
+The lines are generated from small themed word lists (about 250,000 combinations), with no AI and no mock data. Both games are Groove UI components that share one accessible game window, and each keeps its best score in the browser. More in [docs/guide/games.md](docs/guide/games.md).
 
 ## Architecture
 
@@ -123,7 +135,7 @@ You need Python 3.10+ and Node.js 20.19+. Settings, tests and the project layout
 
 | Doc | What's in it |
 | --- | --- |
-| [docs/guide/](docs/guide/) | Feature guides: [graveyard](docs/guide/graveyard.md), [Lantern](docs/guide/lantern.md), [dead tech](docs/guide/dead-tech.md), [development](docs/guide/development.md) |
+| [docs/guide/](docs/guide/) | Feature guides: [graveyard](docs/guide/graveyard.md), [Lantern](docs/guide/lantern.md), [dead tech](docs/guide/dead-tech.md), [games](docs/guide/games.md), [development](docs/guide/development.md) |
 | [GRAVECAST_VISION.md](docs/GRAVECAST_VISION.md) | The product, every decision, and why |
 | [REPO_SCAN_DESIGN.md](docs/REPO_SCAN_DESIGN.md) | How the repo scan works |
 | [KIT_SCRIPTS.md](docs/KIT_SCRIPTS.md) | The survival kit's sourced captions, panel by panel |
