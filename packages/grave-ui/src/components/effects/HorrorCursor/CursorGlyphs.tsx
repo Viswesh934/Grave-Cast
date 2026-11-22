@@ -212,3 +212,63 @@ export const SkeletalHandGlyph = ({
     />
   </svg>
 );
+
+/**
+ * Electric Zap glyph - high voltage electric arc discharge with crackling sparks.
+ * Radiates outward when clicked.
+ */
+export const ElectricZapGlyph = ({
+  size = CURSOR_GLYPH_SIZE,
+  className,
+  color = '#38bdf8',
+  accent = '#fef08a',
+  style,
+  sparking = false,
+}: CursorGlyphProps & { sparking?: boolean }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    style={style}
+    role="img"
+    aria-label="Electric zap cursor"
+  >
+    {/* Outer plasma glow arc */}
+    <path
+      d="M13 1.5 L4 13.5 L10.5 13.5 L8 22.5 L19.5 9.5 L13 9.5 Z"
+      fill={color}
+      opacity={sparking ? '0.9' : '0.6'}
+      style={{ filter: `drop-shadow(0 0 6px ${color})` }}
+    />
+    {/* Intense lightning core */}
+    <path
+      d="M13 3 L5.5 13 L11 13 L9 20.5 L18 10 L13 10 Z"
+      fill={accent}
+    />
+    {/* Hot white center streak */}
+    <path
+      d="M12.5 5 L7.5 12.5 L11.5 12.5 L10 18 L16.5 10.5 L12.5 10.5 Z"
+      fill="#ffffff"
+      opacity="0.95"
+    />
+    {/* Crackling arc sparks */}
+    {sparking ? (
+      <>
+        <path d="M2 10 L0.5 8" stroke={accent} strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M3 17 L1 19" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M22 6 L23.5 4" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M21 15 L23.5 17" stroke={accent} strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M12 23 L13 24" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      </>
+    ) : (
+      <>
+        <path d="M3 10 L1.5 9" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+        <path d="M21 7 L22.5 6" stroke={accent} strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+        <path d="M20 15 L21.5 16" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.8" />
+      </>
+    )}
+  </svg>
+);

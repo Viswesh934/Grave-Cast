@@ -14,6 +14,7 @@ import {
   BloodyDaggerGlyph,
   SpectralWispGlyph,
   SkeletalHandGlyph,
+  ElectricZapGlyph,
 } from './CursorGlyphs';
 import {
   cursorVariantTokens,
@@ -84,6 +85,10 @@ const renderGlyph = (
     case 'skeletal-hand':
       return (
         <SkeletalHandGlyph size={size} color={color} accent={accent} grasping={isPressed} />
+      );
+    case 'electric-zap':
+      return (
+        <ElectricZapGlyph size={size} color={color} accent={accent} sparking={isPressed} />
       );
     case 'ritual-candle':
     default:

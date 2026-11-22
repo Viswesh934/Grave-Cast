@@ -59,6 +59,11 @@ const NAV_GROUPS: NavGroup[] = [
       { title: 'Voice', path: '/docs/components/voice', badge: 'New' },
       { title: 'Scribble', path: '/docs/components/scribble', badge: 'New' },
       { title: 'Doodle', path: '/docs/components/doodle', badge: 'New' },
+      { title: 'HauntedDiary', path: '/docs/components/diary', badge: 'New' },
+      { title: 'GhostRun', path: '/docs/components/ghost-run', badge: 'Arcade' },
+      { title: 'BitingFrame', path: '/docs/components/biting-frame', badge: 'New' },
+      { title: 'BroomProgress', path: '/docs/components/broom-progress', badge: 'New' },
+      { title: 'HauntedScrollbar', path: '/docs/components/haunted-scrollbar', badge: 'Living' },
     ],
   },
   {

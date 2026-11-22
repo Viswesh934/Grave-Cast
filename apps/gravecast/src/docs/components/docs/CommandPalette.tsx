@@ -43,6 +43,26 @@ const SEARCH_ITEMS: SearchItem[] = [
   // The Arachnid
   { id: 'cobweb', title: 'CobwebCorner', category: 'The Arachnid', path: '/docs/components/cobweb' },
 
+  // Effects & FX
+  { id: 'cursor', title: 'HorrorCursor', category: 'The Effects', path: '/docs/components/horror-cursor' },
+  { id: 'keyboard', title: 'HauntedKeyboard', category: 'The Effects', path: '/docs/components/haunted-keyboard' },
+  { id: 'soundlib', title: 'SoundLibrary', category: 'The Effects', path: '/docs/components/sound-library' },
+  { id: 'horrorbg', title: 'HorrorBackground', category: 'The Effects', path: '/docs/components/horror-background' },
+  { id: 'soundtrig', title: 'SoundTrigger', category: 'The Effects', path: '/docs/components/sound-trigger' },
+  { id: 'ascii', title: 'ASCII Art & Camera', category: 'The Effects', path: '/docs/components/ascii' },
+  { id: 'surveillance', title: 'SurveillanceCam', category: 'The Effects', path: '/docs/components/surveillance-cam' },
+  { id: 'voice', title: 'Voice & VoiceStudio', category: 'The Effects', path: '/docs/components/voice' },
+  { id: 'scribble', title: 'Scribble', category: 'The Effects', path: '/docs/components/scribble' },
+  { id: 'doodle', title: 'Doodle', category: 'The Effects', path: '/docs/components/doodle' },
+  { id: 'diary', title: 'HauntedDiary', category: 'The Effects', path: '/docs/components/diary' },
+  { id: 'ghostrun', title: 'GhostRun (Mini-Game)', category: 'The Effects', path: '/docs/components/ghost-run' },
+  { id: 'bitingframe', title: 'BitingFrame', category: 'The Effects', path: '/docs/components/biting-frame' },
+  { id: 'broomprogress', title: 'BroomProgress', category: 'The Effects', path: '/docs/components/broom-progress' },
+  { id: 'scrollbar', title: 'HauntedScrollbar (Blob)', category: 'The Effects', path: '/docs/components/haunted-scrollbar' },
+
+  // The Grimoire
+  { id: 'grimoire', title: 'Grimoire Overview', category: 'The Grimoire', path: '/docs/components/grimoire' },
+
   // The Bestiary
   { id: 'bestiary', title: 'Bestiary (Overview)', category: 'The Bestiary', path: '/docs/components/bestiary' },
   { id: 'wisp', title: 'Wisp (Ghost)', category: 'The Bestiary', path: '/docs/components/bestiary/ghost' },

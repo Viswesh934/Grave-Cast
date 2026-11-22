@@ -21,3 +21,7 @@ export * from './Doodle';
 export * from './Diary';
 export * from './BroomProgress';
 export * from './BitingFrame';
+export * from './GameDialog';
+export * from './GhostRun';
+export * from './Backwards';
+export * from './HauntedScrollbar';

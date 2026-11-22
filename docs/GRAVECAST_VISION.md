@@ -355,6 +355,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | Shared signal pieces (Morse timing, a clean tone player, a steady beat, torch, compass, screen wake lock) live in Groove UI as `groove-ui/signal`, so Lantern loads no 3D code | Agreed |
 | Hackathon: the tools ship as drafts under the prototype notice; their numbers are checked against sources before a production release | Agreed |
 | Breathing guide and the Buys Ballot storm arrow are left out. The arrow would tell people which way to walk in a storm, which official guidance does not support | Agreed |
+| The website hides one easter egg: two small games in Groove UI. **Ghost run** is an endless runner where a ghost drifts to the left (the dino game reversed), jumps tombstones and collects coins. **Backwards** is a 30-second typing round where each line is typed with its words in reverse order ("How are you" is typed "you are How"); lines are made up from small themed word lists, with a few short diary riddles mixed in, so no AI and no large mock data. A ghost button appears beside the Scribble pen in the top bar only after a diary riddle is answered right (a wrong answer shows nothing) and opens a list of the two games. Once found it stays on that browser. Never in Lantern; works from the keyboard; Escape closes | Agreed |
 
 ## 10. Open questions
 

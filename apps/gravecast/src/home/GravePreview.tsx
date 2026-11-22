@@ -43,6 +43,18 @@ function StoryRing({ weathering }: { weathering: readonly TombstoneWeathering[] 
   )
 }
 
+const SEVERITY_CONFIG: Record<string, { label: string; badgeClass: string }> = {
+  critical: { label: 'critical', badgeClass: 'border-red-500/50 bg-red-950/70 text-red-300' },
+  high: { label: 'high', badgeClass: 'border-amber-500/50 bg-amber-950/70 text-amber-300' },
+  medium: { label: 'medium', badgeClass: 'border-yellow-500/50 bg-yellow-950/70 text-yellow-300' },
+  low: { label: 'low', badgeClass: 'border-cyan-500/50 bg-cyan-950/70 text-cyan-300' },
+  info: { label: 'notes', badgeClass: 'border-stone-600/50 bg-stone-900/70 text-stone-300' },
+  danger: { label: 'danger', badgeClass: 'border-red-500/50 bg-red-950/70 text-red-300' },
+  warning: { label: 'warning', badgeClass: 'border-amber-500/50 bg-amber-950/70 text-amber-300' },
+  caution: { label: 'caution', badgeClass: 'border-yellow-500/50 bg-yellow-950/70 text-yellow-300' },
+  note: { label: 'note', badgeClass: 'border-stone-600/50 bg-stone-900/70 text-stone-300' },
+}
+
 export interface GravePreviewProps {
   summary: ScanSummary
   onOpen: () => void
@@ -62,9 +74,25 @@ export const GravePreview = forwardRef<HTMLButtonElement, GravePreviewProps>(({ 
         <span className="absolute font-serif text-2xl text-grave-bone-100">{summary.graves.length}</span>
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block font-mono text-sm break-all text-grave-mist-300">{summary.subject}</span>
-        <span className="mt-1 block font-serif text-2xl text-grave-bone-100">{summary.verdict}</span>
-        <span className="mt-2 block text-sm tracking-[0.2em] text-grave-grove-glow uppercase transition-colors group-hover:text-grave-bone-100">
+        <span className="block font-mono text-xs break-all text-grave-mist-400 uppercase tracking-wider">{summary.subject}</span>
+        <span className="mt-0.5 block font-serif text-2xl text-grave-bone-100 leading-snug">{summary.verdict}</span>
+        {summary.severityCounts && Object.keys(summary.severityCounts).length > 0 && (
+          <span className="mt-2 flex flex-wrap items-center gap-1.5">
+            {Object.entries(summary.severityCounts).map(([sev, count]) => {
+              const cfg = SEVERITY_CONFIG[sev] ?? { label: sev, badgeClass: 'border-grave-dark-600 bg-grave-dark-900 text-grave-mist-300' }
+              return (
+                <span
+                  key={sev}
+                  className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[11px] leading-tight ${cfg.badgeClass}`}
+                >
+                  <span className="font-semibold">{count}</span>
+                  <span>{count === 1 && cfg.label.endsWith('s') ? cfg.label.slice(0, -1) : cfg.label}</span>
+                </span>
+              )
+            })}
+          </span>
+        )}
+        <span className="mt-2.5 block text-xs tracking-[0.2em] text-grave-grove-glow uppercase transition-colors group-hover:text-grave-bone-100">
           {summary.graves.length > 0 ? 'Walk the graveyard' : 'See what wasn\u2019t checked'} {'\u2192'}
         </span>
       </span>

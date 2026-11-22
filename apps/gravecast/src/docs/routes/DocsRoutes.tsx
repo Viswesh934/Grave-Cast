@@ -29,6 +29,11 @@ const SurveillanceCamDoc = lazy(() => import('../pages/docs/SurveillanceCamDoc')
 const VoiceDoc = lazy(() => import('../pages/docs/VoiceDoc').then((m) => ({ default: m.VoiceDoc })));
 const ScribbleDoc = lazy(() => import('../pages/docs/ScribbleDoc').then((m) => ({ default: m.ScribbleDoc })));
 const DoodleDoc = lazy(() => import('../pages/docs/DoodleDoc').then((m) => ({ default: m.DoodleDoc })));
+const DiaryDoc = lazy(() => import('../pages/docs/DiaryDoc').then((m) => ({ default: m.DiaryDoc })));
+const GhostRunDoc = lazy(() => import('../pages/docs/GhostRunDoc').then((m) => ({ default: m.GhostRunDoc })));
+const BitingFrameDoc = lazy(() => import('../pages/docs/BitingFrameDoc').then((m) => ({ default: m.BitingFrameDoc })));
+const BroomProgressDoc = lazy(() => import('../pages/docs/BroomProgressDoc').then((m) => ({ default: m.BroomProgressDoc })));
+const HauntedScrollbarDoc = lazy(() => import('../pages/docs/HauntedScrollbarDoc').then((m) => ({ default: m.HauntedScrollbarDoc })));
 const GrimoireDoc = lazy(() => import('../pages/docs/GrimoireDoc').then((m) => ({ default: m.GrimoireDoc })));
 const RiteDocRoute = lazy(() => import('../pages/docs/grimoire/RiteDocRoute').then((m) => ({ default: m.RiteDocRoute })));
 const BestiaryDoc = lazy(() => import('../pages/docs/BestiaryDoc').then((m) => ({ default: m.BestiaryDoc })));
@@ -96,6 +101,11 @@ export function docsRoutes() {
       <Route path="docs/components/voice" element={<VoiceDoc />} />
       <Route path="docs/components/scribble" element={<ScribbleDoc />} />
       <Route path="docs/components/doodle" element={<DoodleDoc />} />
+      <Route path="docs/components/diary" element={<DiaryDoc />} />
+      <Route path="docs/components/ghost-run" element={<GhostRunDoc />} />
+      <Route path="docs/components/biting-frame" element={<BitingFrameDoc />} />
+      <Route path="docs/components/broom-progress" element={<BroomProgressDoc />} />
+      <Route path="docs/components/haunted-scrollbar" element={<HauntedScrollbarDoc />} />
 
       {/* The Grimoire */}
       <Route path="docs/components/grimoire" element={<GrimoireDoc />} />

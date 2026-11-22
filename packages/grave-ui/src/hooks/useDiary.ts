@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   answerDiaryEntry,
+  DIARY_PICK_FROM_DEFAULT,
   fillDiaryText,
   nextDiaryEntry,
   type DiaryEntry,
@@ -18,6 +19,16 @@ import {
  * - `silent`: it has nothing left to ask
  */
 export type DiaryStage = 'asking' | 'replying' | 'silent';
+
+/** What the diary tells onAnswer after each answer. */
+export interface DiaryAnswerEvent {
+  /** The entry that was answered. */
+  entry: DiaryEntry;
+  /** What was written, trimmed and cut to DIARY_ANSWER_LIMIT. For a choice, the option's label. */
+  answer: string;
+  /** Whether it was a wrong riddle answer. Only riddles can be wrong. */
+  wrong: boolean;
+}
 
 /** Answers longer than this are cut short before they are remembered. */
 export const DIARY_ANSWER_LIMIT = 200;
@@ -35,6 +46,15 @@ export interface DiaryOptions {
    * @default true
    */
   cycle?: boolean;
+  /**
+   * Choose each entry at random from the next this many it may ask, so every
+   * visit goes a little differently while still moving from the start of the list
+   * to the end. 1 asks strictly in order.
+   * @default 1
+   */
+  pickFrom?: number;
+  /** Called after each answer, once the diary has judged it. A right riddle answer has entry.kind === 'riddle' and wrong false. */
+  onAnswer?: (event: DiaryAnswerEvent) => void;
 }
 
 export interface DiaryReturn {
@@ -99,7 +119,16 @@ const read = (storageKey: string | undefined): Saved => {
  * useEffect(() => { if (open) diary.awaken(); }, [open]);
  * ```
  */
-export const useDiary = ({ entries, wrongReplies = [], storageKey, cycle = true }: DiaryOptions): DiaryReturn => {
+export const useDiary = ({
+  entries,
+  wrongReplies = [],
+  storageKey,
+  cycle = true,
+  pickFrom = DIARY_PICK_FROM_DEFAULT,
+  onAnswer,
+}: DiaryOptions): DiaryReturn => {
+  const onAnswerRef = useRef(onAnswer);
+  onAnswerRef.current = onAnswer;
   const [saved, setSaved] = useState<Saved>(() => read(storageKey));
   const savedRef = useRef(saved);
   savedRef.current = saved;
@@ -120,12 +149,12 @@ export const useDiary = ({ entries, wrongReplies = [], storageKey, cycle = true 
   const awaken = useCallback(() => {
     const current = savedRef.current;
     let seen = current.seen;
-    let next = nextDiaryEntry(entries, seen, current.memory);
+    let next = nextDiaryEntry(entries, seen, current.memory, pickFrom);
     if (!next && cycle && seen.length > 0) {
       // A new round: ask again, but not the entry it just asked.
       const last = seen[seen.length - 1];
       seen = [last];
-      next = nextDiaryEntry(entries, seen, current.memory) ?? nextDiaryEntry(entries, [], current.memory);
+      next = nextDiaryEntry(entries, seen, current.memory, pickFrom) ?? nextDiaryEntry(entries, [], current.memory, pickFrom);
       seen = [];
     }
     setEntry(next);
@@ -137,7 +166,7 @@ export const useDiary = ({ entries, wrongReplies = [], storageKey, cycle = true 
       savedRef.current = updated;
       setSaved(updated);
     }
-  }, [entries, cycle]);
+  }, [entries, cycle, pickFrom]);
 
   const answer = useCallback(
     (value: string) => {
@@ -152,6 +181,7 @@ export const useDiary = ({ entries, wrongReplies = [], storageKey, cycle = true 
       setReply(outcome.reply);
       setWrong(outcome.wrong);
       setStage('replying');
+      onAnswerRef.current?.({ entry, answer: given, wrong: outcome.wrong });
     },
     [entry, stage, wrongReplies]
   );

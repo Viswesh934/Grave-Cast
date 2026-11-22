@@ -6,7 +6,7 @@ import type { TombstoneWeathering } from 'groove-ui'
 import { CHECKED_ON_SERVER, DOMAIN_AGE, NOT_CHECKED_YET, verdictFor, type Grave, type GraveSeverity, type LinkSummary } from '../linkscan/deviceChecks'
 import { hostOf, type ServerScan } from '../linkscan/serverScan'
 import { groupRepoGraves } from '../repograve/groupGraves'
-import { REPO_STANDING_LIMITS, SEVERITY_WORD as REPO_SEVERITY_WORD } from '../repograve/markerWords'
+import { REPO_STANDING_LIMITS } from '../repograve/markerWords'
 import { SEVERITIES, type RepoGraveyard } from '../repograve/repoScan'
 
 export type Mode = 'link' | 'dev'
@@ -67,6 +67,8 @@ export interface ScanSummary {
   note?: string
   /** Open issues and pull requests on GitHub, for dev mode. */
   openIssues?: number
+  /** Breakdown of findings by severity for compact badge rendering */
+  severityCounts?: Record<string, number>
 }
 
 const LINK_WEATHERING: Record<GraveSeverity, TombstoneWeathering> = {
@@ -124,6 +126,10 @@ export function summariseLink({ link, graves, server, serverProblem }: CheckedLi
     facts.push(`WHOIS (${record.server}): ${record.line}. ${record.domain} is ${describeAge(record.ageDays)} old.`)
   }
   if (serverProblem) facts.push(`The server didn\u2019t open it: ${serverProblem}`)
+  const severityCounts: Record<string, number> = {}
+  for (const g of graves) {
+    severityCounts[g.severity] = (severityCounts[g.severity] ?? 0) + 1
+  }
   return {
     mode: 'link',
     subject: finalHost ?? link.displayHost,
@@ -140,20 +146,16 @@ export function summariseLink({ link, graves, server, serverProblem }: CheckedLi
     notChecked: server ? notCheckedAfterServer(server) : [...CHECKED_ON_SERVER, ...NOT_CHECKED_YET],
     note:
       'Missing protections are the site owner\u2019s to fix. They make a site easier to attack, but they don\u2019t show that this link is harmful.',
+    severityCounts,
   }
 }
 
 const plural = (count: number, one: string, many: string): string => `${count} ${count === 1 ? one : many}`
 
-/** "6 findings: 2 critical, 1 high risk and 3 notes." Never "safe". */
+/** Concise verdict headline; specific severity counts are rendered in compact badge pills. */
 const repoVerdict = (graveyard: RepoGraveyard): string => {
   if (graveyard.total === 0) return 'No problems found by these checks.'
-  const parts = SEVERITIES.filter((s) => graveyard.bySeverity[s] > 0).map((s) => {
-    const n = graveyard.bySeverity[s]
-    return s === 'info' ? plural(n, 'note', 'notes') : `${n} ${REPO_SEVERITY_WORD[s].toLowerCase()}`
-  })
-  const list = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0]
-  return `${plural(graveyard.total, 'finding', 'findings')}: ${list}.`
+  return `${plural(graveyard.total, 'finding', 'findings')} discovered.`
 }
 
 export function summariseRepo(graveyard: RepoGraveyard): ScanSummary {
@@ -175,6 +177,13 @@ export function summariseRepo(graveyard: RepoGraveyard): ScanSummary {
   // Every check that did not fully run, with its reason, then what the scan never looks at.
   const notChecked = graveyard.checks.filter((c) => c.status !== 'ran').map((c) => `${c.name}: ${c.detail}`)
   if (graveyard.filesSkipped > 0) notChecked.push(`${plural(graveyard.filesSkipped, 'file', 'files')} left out by the size or count limits`)
+  const severityCounts: Record<string, number> = {}
+  for (const s of SEVERITIES) {
+    if (graveyard.bySeverity[s] > 0) {
+      severityCounts[s] = graveyard.bySeverity[s]
+    }
+  }
+
   return {
     mode: 'dev',
     subject: graveyard.fullName,
@@ -184,5 +193,6 @@ export function summariseRepo(graveyard: RepoGraveyard): ScanSummary {
     notChecked: [...notChecked, ...REPO_STANDING_LIMITS],
     note: 'Each grave is found by reading the files. Check it in the code before you change anything.',
     openIssues: graveyard.openIssues,
+    severityCounts,
   }
 }

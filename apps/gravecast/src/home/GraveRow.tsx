@@ -33,29 +33,34 @@ export function GraveRow({ grave, index }: { grave: StoryGrave; index: number })
   const haunt = HAUNT[grave.weathering]
   return (
     <li
-      className={`flex items-center gap-4 rounded-xl border bg-grave-dark-900/80 py-3 pr-4 pl-2 backdrop-blur-sm ${haunt.border}`}
+      className={`group flex items-start gap-4 rounded-xl border bg-grave-dark-950/90 p-4 shadow-lg backdrop-blur-md transition-all hover:border-grave-grove-glow/70 hover:shadow-[0_0_20px_rgba(56,189,248,0.12)] ${haunt.border}`}
     >
-      <div aria-hidden="true" className="shrink-0">
+      <div aria-hidden="true" className="shrink-0 pt-0.5">
         <BestiaryCharacter spec={GUARDIAN[grave.weathering]} size="sm" sound={false} growable={false} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="m-0 flex items-baseline gap-2 text-xs tracking-[0.25em] uppercase">
-          <span className="text-grave-mist-400">{String(index + 1).padStart(2, '0')}</span>
-          <span className={haunt.label}>{grave.label}</span>
-        </p>
-        <p className="mt-1 mb-0 font-serif text-lg text-grave-bone-100">{grave.title}</p>
-        <p className="mt-1 mb-0 text-sm text-grave-mist-300">{grave.detail}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="m-0 flex items-baseline gap-2 text-xs tracking-[0.25em] uppercase font-mono">
+            <span className="font-bold text-grave-mist-400">{String(index + 1).padStart(2, '0')}</span>
+            <span className={haunt.label}>{grave.label}</span>
+          </p>
+          <span className="rounded border border-grave-dark-800 bg-grave-dark-900 px-1.5 py-0.2 text-[10px] font-mono text-grave-mist-400 capitalize">
+            {grave.weathering}
+          </span>
+        </div>
+        <p className="mt-1 mb-0 font-serif text-lg font-semibold text-grave-bone-100 group-hover:text-grave-grove-glow transition-colors">{grave.title}</p>
+        <p className="mt-1 mb-0 text-sm leading-relaxed text-grave-mist-300">{grave.detail}</p>
         {grave.href ? (
           <a
             href={grave.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 inline-block font-mono text-xs break-all text-grave-mist-300 underline decoration-grave-dark-600 underline-offset-4 hover:text-grave-bone-100"
+            className="mt-1.5 inline-block font-mono text-xs break-all text-grave-mist-300 underline decoration-grave-dark-600 underline-offset-4 hover:text-grave-bone-100"
           >
             {grave.evidence}
           </a>
         ) : (
-          <p className="mt-1 mb-0 font-mono text-xs break-all text-grave-mist-400">{grave.evidence}</p>
+          <p className="mt-1.5 mb-0 font-mono text-xs break-all text-grave-mist-400">{grave.evidence}</p>
         )}
         <GraveDetails grave={grave} />
       </div>

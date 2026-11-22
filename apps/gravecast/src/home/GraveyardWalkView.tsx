@@ -26,37 +26,25 @@ const ARRIVE_SOUND: Record<TombstoneWeathering, SpookySound> = {
   pristine: 'stoneTap',
 }
 
+/** Spooky onomatopoeia sounds rising from the grave in the 3D yard. */
+const SPOOKY_BUBBLE_SOUNDS: readonly string[] = [
+  '👻 Boo!',
+  '💀 Creak...',
+  '🦴 Rattle!',
+  '🕯️ Hiss...',
+  '⚡ Zap!',
+  '🦇 Eek!',
+  '🧟 Groaaan...',
+  '🐺 Awooo!',
+  '🕷️ Skitter...',
+  '💨 Whoooosh...',
+  '👁️ Whisper...',
+  '🌑 Shhhhh...',
+]
+
 /** What is carved under a stone's title: the file for a repo, the kind of finding for a link. */
 const engraving = (summary: ScanSummary, grave: StoryGrave): string =>
   grave.engraving ?? (summary.mode === 'dev' ? fileName(grave.evidence) : grave.label)
-
-/** What the person reads above a grave once the witch is beside it: which file, and what is wrong there. */
-function GraveCard({ summary, grave, index, count }: { summary: ScanSummary; grave: StoryGrave; index: number; count: number }) {
-  return (
-    <div className="mb-3 max-h-[60vh] w-[min(24rem,85vw)] overflow-y-auto rounded-xl border border-grave-grove-glow/50 bg-grave-dark-950/90 p-4 text-left shadow-lg shadow-black/60 backdrop-blur-sm">
-      <p className="m-0 text-[0.65rem] tracking-[0.25em] text-grave-grove-glow uppercase">
-        Grave {index + 1} of {count} {'\u00b7'} {grave.label}
-      </p>
-      <p className="mt-1 mb-0 font-serif text-2xl leading-tight text-grave-bone-100 italic">{grave.title}</p>
-      <p className="mt-3 mb-0 text-[0.65rem] tracking-[0.25em] text-grave-mist-400 uppercase">{summary.mode === 'dev' ? 'File' : 'Found in'}</p>
-      {grave.href ? (
-        <a
-          href={grave.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-mono text-sm break-all text-grave-bone-200 underline decoration-grave-dark-600 underline-offset-4 hover:text-grave-bone-100"
-        >
-          {grave.evidence}
-        </a>
-      ) : (
-        <p className="m-0 font-mono text-sm break-all text-grave-bone-200">{grave.evidence}</p>
-      )}
-      <p className="mt-3 mb-0 text-[0.65rem] tracking-[0.25em] text-grave-mist-400 uppercase">The problem</p>
-      <p className="m-0 text-base leading-relaxed text-grave-mist-200">{grave.detail}</p>
-      <GraveDetails grave={grave} />
-    </div>
-  )
-}
 
 export interface GraveyardWalkViewProps {
   summary: ScanSummary
@@ -152,7 +140,11 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
               target={target}
               onPick={goTo}
               onArrive={onArrive}
-              renderArrived={(index) => <GraveCard summary={summary} grave={summary.graves[index]} index={index} count={count} />}
+              renderArrived={(index) => (
+                <div className="pointer-events-none select-none whitespace-nowrap rounded-full border border-grave-grove-glow/90 bg-grave-dark-950/95 px-3.5 py-1 text-xs font-mono font-semibold text-grave-bone-100 shadow-[0_0_20px_rgba(56,189,248,0.55)] backdrop-blur-sm">
+                  {SPOOKY_BUBBLE_SOUNDS[index % SPOOKY_BUBBLE_SOUNDS.length]}
+                </div>
+              )}
               still={reduced}
               returnKey={returns}
               onGate={backToGate}
@@ -217,6 +209,87 @@ export function GraveyardWalkView({ summary, onClose }: GraveyardWalkViewProps) 
         <p role="status" className="pointer-events-none absolute bottom-6 left-4 m-0 rounded-full border border-grave-dark-700 bg-grave-dark-950/80 px-4 py-2 font-serif text-lg text-grave-mist-200 italic sm:left-10">
           Flying to {going.title}{'\u2026'}
         </p>
+      )}
+
+      {/* Active Grave Card: Docked higher on the left sky area so ground-level graves and witch view are clear */}
+      {arrived !== null && summary.graves[arrived] && !listOpen && (
+        <aside
+          aria-label={`Details for grave ${arrived + 1}`}
+          className="gc-reveal pointer-events-auto absolute top-16 left-4 z-30 max-h-[55vh] w-[min(25rem,calc(100vw-2rem))] overflow-y-auto rounded-2xl border border-grave-grove-glow/70 bg-grave-dark-950/95 p-5 shadow-[0_0_50px_rgba(0,0,0,0.95)] backdrop-blur-md sm:top-20 sm:left-8"
+        >
+          <div className="flex items-center justify-between gap-3 pb-3 border-b border-grave-dark-800">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs text-grave-grove-glow font-bold">
+                GRAVE {arrived + 1} OF {count}
+              </span>
+              <span className="rounded border border-grave-dark-700 bg-grave-dark-900 px-2 py-0.5 text-[11px] font-mono text-grave-mist-300">
+                {summary.graves[arrived].label}
+              </span>
+            </div>
+            {/* Quick Next / Prev Grave navigation buttons */}
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => goTo((arrived - 1 + count) % count)}
+                className="grid size-7 cursor-pointer place-items-center rounded-lg border border-grave-dark-700 bg-grave-dark-900 text-xs font-mono text-grave-mist-200 hover:border-grave-grove-glow hover:text-white"
+                title="Previous grave (←)"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo((arrived + 1) % count)}
+                className="grid size-7 cursor-pointer place-items-center rounded-lg border border-grave-dark-700 bg-grave-dark-900 text-xs font-mono text-grave-mist-200 hover:border-grave-grove-glow hover:text-white"
+                title="Next grave (→)"
+              >
+                →
+              </button>
+              <button
+                type="button"
+                onClick={() => setArrived(null)}
+                className="ml-1 grid size-7 cursor-pointer place-items-center rounded-lg border border-grave-dark-700 bg-grave-dark-900 text-xs text-grave-mist-400 hover:text-white"
+                title="Dismiss card"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <h3 className="mt-3 mb-1 font-serif text-2xl text-grave-bone-100 leading-tight">
+            {summary.graves[arrived].title}
+          </h3>
+
+          <div className="mt-3">
+            <span className="block text-[10px] tracking-[0.2em] uppercase font-mono text-grave-mist-400">
+              {summary.mode === 'dev' ? 'File Location' : 'Found in'}
+            </span>
+            {summary.graves[arrived].href ? (
+              <a
+                href={summary.graves[arrived].href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-0.5 inline-block font-mono text-xs break-all text-grave-grove-glow underline underline-offset-2 hover:text-white"
+              >
+                {summary.graves[arrived].evidence}
+              </a>
+            ) : (
+              <p className="mt-0.5 mb-0 font-mono text-xs break-all text-grave-mist-300">
+                {summary.graves[arrived].evidence}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-3">
+            <span className="block text-[10px] tracking-[0.2em] uppercase font-mono text-grave-mist-400">
+              The problem
+            </span>
+            <p className="mt-0.5 mb-0 text-sm leading-relaxed text-grave-mist-200">
+              {summary.graves[arrived].detail}
+            </p>
+          </div>
+
+          <GraveDetails grave={summary.graves[arrived]} />
+        </aside>
       )}
       {count > 0 && !flat && (
         <p className="pointer-events-none absolute right-4 bottom-6 m-0 hidden text-xs text-grave-mist-400 sm:right-10 md:block">

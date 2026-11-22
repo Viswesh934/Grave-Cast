@@ -19,7 +19,8 @@ export type HorrorCursorVariant =
   | 'ritual-candle'
   | 'bloody-dagger'
   | 'spectral-wisp'
-  | 'skeletal-hand';
+  | 'skeletal-hand'
+  | 'electric-zap';
 
 /**
  * Per-variant visual + motion configuration.
@@ -107,5 +108,14 @@ export const cursorVariantTokens: Record<HorrorCursorVariant, CursorVariantToken
     damping: 'smooth',
     trailLength: 0,
     anchor: { x: 0.3, y: 0.08 },
+  },
+  'electric-zap': {
+    color: '#38bdf8',
+    accent: '#fef08a',
+    glow: 'rgba(56, 189, 248, 0.85)',
+    size: 40,
+    damping: 'sharp',
+    trailLength: 4,
+    anchor: { x: 0.35, y: 0.1 },
   },
 } as const;
