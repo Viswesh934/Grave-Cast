@@ -8,7 +8,7 @@ Status: prototype. We build in small iterations and the concept matters more tha
 
 ## Why we built it
 
-Our team lives where emergencies are never far away. One of us lives in a cyclone region: in one cyclone, trees started flying through the air, and then came about two days of power cut, with no electricity, no internet, and no phone signal. With the survival skills of a mosquito, there wasn't much to do, and nothing to look up. Another of us is from Lebanon, where war can cut a place off, and another is from Florida, where hurricanes come often.
+Our team lives where emergencies are never far away. One of us lives in a cyclone region: in one cyclone, trees started flying through the air, and then came about two days of power cut, with no electricity, no internet, and no phone signal. With the survival skills of a mosquito, there wasn't much to do, and nothing to look up. The other is from Lebanon, where war can cut a place off.
 
 So we built something that keeps working on limited internet and holds the common emergency know-how for when there is none. That is Lantern (§3.4). The website tells this story first, on the "Our story" page, before it introduces Lantern.
 
@@ -318,7 +318,7 @@ Our AWS account is on the **Paid plan**. Always-free allowances still apply, but
 | In dev mode the drone gains a voice for each tenfold of the repo's open issues and pull requests | Agreed |
 | The home page has a Scribble cannon: once, a pen is fired from the bottom left into the right end of the top bar, where it stays with a red glow. Clicking it turns on drawing; its The pen has its own place at the right end of the top bar and is there from the moment the page opens; the cannon fires a ghost (the bestiary's) on every visit that sways across the page and fades into the pen, like a soul returning, and then its glow lights. It can't be turned off or lost, so everyone finds it. The status vial is red; Lord Alucard (the bestiary vampire) is the creature in the 3D yard. Teeth bite down on the form while a scan runs | Agreed |
 | The home page uses the docs' green grove palette (Groove UI `.grave-grove` and `palette.grove`), with one emerald accent. This relaxes "muted colors, no bright accents" for the website only | Agreed |
-| The website tells the team's backstory on an "Our story" page: one of us in a cyclone region (flying trees, then about two days with no electricity, internet or signal), one from Lebanon (war), one from Florida (frequent hurricanes) | Agreed |
+| The website tells the team's backstory on an "Our story" page: one of us in a cyclone region (flying trees, then about two days with no electricity, internet or signal), the other from Lebanon (war) | Agreed |
 | Top bar order: Graveyard, Lantern, Docs, Our story. Lantern is the second tab once the section works; Our story is always last | Agreed |
 | The installed Lantern is plain and fast: no animation, no 3D, no decorative sound, no horror effects. Only sounds that do a job (the CPR beat, SOS) play. The website may still show off | Agreed |
 | Lantern is its own page (`lantern/index.html`) with its own bundle, so no website code is cached on the phone. Moving between it and the website is a full page load | Agreed |
